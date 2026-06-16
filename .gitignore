@@ -1,0 +1,19 @@
+# Playwright
+olm_playwright_tests/node_modules/
+olm_playwright_tests/dist/
+olm_playwright_tests/test-results/
+olm_playwright_tests/playwright-report/
+olm_playwright_tests/blob-report/
+olm_playwright_tests/reports/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+*.log
