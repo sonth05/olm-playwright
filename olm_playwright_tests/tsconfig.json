@@ -11,7 +11,25 @@
     "outDir": "dist",
     "rootDir": ".",
     "types": ["node"],
-    "ignoreDeprecations": "6.0"
+    "baseUrl": ".",
+    "paths": {
+      "@config/*": ["config/*"],
+      "@pages/*": ["pages/*"],
+      "@utils/*": ["utils/*"],
+      "@fixtures/*": ["fixtures/*"],
+      "@components/*": ["components/*"],
+      "@data/*": ["data/*"]
+    }
   },
-  "include": ["src/**/*", "tests/**/*", "playwright.config.ts"]
+  "include": [
+    "config/**/*",
+    "pages/**/*",
+    "components/**/*",
+    "fixtures/**/*",
+    "utils/**/*",
+    "scripts/**/*",
+    "tests/**/*",
+    "global-setup.ts",
+    "playwright.config.ts"
+  ]
 }

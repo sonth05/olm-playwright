@@ -1,25 +1,37 @@
 # OLM Playwright Tests (TypeScript)
 
-Framework kiểm thử tự động cho [OLM.vn](https://olm.vn) dùng Playwright + TypeScript.
+Framework kiểm thử tự động cho [OLM.vn](https://olm.vn) — cấu trúc chuẩn tester.
 
 ## Cấu trúc
 
 ```
 olm_playwright_tests/
-├── src/
-│   ├── config/       # URL, selectors, test data
-│   ├── pages/        # Page Object Model
-│   ├── utils/        # Logger, CSV reporter, helpers
-│   └── scripts/      # Script automation độc lập
-├── tests/            # Playwright test specs (106 tests)
-├── reports/          # CSV + HTML report (tự tạo khi chạy)
-└── playwright.config.ts
+├── .env.example              # Mẫu biến môi trường
+├── playwright.config.ts
+├── global-setup.ts           # Tạo auth/user.json
+├── auth/                     # storageState đăng nhập
+├── config/                   # URL, selectors, test data
+├── data/                     # JSON test data
+├── fixtures/                 # Custom fixtures (auth)
+├── components/               # Component tái sử dụng
+├── pages/                    # Page Object Model
+├── tests/
+│   ├── smoke/                # Test nhanh (~17)
+│   ├── regression/           # Test đầy đủ theo module
+│   ├── e2e/                  # User journey / flow
+│   └── api/                  # API (placeholder)
+├── utils/                    # Helpers, logger, CSV, visual
+├── scripts/                  # Automation độc lập
+├── reports/                  # HTML + CSV (tự sinh)
+├── screenshots/ videos/ logs/
+└── package.json
 ```
 
 ## Cài đặt
 
 ```bash
 cd olm_playwright_tests
+cp .env.example .env          # chỉnh credentials nếu cần
 npm install
 npx playwright install chromium
 ```
@@ -27,65 +39,58 @@ npx playwright install chromium
 ## Chạy test
 
 ```bash
-# Toàn bộ test
-npm test
-
-# Chỉ smoke tests
-npm run test:smoke
-
-# Chỉ regression tests
-npm run test:regression
-
-# Có giao diện trình duyệt
-npm run test:headed
-
-# Một nhóm test
-npm run test:login
-
-# Xem báo cáo HTML
-npm run report
+npm test                 # Toàn bộ (smoke + regression + e2e)
+npm run test:smoke       # tests/smoke/
+npm run test:regression  # tests/regression/
+npm run test:e2e         # tests/e2e/
+npm run test:headed      # Có giao diện trình duyệt
+npm run report           # Xem HTML report
 ```
 
 ## Script automation
 
 ```bash
-# Thi thử THPT Sinh học
-npm run thi-thu
-
-# Bài luyện tập Toán 9 - Phương pháp thế
-npm run toan9
+npm run thi-thu          # Thi thử THPT Sinh học
+npm run toan9            # Bài luyện tập Toán 9
+npm run auto-learning    # Học theo lessons-by-grade.json
 ```
 
-## Tags test
+## Auth fixture
 
-Dùng grep để lọc: `@smoke`, `@regression`, `@login`, `@registration`, `@header`, `@navigation`, `@contest`, `@payment`, `@hoi_dap`, `@library`, `@news`, `@fun_contest`
+`global-setup.ts` đăng nhập 1 lần → lưu `auth/user.json`.
 
-## Biến môi trường
+Test cần session sẵn:
 
-- `HEADLESS=true` — chạy không hiện cửa sổ trình duyệt (local)
-- `CI=true` — bật retry tự động; trên CI mặc định chạy headless
-- `OLM_USERNAME` / `OLM_PASSWORD` — ghi đè tài khoản test (dùng GitHub Secrets trên CI)
+```typescript
+import { test, expect } from '../../fixtures/auth.fixture';
+
+test('Ví dụ', async ({ authenticatedPage }) => {
+  await authenticatedPage.goto('/hoc-bai');
+});
+```
+
+## Biến môi trường (.env)
+
+| Biến | Mô tả |
+|------|-------|
+| `BASE_URL` | URL gốc OLM |
+| `OLM_VIP_USERNAME` / `OLM_VIP_PASSWORD` | Tài khoản VIP |
+| `OLM_SCHOOL_USERNAME` / `OLM_SCHOOL_PASSWORD` | Tài khoản trường |
+| `OLM_NORMAL_USERNAME` / `OLM_NORMAL_PASSWORD` | Học sinh thường |
+| `HEADLESS` | `true` / `false` |
+| `WORKERS` | Số worker song song |
 
 ## CI (GitHub Actions)
 
-Workflow: `.github/workflows/playwright.yml`
+| Sự kiện | Lệnh |
+|---------|------|
+| Pull Request | `npm run test:smoke` |
+| Push main/master | `npm test` |
 
-| Sự kiện | Test chạy |
-|---------|-----------|
-| Pull Request → `main` / `master` | `@smoke` (~17 test) |
-| Push → `main` / `master` | Toàn bộ suite (106 test) |
-
-Sau khi push repo lên GitHub, vào **Settings → Secrets and variables → Actions** và thêm (tuỳ chọn):
-
-- `OLM_USERNAME` — tài khoản test OLM
-- `OLM_PASSWORD` — mật khẩu test
-
-Nếu không cấu hình secrets, CI dùng giá trị mặc định trong `testData.ts`.
-
-Khi test fail, tải báo cáo tại tab **Actions → run → Artifacts** (`playwright-smoke-report` hoặc `playwright-full-report`).
+GitHub Secrets: `OLM_VIP_USERNAME`, `OLM_VIP_PASSWORD`, `OLM_SCHOOL_*`, `OLM_NORMAL_*`
 
 ## Báo cáo
 
-- HTML report: `reports/html/`
-- CSV report: `reports/test_report_*.csv`
-- Video / screenshot / trace khi fail: `reports/test-results/`
+- HTML: `reports/html/`
+- CSV: `reports/test_report_*.csv`
+- Artifacts fail: `reports/test-results/` (video, trace, screenshot)

@@ -4,25 +4,24 @@ Kiểm thử tự động cho [OLM.vn](https://olm.vn).
 
 ## Test framework
 
-Toàn bộ test nằm trong [`olm_playwright_tests/`](olm_playwright_tests/) — Playwright + TypeScript.
+Toàn bộ test nằm trong [`olm_playwright_tests/`](olm_playwright_tests/) — Playwright + TypeScript, cấu trúc chuẩn tester (smoke / regression / e2e).
 
 ```bash
 cd olm_playwright_tests
+cp .env.example .env
 npm install
 npx playwright install chromium
 npm test
 ```
 
-Xem chi tiết trong [olm_playwright_tests/README.md](olm_playwright_tests/README.md).
+Xem chi tiết: [olm_playwright_tests/README.md](olm_playwright_tests/README.md)
 
-## CI tự động (GitHub Actions)
+## CI tự động
 
-Khi push lên GitHub, workflow [`.github/workflows/playwright.yml`](.github/workflows/playwright.yml) tự chạy:
+Workflow [`.github/workflows/playwright.yml`](.github/workflows/playwright.yml):
 
-- **Pull Request** → smoke tests (`@smoke`)
-- **Push lên main/master** → full test suite
-
-Cấu hình secrets (tuỳ chọn): `OLM_USERNAME`, `OLM_PASSWORD` trong GitHub repo Settings.
+- **Pull Request** → `npm run test:smoke`
+- **Push main/master** → `npm test`
 
 ## Tài liệu tham khảo
 

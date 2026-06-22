@@ -1,36 +1,26 @@
 {
   "name": "olm-playwright-tests",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "OLM.vn test automation – Playwright TypeScript",
   "scripts": {
     "test": "playwright test",
-    "test:smoke": "playwright test --grep @smoke",
+    "test:smoke": "playwright test tests/smoke",
+    "test:regression": "playwright test tests/regression",
+    "test:e2e": "playwright test tests/e2e",
+    "test:api": "playwright test tests/api",
     "test:headed": "playwright test --headed",
-    "test:login": "playwright test tests/login.spec.ts",
-    "test:regression": "playwright test --grep @regression",
-    "report": "playwright show-report",
-    "thi-thu": "tsx src/scripts/thiThuThptSinhHoc.ts",
-    "toan9": "tsx src/scripts/toan9Bai2PhuongPhapThe.ts"
+    "test:login": "playwright test tests/smoke/login.smoke.spec.ts tests/regression/login.regression.spec.ts",
+    "report": "playwright show-report reports/html",
+    "thi-thu": "tsx scripts/thiThuThptSinhHoc.ts",
+    "toan9": "tsx scripts/toan9Bai2PhuongPhapThe.ts",
+    "auto-learning": "tsx scripts/auto-learning.ts"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.0",
     "@types/node": "^22.19.21",
+    "dotenv": "^16.4.7",
     "playwright": "^1.61.0",
-    "ts-node": "^10.9.2",
     "tsx": "^4.19.2",
     "typescript": "^5.9.3"
-  },
-  "main": "index.js",
-  "directories": {
-    "test": "tests"
-  },
-  "dependencies": {
-    "esbuild": "^0.28.1",
-    "playwright-core": "^1.61.0",
-    "undici-types": "^6.21.0"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs"
+  }
 }
