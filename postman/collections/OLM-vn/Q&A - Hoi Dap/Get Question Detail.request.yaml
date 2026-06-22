@@ -1,0 +1,9 @@
+$kind: http-request
+name: Get Question Detail
+method: GET
+url: '{{baseUrl}}/cau-hoi/:questionId'
+order: 2000
+description: Chi tiết câu hỏi và câu trả lời
+pathVariables:
+  - key: questionId
+    value: '1'

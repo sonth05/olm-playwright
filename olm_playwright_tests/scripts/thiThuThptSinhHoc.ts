@@ -1,9 +1,10 @@
 /** Script tự động thi thử THPT Sinh học OLM.vn - ĐÃ FIX v4 */
 import { chromium } from 'playwright';
-import { humanDelay } from '../utils/helpers';
+import { BASE_URL, LOGIN_URL } from '../config/config';
 import { PASSWORD, USERNAME } from '../config/testData';
+import { humanDelay } from '../utils/helpers';
 
-const LOP12_URL = 'https://olm.vn/lop-12';
+const LOP12_URL = `${BASE_URL}/lop-12`;
 const TIMEOUT = 30_000;
 const MAX_CAU = 50;
 
@@ -111,8 +112,10 @@ async function isHoanThanhHetCau(page: import('playwright').Page): Promise<boole
 }
 
 async function main(): Promise<void> {
+  const headless = process.env.HEADLESS === 'true';
+  console.log(`Chế độ: ${headless ? 'headless' : 'headed'} | Tài khoản: ${USERNAME}`);
   const browser = await chromium.launch({
-    headless: false,
+    headless,
     args: [
       '--no-sandbox',
       '--disable-blink-features=AutomationControlled',
@@ -140,7 +143,7 @@ async function main(): Promise<void> {
 
   try {
     console.log('[1] Đăng nhập OLM...');
-    await page.goto('https://olm.vn/dangnhap', { waitUntil: 'networkidle' });
+    await page.goto(LOGIN_URL, { waitUntil: 'networkidle' });
     await sleep(humanDelay());
 
     await page.fill("input[type='text'], input[name='username']", USERNAME);

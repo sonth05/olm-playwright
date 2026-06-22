@@ -1,0 +1,6 @@
+$kind: http-request
+name: Get Gio Hang Thu Vien So
+method: GET
+url: '{{baseUrl}}/gio-hang-thu-vien-so'
+order: 3000
+description: Giỏ hàng gói hội viên thư viện số

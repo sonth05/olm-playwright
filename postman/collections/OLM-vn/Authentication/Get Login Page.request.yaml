@@ -1,0 +1,6 @@
+$kind: http-request
+name: Get Login Page
+method: GET
+url: '{{baseUrl}}/dangnhap'
+order: 3000
+description: Tải trang đăng nhập

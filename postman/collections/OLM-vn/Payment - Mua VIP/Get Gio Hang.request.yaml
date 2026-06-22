@@ -1,0 +1,6 @@
+$kind: http-request
+name: Get Gio Hang
+method: GET
+url: '{{baseUrl}}/gio-hang'
+order: 2000
+description: Trang giỏ hàng

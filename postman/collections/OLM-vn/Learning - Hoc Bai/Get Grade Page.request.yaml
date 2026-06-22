@@ -1,0 +1,9 @@
+$kind: http-request
+name: Get Grade Page
+method: GET
+url: '{{baseUrl}}/lop-:grade'
+order: 2000
+description: Trang lớp học — danh sách khóa học theo lớp (lớp 1–12)
+pathVariables:
+  - key: grade
+    value: '1'

@@ -1,0 +1,9 @@
+$kind: http-request
+name: Read Book
+method: GET
+url: '{{baseUrl}}/doc-sach/:bookSlug'
+order: 4000
+description: Đọc sách trực tuyến
+pathVariables:
+  - key: bookSlug
+    value: toan-lop-1

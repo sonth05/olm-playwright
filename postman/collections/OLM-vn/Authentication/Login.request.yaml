@@ -1,0 +1,13 @@
+$kind: http-request
+name: Login
+method: POST
+url: '{{baseUrl}}/dangnhap'
+order: 1000
+description: Đăng nhập tài khoản OLM
+body:
+  type: urlencoded
+  content:
+    - key: username
+      value: ''
+    - key: password
+      value: ''

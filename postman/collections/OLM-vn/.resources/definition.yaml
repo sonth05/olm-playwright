@@ -1,0 +1,7 @@
+$kind: collection
+name: OLM.vn API Collection
+description: API endpoints for OLM.vn - Vietnamese educational platform
+variables:
+  - key: baseUrl
+    value: 'https://olm.vn'
+    type: string

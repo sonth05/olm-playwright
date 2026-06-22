@@ -1,0 +1,11 @@
+$kind: http-request
+name: Ask a Question
+method: POST
+url: '{{baseUrl}}/hoi-dap'
+order: 3000
+description: Đặt câu hỏi mới
+body:
+  type: urlencoded
+  content:
+    - key: content
+      value: ''

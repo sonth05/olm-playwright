@@ -1,0 +1,6 @@
+$kind: http-request
+name: Get Hoi Dap Home
+method: GET
+url: '{{baseUrl}}/hoi-dap'
+order: 1000
+description: Trang hỏi đáp — danh sách câu hỏi

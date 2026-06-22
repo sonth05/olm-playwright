@@ -1,0 +1,6 @@
+$kind: http-request
+name: Get Thu Vien So Home
+method: GET
+url: '{{baseUrl}}/thu-vien-so'
+order: 1000
+description: Trang thư viện số

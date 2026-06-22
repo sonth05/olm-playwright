@@ -1,0 +1,13 @@
+$kind: http-request
+name: Get Sach Giao Khoa
+method: GET
+url: '{{baseUrl}}/thu-vien-so/sach-giao-khoa'
+order: 2000
+description: Danh sách sách giáo khoa
+queryParams:
+  - key: grade
+    value: ''
+    disabled: true
+  - key: type
+    value: ''
+    disabled: true

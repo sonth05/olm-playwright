@@ -1,0 +1,9 @@
+$kind: http-request
+name: 'Get Lesson / Topic Page'
+method: GET
+url: '{{baseUrl}}/chu-de/:topicSlug'
+order: 4000
+description: Trang bài học / chủ đề — nội dung bài học, video, bài tập
+pathVariables:
+  - key: topicSlug
+    value: toan-lop-1

@@ -1,0 +1,6 @@
+$kind: http-request
+name: Get Hoc Bai Home
+method: GET
+url: '{{baseUrl}}/hoc-bai'
+order: 1000
+description: Trang chủ học bài — danh sách lớp học

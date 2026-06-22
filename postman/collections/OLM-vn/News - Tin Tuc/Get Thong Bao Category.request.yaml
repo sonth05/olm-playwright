@@ -1,0 +1,6 @@
+$kind: http-request
+name: Get Thong Bao Category
+method: GET
+url: '{{baseUrl}}/chu-de-bai-viet/thong-bao'
+order: 4000
+description: Bài viết thông báo

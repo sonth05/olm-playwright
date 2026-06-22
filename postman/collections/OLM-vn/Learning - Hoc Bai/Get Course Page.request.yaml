@@ -1,0 +1,9 @@
+$kind: http-request
+name: Get Course Page
+method: GET
+url: '{{baseUrl}}/khoa-hoc/:courseSlug'
+order: 3000
+description: Trang khóa học — danh sách chương và bài học
+pathVariables:
+  - key: courseSlug
+    value: toan-lop-1

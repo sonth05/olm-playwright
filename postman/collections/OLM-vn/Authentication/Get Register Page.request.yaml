@@ -1,0 +1,6 @@
+$kind: http-request
+name: Get Register Page
+method: GET
+url: '{{baseUrl}}/dang-ky'
+order: 4000
+description: Tải trang đăng ký

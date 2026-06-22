@@ -1,0 +1,9 @@
+$kind: http-request
+name: Get Contest Detail
+method: GET
+url: '{{baseUrl}}/bai-viet/:contestSlug'
+order: 3000
+description: Chi tiết cuộc thi
+pathVariables:
+  - key: contestSlug
+    value: cuoc-thi-toan-vui

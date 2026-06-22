@@ -1,0 +1,6 @@
+$kind: http-request
+name: Get Hoc Tap Category
+method: GET
+url: '{{baseUrl}}/chu-de-bai-viet/hoc-tap'
+order: 3000
+description: Bài viết chủ đề học tập
