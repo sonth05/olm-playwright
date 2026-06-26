@@ -92,8 +92,10 @@ test.describe('Payment @payment @regression', () => {
       expect(pkg.price).toMatch(/\d/);
       expect(pkg.price).toMatch(/VND/i);
     }
-  });
+    await this.packageCards.nth(index).click();
+  }
 
+<<<<<<< HEAD
   // ── 4. Sidebar sau khi click Đăng ký ─────────────────────────────────────
 
   test('[Happy] Click Đăng ký gói Đề thi - sidebar THANH TOÁN hiển thị', async ({ authenticatedPage }) => {
@@ -255,3 +257,77 @@ test.describe('Payment @payment @regression', () => {
     expect(authenticatedPage.url()).not.toContain('thanh-toan-thanh-cong');
   });
 });
+=======
+  /** Chọn môn học cho gói THEO MÔN */
+  async selectSubject(subject: string) {
+    await this.subjectDropdown.click();
+    await this.page.getByRole('option', { name: new RegExp(subject, 'i') }).click();
+  }
+
+  /** Click nút Đăng ký */
+  async clickDangKy() {
+    await this.dangKyButtons.first().click();
+    await this.page.waitForTimeout(1000);
+  }
+
+  /** Mở giỏ hàng */
+  async openGioHang() {
+    await this.cartIcon.click();
+    await this.page.waitForLoadState('networkidle');
+  }
+
+  /** Click Thanh Toán */
+  async clickCheckout() {
+    await this.checkoutButton.click();
+  }
+
+  /** Lấy danh sách gói VIP */
+  async getVipPackages() {
+    return await this.packageCards.evaluateAll((cards) => {
+      return cards.map((card) => {
+        const priceEl = card.querySelector('.price, [class*="VND"], strong, b') as HTMLElement;
+        return {
+          name: card.querySelector('h3, strong, [class*="title"]')?.textContent?.trim() || '',
+          price: priceEl?.textContent?.trim() || '',
+          text: card.textContent?.trim().substring(0, 150) || ''
+        };
+      });
+    });
+  }
+
+  /** Số lượng item trong giỏ */
+  async getCartItemCount(): Promise<number> {
+    const countText = await this.cartItemCount.textContent();
+    if (!countText) return 0;
+    const match = countText.match(/\d+/);
+    return match ? parseInt(match[0]) : 0;
+  }
+
+  /** Tổng tiền giỏ hàng */
+  async getCartTotal(): Promise<string> {
+    return (await this.cartTotal.textContent())?.trim() || '0 VND';
+  }
+
+  /** Chọn vai trò (Học sinh / Giáo viên / Nhà trường) */
+  async selectRole(role: 'hoc-sinh' | 'giao-vien' | 'nha-truong') {
+    const roleText = {
+      'hoc-sinh': 'Học sinh',
+      'giao-vien': 'Giáo viên',
+      'nha-truong': 'Nhà trường'
+    }[role];
+
+    await this.roleButtons.filter({ hasText: roleText }).first().click();
+  }
+
+  /** Kiểm tra có hiển thị phương thức thanh toán không */
+  async isPaymentMethodVisible(): Promise<boolean> {
+    return await this.paymentMethods.first().isVisible({ timeout: 5000 }).catch(() => false);
+  }
+
+  /** Kiểm tra tổng tiền bên phải */
+  async getOrderTotal(): Promise<string> {
+    const totalLocator = this.page.locator('text=Tổng tiền').locator('..').locator('text=/[0-9.]+/');
+    return (await totalLocator.textContent())?.trim() || '';
+  }
+}
+>>>>>>> d6829bd7b6bec34445d7b0b12cf26b66f1b5e0b1
