@@ -10,17 +10,19 @@ export class ThuVienSoPage extends BasePage {
   static readonly SACH_GIAO_KHOA_URL = SACH_GIAO_KHOA_URL;
   static readonly TAP_CHI_URL = TAP_CHI_URL;
 
-  static readonly BANNER = '.banner, .hero, .thu-vien-banner';
-  static readonly CTA_SACH_GIAO_KHOA = "a[href*='sach-giao-khoa']";
-  static readonly CTA_GOI_HOI_VIEN = "a[href*='gio-hang-thu-vien-so']";
-  static readonly CAROUSEL = '.carousel, .slider';
-  static readonly FILTER_GRADE_TABS = '.filter-grade a, .tab-grade button, .grade-tab';
-  static readonly FILTER_TYPE_TOGGLE = '.filter-type, .toggle-book-type';
-  static readonly BOOK_LIST = '.book-item, .book-card, .card';
-  static readonly BOOK_LINK = "a[href*='/doc-sach/']";
-  static readonly MAGAZINE_LIST = '.magazine-item, .magazine-card, .card';
+  // Selectors chuẩn theo DOM thực tế của trang
+  static readonly BOOK_CARD = '.card-document-content';
+  static readonly BOOK_LINK = "a[href*='/doc-sach/'], a[href*='/thu-vien-so/']";
+  // Card danh mục tạp chí dùng class "card-collection"
+  static readonly MAGAZINE_CARD = '.card-collection';
   static readonly MEMBERSHIP_BADGE = '.badge-hoi-vien, .lock-icon, .badge-member';
-  static readonly GOI_HOI_VIEN_CTA = "a[href*='gio-hang-thu-vien-so'], .btn-hoi-vien";
+
+  // Selector cho badge "N kết quả"
+  static readonly RESULT_COUNT_BADGE =
+    'span:has-text("kết quả"), div:has-text("kết quả")';
+
+  // Selector lọc lớp: data-grade attribute
+  static readonly GRADE_ITEM = '[data-group="grade-select-course"]';
 
   async open(): Promise<this> {
     await this.navigateTo(ThuVienSoPage.URL);
@@ -30,15 +32,20 @@ export class ThuVienSoPage extends BasePage {
   async openSachGiaoKhoa(grade?: number, bookType?: string): Promise<this> {
     let url = ThuVienSoPage.SACH_GIAO_KHOA_URL;
     const params: string[] = [];
-    if (grade) params.push(`grade=${grade}`);
+    if (grade !== undefined) params.push(`grade=${grade}`);
     if (bookType) params.push(`type=${bookType}`);
     if (params.length) url += '?' + params.join('&');
     await this.navigateTo(url);
+    // Scroll xuống để trigger lazy-load
+    await this.page.evaluate(() => window.scrollTo(0, 600));
+    await this.page.waitForTimeout(1500);
     return this;
   }
 
   async openTapChi(): Promise<this> {
     await this.navigateTo(ThuVienSoPage.TAP_CHI_URL);
+    await this.page.evaluate(() => window.scrollTo(0, 600));
+    await this.page.waitForTimeout(1500);
     return this;
   }
 
@@ -46,12 +53,53 @@ export class ThuVienSoPage extends BasePage {
     return this.getCurrentUrl().includes('thu-vien-so');
   }
 
+  /**
+   * Đếm số card sách hiển thị trên trang.
+   * Dùng selector chuẩn theo class thực tế: card-document-content
+   */
   async getBookCount(): Promise<number> {
-    return this.page.locator(ThuVienSoPage.BOOK_LIST).count();
+    // Chờ ít nhất 1 card xuất hiện hoặc timeout sau 5s
+    try {
+      await this.page
+        .locator(ThuVienSoPage.BOOK_CARD)
+        .first()
+        .waitFor({ state: 'visible', timeout: 10000 });
+    } catch {
+      // Không có card nào — trả về 0
+      return 0;
+    }
+    return this.page.locator(ThuVienSoPage.BOOK_CARD).count();
+  }
+
+  /**
+   * Lấy số "N kết quả" từ badge hiển thị trên trang.
+   * Trả về -1 nếu không tìm thấy.
+   */
+  async getDisplayedResultCount(): Promise<number> {
+    try {
+      // Tìm element chứa "kết quả" — ví dụ "11 kết quả"
+      const el = this.page
+        .locator('text=/\\d+ kết quả/')
+        .first();
+      await el.waitFor({ state: 'visible', timeout: 10000 });
+      const text = await el.textContent();
+      const match = text?.match(/(\d+)\s*kết quả/);
+      return match ? parseInt(match[1], 10) : -1;
+    } catch {
+      return -1;
+    }
   }
 
   async getMagazineCount(): Promise<number> {
-    return this.page.locator(ThuVienSoPage.MAGAZINE_LIST).count();
+    try {
+      await this.page
+        .locator(ThuVienSoPage.MAGAZINE_CARD)
+        .first()
+        .waitFor({ state: 'visible', timeout: 10000 });
+    } catch {
+      return 0;
+    }
+    return this.page.locator(ThuVienSoPage.MAGAZINE_CARD).count();
   }
 
   async clickFirstBook(): Promise<this> {
@@ -70,5 +118,19 @@ export class ThuVienSoPage extends BasePage {
 
   isTapChiLoaded(): boolean {
     return this.getCurrentUrl().includes('tap-chi');
+  }
+
+  /**
+   * Click vào tab lớp theo số (1–12) trên trang Sách giáo khoa.
+   * Dùng data-grade attribute.
+   */
+  async selectGrade(grade: number): Promise<void> {
+    const tab = this.page.locator(
+      `[data-group="grade-select-course"][data-grade="${grade}"]`
+    );
+    await tab.waitFor({ state: 'visible', timeout: 10000 });
+    await tab.click();
+    // Chờ danh sách re-render
+    await this.page.waitForTimeout(1500);
   }
 }

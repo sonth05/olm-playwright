@@ -8,9 +8,50 @@ export class BasePage {
     this.page = page;
   }
 
+  /**
+   * Điều hướng đến URL và tự động dismiss popup thông báo OLM.
+   * Popup "#dialogConfirmNotification" / "#later-noti" xuất hiện sau khi load
+   * và chặn mọi thao tác nếu không được dismiss trước.
+   */
   async navigateTo(url: string): Promise<void> {
-    await this.page.goto(url, { waitUntil: 'domcontentloaded' });
+    await this.page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
     await this.page.waitForTimeout(PAGE_LOAD_WAIT * 1000);
+    await this._dismissOlmPopups();
+  }
+
+  /**
+   * Dismiss các popup/overlay chuẩn của OLM.
+   * Gọi sau mỗi lần navigate hoặc khi cần đảm bảo UI không bị che.
+   */
+  async _dismissOlmPopups(): Promise<void> {
+    // 1. Popup "Đăng ký nhận thông báo" (#later-noti)
+    try {
+      const laterBtn = this.page.locator('#later-noti').first();
+      if (await laterBtn.isVisible({ timeout: 6_000 })) {
+        await laterBtn.click({ timeout: 6_000 });
+        await this.page.waitForTimeout(400);
+      }
+    } catch { /* popup không xuất hiện */ }
+
+    // 2. Modal VIP hoặc modal thông thường có nút close
+    try {
+      const closeBtn = this.page.locator(
+        '.modal.show .close, .modal.show .btn-close, .modal.show button[aria-label="Close"]'
+      ).first();
+      if (await closeBtn.isVisible({ timeout: 3_000 })) {
+        await closeBtn.click({ timeout: 4_000 });
+        await this.page.waitForTimeout(300);
+      }
+    } catch { /* không có modal */ }
+
+    // 3. Backdrop còn sót → Escape
+    try {
+      const backdrop = this.page.locator('.modal-backdrop').first();
+      if (await backdrop.isVisible({ timeout: 1600 })) {
+        await this.page.keyboard.press('Escape');
+        await this.page.waitForTimeout(300);
+      }
+    } catch { /* không có backdrop */ }
   }
 
   getCurrentUrl(): string {
@@ -41,7 +82,7 @@ export class BasePage {
       const locator = this.page.locator(sel).first();
       try {
         await locator.waitFor({ state: 'visible', timeout: timeoutMs });
-        await locator.click({ trial: true, timeout: 3000 }).catch(() => {});
+        await locator.click({ trial: true, timeout: 6000 }).catch(() => {});
         return locator;
       } catch {
         continue;

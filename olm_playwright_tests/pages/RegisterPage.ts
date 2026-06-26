@@ -4,18 +4,32 @@ import { BasePage } from './BasePage';
 export class RegisterPage extends BasePage {
   static readonly URL = REGISTER_URL;
 
-  static readonly ACCOUNT_TYPE_STUDENT = "xpath=//label[contains(text(),'Học sinh')]";
-  static readonly ACCOUNT_TYPE_TEACHER = "xpath=//label[contains(text(),'Giáo viên')]";
-  static readonly INPUT_FULLNAME = "input[name='name'], input[placeholder*='Họ tên']";
-  static readonly INPUT_USERNAME = "input[name='username']";
-  static readonly INPUT_PHONE = "input[name='phone'], input[type='tel']";
-  static readonly INPUT_EMAIL = "input[name='email'], input[type='email']";
-  static readonly INPUT_PASSWORD = "input[name='password'], input[type='password']";
+  // Bước chọn loại tài khoản (trang đầu - nếu có)
+  static readonly ACCOUNT_TYPE_STUDENT = [
+    "xpath=//label[contains(text(),'Học sinh')]",
+    "xpath=//div[contains(text(),'Học sinh')]",
+    "xpath=//button[contains(text(),'Học sinh')]",
+    ".student-type, [data-type='student']",
+  ].join(', ');
+  static readonly ACCOUNT_TYPE_TEACHER = [
+    "xpath=//label[contains(text(),'Giáo viên')]",
+    "xpath=//div[contains(text(),'Giáo viên')]",
+    "xpath=//button[contains(text(),'Giáo viên')]",
+    ".teacher-type, [data-type='teacher']",
+  ].join(', ');
+
+  // Form đăng ký - dựa trên HTML thực tế OLM (placeholder tiếng Việt)
+  static readonly INPUT_FULLNAME = "input[placeholder*='họ và tên'], input[placeholder*='Họ tên'], input[name='name'], input[placeholder*='họ tên']";
+  static readonly INPUT_USERNAME = "input[placeholder*='tên đăng nhập'], input[name='username'], input[placeholder*='Tên đăng nhập']";
+  static readonly INPUT_PHONE   = "input[name='tel'], input[placeholder*='số điện thoại'], input[placeholder*='điện thoại'], input[name='phone']";
+  static readonly INPUT_EMAIL   = "input[placeholder*='email'], input[name='email'], input[type='email']";
+  static readonly INPUT_PASSWORD = "input[placeholder*='mật khẩu'], input[name='password'], input[type='password']";
   static readonly CHECKBOX_NOTIFICATION = "input[type='checkbox']";
-  static readonly SUBMIT_BTN = "button[type='submit']";
-  static readonly GOOGLE_BTN = "a[href*='google']";
-  static readonly SSO_GDDT_BTN = "a[href*='hanoi']";
-  static readonly LOGIN_LINK = "a:has-text('Đã có tài khoản')";
+  static readonly SUBMIT_BTN    = "button[type='submit'], button:has-text('Đăng ký')";
+  static readonly GOOGLE_BTN    = "a[href*='google']";
+  static readonly SSO_GDDT_BTN  = "a[href*='hanoi']";
+  // Link về trang đăng nhập - OLM dùng nhiều text khác nhau tùy phiên bản
+  static readonly LOGIN_LINK    = "a:has-text('Đăng nhập'), a:has-text('Đã có tài khoản'), a[href*='dangnhap']";
   static readonly MODAL_EMAIL_EXISTS = '.modal.show, .modal-content';
   static readonly ERROR_MESSAGE = '.alert-danger, .error-message, .text-danger';
 
@@ -25,13 +39,14 @@ export class RegisterPage extends BasePage {
   }
 
   async selectStudentAccount(): Promise<this> {
-    const el = await this.findVisible([RegisterPage.ACCOUNT_TYPE_STUDENT], 5);
+    // OLM có thể không có bước chọn loại tài khoản (form thẳng)
+    const el = await this.findVisible([RegisterPage.ACCOUNT_TYPE_STUDENT], 3);
     if (el) await this.jsClick(el);
     return this;
   }
 
   async selectTeacherAccount(): Promise<this> {
-    const el = await this.findVisible([RegisterPage.ACCOUNT_TYPE_TEACHER], 5);
+    const el = await this.findVisible([RegisterPage.ACCOUNT_TYPE_TEACHER], 3);
     if (el) await this.jsClick(el);
     return this;
   }
