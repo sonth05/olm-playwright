@@ -25,6 +25,18 @@ export const TIN_TUC_URL          = `${BASE_URL}/thongtin`;
 export const BAI_VIET_URL         = `${BASE_URL}/bai-viet`;
 export const HOC_TAP_URL          = `${BASE_URL}/chu-de-bai-viet/hoc-tap`;
 export const THONG_BAO_NEWS_URL   = `${BASE_URL}/chu-de-bai-viet/thong-bao`;
+export const GIO_HANG_THU_VIEN_SO_URL = `${BASE_URL}/gio-hang-thu-vien-so`;
+
+// ─── URL có path param (bổ sung cho tests/api, map từ Postman collection) ──
+// Chú ý: Get Grade Page dùng pattern "/lop-:grade" (không có dấu / giữa
+// "lop-" và số), khác với SKIP_HREFS trong constants.ts vốn chỉ dùng để
+// match prefix '/lop-' khi parse link trên trang.
+export const lopUrl     = (grade: number | string): string => `${BASE_URL}/lop-${grade}`;
+export const khoaHocUrl = (courseSlug: string): string => `${BASE_URL}/khoa-hoc/${courseSlug}`;
+export const chuDeUrl   = (topicSlug: string): string => `${BASE_URL}/chu-de/${topicSlug}`;
+export const docSachUrl = (bookSlug: string): string => `${BASE_URL}/doc-sach/${bookSlug}`;
+export const baiVietDetailUrl = (slug: string): string => `${BASE_URL}/bai-viet/${slug}`;
+export const cauHoiUrl  = (questionId: number | string): string => `${BASE_URL}/cau-hoi/${questionId}`;
 
 // ─── Timeouts (giảm xuống 1/2 so với bản gốc) ─────────────────────────────
 export const WAIT_TIMEOUT  = envNum('WAIT_TIMEOUT',  8);   // ← giảm từ 15 → 8  (giây)
