@@ -26,6 +26,20 @@ export const BAI_VIET_URL         = `${BASE_URL}/bai-viet`;
 export const HOC_TAP_URL          = `${BASE_URL}/chu-de-bai-viet/hoc-tap`;
 export const THONG_BAO_NEWS_URL   = `${BASE_URL}/chu-de-bai-viet/thong-bao`;
 export const GIO_HANG_THU_VIEN_SO_URL = `${BASE_URL}/gio-hang-thu-vien-so`;
+export const KIDS_URL             = `${BASE_URL}/kids`;
+export const TOAN_MAU_GIAO_URL         = `${BASE_URL}/bg/toan-mau-giao-olm`;
+export const TIENG_ANH_MAU_GIAO_URL    = `${BASE_URL}/bg/tieng-anh-mau-giao`;
+export const TIENG_VIET_MAU_GIAO_URL   = `${BASE_URL}/bg/tieng-viet-mau-giao-olm`;
+export const CHUONG_TRINH_5_TUOI_URL   = `${BASE_URL}/bg/chuong-trinh-hoc-cho-tre-5-tuoi`;
+export const CHUONG_TRINH_3_4_TUOI_URL = `${BASE_URL}/bg/chuong-trinh-giao-duc-tre-3-4-tuoi`;
+
+export const KIDS_COURSES = [
+  { name: 'Toán Mẫu giáo',                 url: TOAN_MAU_GIAO_URL },
+  { name: 'Tiếng Anh Mẫu giáo',            url: TIENG_ANH_MAU_GIAO_URL },
+  { name: 'Tiếng Việt mẫu giáo',           url: TIENG_VIET_MAU_GIAO_URL },
+  { name: 'Chương trình học cho trẻ 5 tuổi',   url: CHUONG_TRINH_5_TUOI_URL },
+  { name: 'Chương trình giáo dục trẻ 3-4 tuổi', url: CHUONG_TRINH_3_4_TUOI_URL },
+] as const;
 
 // ─── URL có path param (bổ sung cho tests/api, map từ Postman collection) ──
 // Chú ý: Get Grade Page dùng pattern "/lop-:grade" (không có dấu / giữa
