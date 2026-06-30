@@ -49,6 +49,9 @@ export class HeaderCoursePage extends BasePage {
    *   hoặc  <li class="nav-item active"> ...
    */
   static readonly SIDEBAR_ACTIVE_GRADE =
+    // Cấu trúc thực tế: <a class="olm-a active" href="/lop-1">...</a>
+    // — không bọc trong .sidebar/aside, không cần li.active.
+    'a.olm-a.active, ' +
     '.sidebar li.active a, aside li.active a, ' +
     'ul.nav li.active a, .nav-sidebar li.active a, ' +
     // fallback: <a> đang active trực tiếp
@@ -67,16 +70,24 @@ export class HeaderCoursePage extends BasePage {
    */
   async openCoursePage(url = HeaderCoursePage.COURSE_URL): Promise<this> {
     await this.navigateTo(url); // tự dismiss popup
-    await this.page.waitForLoadState('networkidle', { timeout: 30_000 }).catch(() => {});
-    // Gọi thêm một lần nữa phòng popup xuất hiện muộn sau networkidle
-    await this._dismissOlmPopups();
+    await this.page.waitForTimeout(1200);
+    // Gọi thêm một lần nữa phòng popup xuất hiện muộn sau khi trang ổn định
+    // (TRƯỚC ĐÂY: gọi this._dismissOlmPopups() — method này KHÔNG TỒN TẠI,
+    // gây TypeError runtime làm fail TOÀN BỘ test trong file này. Đã sửa
+    // thành this.dismissPopups() — wrapper public có thật trong BasePage.)
+    await this.dismissPopups();
+    // Banner "Đăng ký nhận thông báo" đôi khi hiện trễ hơn nữa (sau khi JS
+    // phân tích/đo lường hành vi xong) và đè lên dropdown tìm kiếm — chờ
+    // thêm rồi dismiss lại lần 2 để chắc chắn không còn che giao diện.
+    await this.page.waitForTimeout(1500);
+    await this.dismissPopups();
     return this;
   }
 
   async clickLogo(): Promise<this> {
     const el = await this.findVisible([HeaderCoursePage.LOGO], 5);
     if (el) await this.jsClick(el);
-    await this.page.waitForLoadState('networkidle', { timeout: 20_000 }).catch(() => {});
+    await this.page.waitForTimeout(1200);
     return this;
   }
 
@@ -101,7 +112,7 @@ export class HeaderCoursePage extends BasePage {
     const el = await this.findVisible([HeaderCoursePage.NAV_HOC_BAI], 5);
     if (el) {
       await this.jsClick(el);
-      await this.page.waitForLoadState('networkidle', { timeout: 20_000 }).catch(() => {});
+      await this.page.waitForTimeout(1200);
     }
     return this;
   }
@@ -110,7 +121,7 @@ export class HeaderCoursePage extends BasePage {
     const el = await this.findVisible([HeaderCoursePage.NAV_HOI_BAI], 5);
     if (el) {
       await this.jsClick(el);
-      await this.page.waitForLoadState('networkidle', { timeout: 20_000 }).catch(() => {});
+      await this.page.waitForTimeout(1200);
     }
     return this;
   }
@@ -119,7 +130,7 @@ export class HeaderCoursePage extends BasePage {
     const el = await this.findVisible([HeaderCoursePage.NAV_KIEM_TRA], 5);
     if (el) {
       await this.jsClick(el);
-      await this.page.waitForLoadState('networkidle', { timeout: 20_000 }).catch(() => {});
+      await this.page.waitForTimeout(1200);
     }
     return this;
   }
@@ -128,7 +139,7 @@ export class HeaderCoursePage extends BasePage {
     const el = await this.findVisible([HeaderCoursePage.NAV_DGNL], 5);
     if (el) {
       await this.jsClick(el);
-      await this.page.waitForLoadState('networkidle', { timeout: 20_000 }).catch(() => {});
+      await this.page.waitForTimeout(1200);
     }
     return this;
   }
@@ -146,13 +157,15 @@ export class HeaderCoursePage extends BasePage {
     const el = await this.findVisible([HeaderCoursePage.NAV_THU_VIEN_SO], 5);
     if (el) {
       await this.jsClick(el);
-      await this.page.waitForLoadState('networkidle', { timeout: 20_000 }).catch(() => {});
+      await this.page.waitForTimeout(1200);
     }
     return this;
   }
 
   async clickSidebarGrade(gradeName: string): Promise<this> {
     const selectors = [
+      // Cấu trúc thực tế: <a class="olm-a" href="/lop-N" title="/lop-N"><span>Lớp N</span></a>
+      `a.olm-a:has-text('${gradeName}')`,
       `.sidebar a:has-text('${gradeName}')`,
       `.grade-sidebar a:has-text('${gradeName}')`,
       `aside a:has-text('${gradeName}')`,
@@ -162,7 +175,9 @@ export class HeaderCoursePage extends BasePage {
     const el = await this.findVisible(selectors, 5);
     if (el) {
       await this.jsClick(el);
-      await this.page.waitForLoadState('networkidle', { timeout: 20_000 }).catch(() => {});
+      await this.page.waitForTimeout(1500);
+      // Dọn lại popup/banner có thể xuất hiện trễ sau khi điều hướng sang lớp khác
+      await this.dismissPopups();
     }
     return this;
   }

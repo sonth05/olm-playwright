@@ -11,18 +11,17 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
 
   // ─── Workers ───────────────────────────────────────────────────────────
-  // Giới hạn tối đa bằng số accounts có trong WORKER_ACCOUNTS (hiện = 3)
-  // để tránh nhiều worker dùng chung 1 session → rate limit / session conflict.
-  // Tăng lên khi bổ sung thêm accounts.
+  // Tăng lên 6 workers tương ứng 6 accounts trong WORKER_ACCOUNTS.
+  // Mỗi worker dùng 1 session riêng biệt → không conflict.
   workers: process.env.WORKERS
     ? Number(process.env.WORKERS)
     : process.env.CI
-      ? 2
-      : 3,                          // ← đổi từ '50%' xuống 3
+      ? 3
+      : 6,                          // ← tăng từ 3 → 6
 
-  // ─── Timeouts ──────────────────────────────────────────────────────────
-  timeout: 120_000,
-  expect: { timeout: 30_000 },
+  // ─── Timeouts (giảm xuống 1/2 so với bản gốc) ─────────────────────────
+  timeout: 60_000,           // ← giảm từ 120_000 → 60_000
+  expect: { timeout: 15_000 },     // ← giảm từ 30_000 → 15_000
 
   reporter: [
     ['list'],
@@ -38,9 +37,9 @@ export default defineConfig({
       : process.env.HEADLESS === 'true',
     viewport: { width: 1366, height: 768 },
 
-    // ─── Timeouts nâng lên để handle olm.vn load chậm ──────────────────
-    actionTimeout:     40_000,      // tăng từ 15s → 20s
-    navigationTimeout: 120_000,      // tăng từ 30s → 60s
+    // ─── Timeouts giảm xuống 1/2 so với bản gốc ────────────────────────
+    actionTimeout:     20_000,      // ← giảm từ 40_000 → 20_000
+    navigationTimeout: 60_000,      // ← giảm từ 120_000 → 60_000
 
     screenshot: 'only-on-failure',
     video:      'retain-on-failure',
@@ -60,8 +59,29 @@ export default defineConfig({
 
   projects: [
     {
+      // ── Project chính: smoke + regression + 3 file e2e nhẹ ───────────────
+      // Loại trừ Giao-bai-lam-bai.e2e.spec.ts (phần "bài tập") ra khỏi đây —
+      // file đó nặng, dùng 2 account (giáo viên + học sinh) chạy nối tiếp
+      // 1 luồng giao bài → làm bài thật, nên cần tách riêng và chạy SAU CÙNG
+      // để không giành worker/account với các test nhanh khác.
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
+      testIgnore: [/Giao-bai-lam-bai\.e2e\.spec\.ts$/],
+    },
+    {
+      // ── Project "bài tập": chỉ chứa Giao-bai-lam-bai.e2e.spec.ts ─────────
+      // dependencies: ['chromium'] → Playwright LUÔN chạy hết toàn bộ
+      // project 'chromium' trước, sau đó mới bắt đầu project này.
+      // workers: 1 + fullyParallel: false → chạy tuần tự, không phân luồng,
+      // vì test này tự đăng nhập/đăng xuất giáo viên rồi học sinh trên
+      // CÙNG MỘT page tuần tự — chạy song song dễ vướng race-condition.
+      name: 'bai-tap',
+      use: { ...devices['Desktop Chrome'] },
+      testMatch: [/Giao-bai-lam-bai\.e2e\.spec\.ts$/],
+      dependencies: ['chromium'],
+      fullyParallel: false,
+      workers: 1,
+      timeout: 180_000, // luồng giao bài + làm bài dài hơn các test khác
     },
   ],
 });

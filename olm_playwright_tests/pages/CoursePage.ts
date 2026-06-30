@@ -137,81 +137,111 @@ export class CoursePage extends BasePage {
     await this.expandAllChapters();
     await this.page.waitForTimeout(500);
 
-    const lessons: LessonInfo[] = [];
-    const topicCards = await this.page.locator(CoursePage.TOPIC_CARDS).all();
+    // ── Đọc toàn bộ dữ liệu bằng page.evaluate() ─────────────────────────
+    // KHÔNG dùng locator.all() rồi gọi getAttribute() tuần tự từng phần tử:
+    // các locator lấy qua .all() là nth-index snapshot tại thời điểm gọi,
+    // nếu DOM thay đổi/lazy-load thêm bớt phần tử ở giữa (rất hay xảy ra khi
+    // vừa expandAllChapters() xong), getAttribute() trên 1 nth-locator có
+    // thể chờ vô thời hạn một phần tử không còn khớp đúng vị trí → timeout
+    // 60s như đã gặp. evaluate() đọc toàn bộ DOM hiện có trong MỘT lần gọi
+    // đồng bộ phía browser, không phụ thuộc actionability/staleness của
+    // Playwright nên nhanh và an toàn hơn hẳn.
+    //
+    // Cũng xử lý luôn trường hợp DOM không còn div.lesson-item[data-href]
+    // trong div.col-4 (một số bài chỉ có link trực tiếp ở div.col-8 h4 a)
+    // bằng cách fallback lấy chính link đó làm 1 bài học.
+    const lessons: LessonInfo[] = await this.page.evaluate(() => {
+      const typeMap: Record<string, string> = {
+        '3': 'Trắc nghiệm',
+        '5': 'Video/PPT',
+        '6': 'In ra làm',
+        '13': 'Tự luận',
+        '14': 'Kiểm tra',
+        '21': 'Bài tập',
+      };
+      const resolveType = (dataType: string | null): string => {
+        if (!dataType) return '';
+        return typeMap[dataType] ?? `type-${dataType}`;
+      };
 
-    for (const topicCard of topicCards) {
-      // Tên chủ đề từ card-header
-      const hdrEl = topicCard.locator('.card-header .collapsible-link, .card-header h3').first();
-      const topicName = hdrEl
-        ? ((await hdrEl.textContent()) ?? '').trim().replace(/\s+/g, ' ')
-        : '';
+      const result: LessonInfo[] = [];
+      const topicCards = Array.from(document.querySelectorAll('div[id^="cardFolder"]'));
 
-      const lis = await topicCard.locator('ul.list-group > li').all();
+      for (const topicCard of topicCards) {
+        const hdrEl = topicCard.querySelector('.card-header .collapsible-link, .card-header h3');
+        const topicName = (hdrEl?.textContent ?? '').trim().replace(/\s+/g, ' ');
 
-      for (const li of lis) {
-        const liId = (await li.getAttribute('id')) ?? '';
-        const liClass = (await li.getAttribute('class')) ?? '';
+        const lis = Array.from(topicCard.querySelectorAll('ul.list-group > li'));
 
-        if (liId.startsWith('accordion-chapter-')) {
-          // Lấy tên bài từ div.col-8 > h4 > a (link đầu tiên, không phải link thi đấu)
-          const chapterLink = li
-            .locator('div.col-8 h4 a:not(.olm-text-three)')
-            .first();
-          const chapterName = chapterLink
-            ? ((await chapterLink.getAttribute('title')) ??
-               (await chapterLink.textContent()) ?? '').trim()
-            : '';
+        for (const li of lis) {
+          const liId = li.getAttribute('id') ?? '';
+          const liClass = li.getAttribute('class') ?? '';
 
-          // Các lesson item bên trong div.col-4
-          const lessonDivs = await li
-            .locator('div.col-4 div.lesson-item[data-href]')
-            .all();
+          if (liId.startsWith('accordion-chapter-')) {
+            const chapterLinkEl = li.querySelector('div.col-8 h4 a:not(.olm-text-three)');
+            const chapterName = (
+              chapterLinkEl?.getAttribute('title') ?? chapterLinkEl?.textContent ?? ''
+            ).trim();
+            const chapterHref = chapterLinkEl?.getAttribute('href') ?? '';
 
-          for (const div of lessonDivs) {
-            const href = (await div.getAttribute('data-href')) ?? '';
-            const dataType = (await div.getAttribute('data-type')) ?? '';
-            const isPpt = (await div.getAttribute('data-ppt')) === '1';
-            const titleAttr =
-              (await div.locator('a').first().getAttribute('data-original-title')) ??
-              (await div.locator('a').first().getAttribute('ariaa-label')) ??
-              '';
+            const lessonDivs = Array.from(
+              li.querySelectorAll('div.col-4 div.lesson-item[data-href]')
+            );
 
-            const lessonType = isPpt
-              ? 'PPT'
-              : this.resolveType(dataType);
+            if (lessonDivs.length > 0) {
+              for (const div of lessonDivs) {
+                const href = div.getAttribute('data-href') ?? '';
+                const dataType = div.getAttribute('data-type');
+                const isPpt = div.getAttribute('data-ppt') === '1';
+                const aEl = div.querySelector('a');
+                const titleAttr =
+                  aEl?.getAttribute('data-original-title') ??
+                  aEl?.getAttribute('aria-label') ??
+                  '';
 
-            if (href) {
-              lessons.push({
-                lesson_title: titleAttr || chapterName,
-                lesson_url: href,
-                lesson_type: lessonType,
+                if (href) {
+                  result.push({
+                    lesson_title: titleAttr || chapterName,
+                    lesson_url: href,
+                    lesson_type: isPpt ? 'PPT' : resolveType(dataType),
+                    topic: topicName,
+                    chapter: chapterName,
+                  });
+                }
+              }
+            } else if (chapterHref) {
+              // Fallback: không có div.lesson-item[data-href] trong col-4,
+              // dùng thẳng link ở div.col-8 h4 a làm 1 bài học.
+              result.push({
+                lesson_title: chapterName,
+                lesson_url: chapterHref,
+                lesson_type: '',
                 topic: topicName,
                 chapter: chapterName,
               });
             }
-          }
+          } else if (liClass.includes('lesson-item')) {
+            // Bài kiểm tra standalone (li.lesson-item.list-group-item)
+            const aEl = li.querySelector('a[href]');
+            const title = (aEl?.getAttribute('title') ?? aEl?.textContent ?? '').trim();
+            const url = aEl?.getAttribute('href') ?? '';
+            const dataType = li.getAttribute('data-type');
 
-        } else if (liClass.includes('lesson-item')) {
-          // Bài kiểm tra standalone (li.lesson-item.list-group-item)
-          const a = li.locator('a[href]').first();
-          const title =
-            (await a.getAttribute('title')) ?? (await a.textContent()) ?? '';
-          const url = (await a.getAttribute('href')) ?? '';
-          const dataType = (await li.getAttribute('data-type')) ?? '';
-
-          if (url) {
-            lessons.push({
-              lesson_title: title.replace(/^\[Kiểm tra\]\s*/i, '').trim(),
-              lesson_url: url,
-              lesson_type: this.resolveType(dataType),
-              topic: topicName,
-              chapter: '',
-            });
+            if (url) {
+              result.push({
+                lesson_title: title.replace(/^\[Kiểm tra\]\s*/i, '').trim(),
+                lesson_url: url,
+                lesson_type: resolveType(dataType),
+                topic: topicName,
+                chapter: '',
+              });
+            }
           }
         }
       }
-    }
+
+      return result;
+    });
 
     return lessons;
   }

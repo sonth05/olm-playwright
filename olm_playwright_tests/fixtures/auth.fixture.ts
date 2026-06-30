@@ -18,10 +18,13 @@ type AuthFixtures = {
 // Worker 0 → worker-0.json (vip_student)
 // Worker 1 → worker-1.json (school)
 // Worker 2 → worker-2.json (normal_student)
-// Worker 3+ → quay vòng lại từ đầu (% WORKER_ACCOUNTS.length)
+// Worker 3 → worker-3.json (extra_1)
+// Worker 4 → worker-4.json (extra_2)
+// Worker 5 → worker-5.json (extra_3)
+// Worker 6+ → quay vòng lại từ đầu (% WORKER_ACCOUNTS.length)
 function getWorkerAuthPath(): string {
   const idx = Number(process.env.TEST_WORKER_INDEX ?? 0);
-  const slot = idx % WORKER_ACCOUNTS.length;
+  const slot = idx % WORKER_ACCOUNTS.length;   // % 6 = round-robin qua 6 accounts
   return authPathForWorker(slot);
 }
 
@@ -36,7 +39,8 @@ export const test = base.extend<AuthFixtures>({
     if (!fs.existsSync(authPath)) {
       throw new Error(
         `Chưa có auth state tại ${authPath}.\n` +
-        `Chạy: npx playwright test (để globalSetup tạo auth files trước).`
+        `Chạy: npx playwright test (để globalSetup tạo auth files trước).\n` +
+        `Hoặc kiểm tra account extra_1/extra_2/extra_3 trong .env.`
       );
     }
     const context = await browser.newContext({ storageState: authPath });

@@ -4,6 +4,8 @@
   "description": "OLM.vn test automation – Playwright TypeScript",
   "scripts": {
     "test": "playwright test",
+    "test:fast": "playwright test --project=chromium",
+    "test:bai-tap": "playwright test --project=bai-tap --no-deps",
     "test:smoke": "playwright test tests/smoke",
     "test:regression": "playwright test tests/regression",
     "test:e2e": "playwright test tests/e2e",

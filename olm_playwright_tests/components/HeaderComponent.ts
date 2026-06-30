@@ -82,7 +82,13 @@ export class HeaderComponent extends BasePage {
 
   async openHome(): Promise<this> {
     await this.navigateTo(BASE_URL); // navigateTo đã tự dismiss popup
-    await this.page.waitForLoadState('networkidle', { timeout: 30_000 }).catch(() => {});
+    // KHÔNG dùng waitForLoadState('networkidle'): trang olm.vn có request nền
+    // liên tục (chat widget, analytics, polling…) nên networkidle gần như
+    // không bao giờ đạt được, luôn timeout đủ 30s và ngốn hết ngân sách
+    // timeout chung của test (đặc biệt trong e2e flow nhiều bước). Thay
+    // bằng chờ ngắn để UI ổn định — navigateTo() đã đợi domcontentloaded +
+    // dismiss popup nên không cần chờ thêm nhiều.
+    await this.page.waitForTimeout(800);
     return this;
   }
 

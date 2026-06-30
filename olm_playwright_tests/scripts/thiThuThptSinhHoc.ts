@@ -23,7 +23,7 @@ async function humanMouseMove(page: import('playwright').Page): Promise<void> {
     const x = Math.floor(Math.random() * 800) + 100;
     const y = Math.floor(Math.random() * 600) + 100;
     await page.mouse.move(x, y);
-    await sleep(Math.random() * 0.6 + 0.3);
+    await sleep(Math.random() * 0.3 + 0.15);
   } catch {
     // ignore
   }
@@ -35,7 +35,7 @@ const XACTHUC_OVERLAY_SELECTOR = '.modal.show[role="dialog"]';
 async function dismissAndWaitXacThuc(page: import('playwright').Page): Promise<void> {
   let modalVisible = false;
   try {
-    modalVisible = await page.locator(XACTHUC_OVERLAY_SELECTOR).isVisible({ timeout: 1500 });
+    modalVisible = await page.locator(XACTHUC_OVERLAY_SELECTOR).isVisible({ timeout: 750 });
   } catch {
     return;
   }
@@ -47,7 +47,7 @@ async function dismissAndWaitXacThuc(page: import('playwright').Page): Promise<v
     const btnKhongHienThi = page.locator(
       "button:has-text('Không hiển lại nữa'), button:has-text('Không hiển thị nữa')"
     );
-    if (await btnKhongHienThi.isVisible({ timeout: 1000 })) {
+    if (await btnKhongHienThi.isVisible({ timeout: 250 })) {
       await btnKhongHienThi.click();
       console.log('✓ Đã click "Không hiển thị nữa"');
       await waitModalGone(page);
@@ -65,7 +65,7 @@ async function dismissAndWaitXacThuc(page: import('playwright').Page): Promise<v
       '.modal.show button.close, ' +
       '.popup-close-button'
     );
-    if (await btnClose.isVisible({ timeout: 1500 })) {
+    if (await btnClose.isVisible({ timeout: 750 })) {
       await btnClose.first().click();
       console.log('✓ Đã click nút đóng (X)');
       await waitModalGone(page);
@@ -89,11 +89,11 @@ async function dismissAndWaitXacThuc(page: import('playwright').Page): Promise<v
 
 async function waitModalGone(page: import('playwright').Page): Promise<void> {
   try {
-    await page.locator(XACTHUC_OVERLAY_SELECTOR).waitFor({ state: 'hidden', timeout: 8000 });
-    await sleep(0.6);
+    await page.locator(XACTHUC_OVERLAY_SELECTOR).waitFor({ state: 'hidden', timeout: 4000 });
+    await sleep(0.3);
     console.log('✓ Modal đã đóng hoàn toàn');
   } catch {
-    await sleep(2);
+    await sleep(1);
     console.log('✓ Đã chờ đủ thời gian sau khi đóng modal');
   }
 }
@@ -105,7 +105,7 @@ async function isHoanThanhHetCau(page: import('playwright').Page): Promise<boole
       "[class*='tw-border-accent-default']:has-text('hoàn thành hết câu hỏi'), " +
       "div.tw-font-semibold:has-text('Bạn đã hoàn thành hết câu hỏi')"
     );
-    return await toast.isVisible({ timeout: 800 });
+    return await toast.isVisible({ timeout: 400 });
   } catch {
     return false;
   }
@@ -144,27 +144,27 @@ async function main(): Promise<void> {
   try {
     console.log('[1] Đăng nhập OLM...');
     await page.goto(LOGIN_URL, { waitUntil: 'networkidle' });
-    await sleep(humanDelay());
+    await sleep(humanDelay(0.25, 0.5));
 
     await page.fill("input[type='text'], input[name='username']", USERNAME);
-    await sleep(humanDelay(0.5, 1.2));
+    await sleep(humanDelay(0.25, 0.6));
     await page.fill("input[type='password']", PASSWORD);
-    await sleep(humanDelay());
+    await sleep(humanDelay(0.25, 0.5));
 
     await page.click("button[type='submit'], button:has-text('Đăng nhập')");
-    await sleep(humanDelay(4, 7));
+    await sleep(humanDelay(2, 3.5));
     console.log('✓ Đăng nhập thành công');
 
     await dismissAndWaitXacThuc(page);
 
     console.log('[2] Vào Lớp 12...');
     await page.goto(LOP12_URL, { waitUntil: 'networkidle' });
-    await sleep(humanDelay(2, 4));
+    await sleep(humanDelay(0.5, 1));
 
     await dismissAndWaitXacThuc(page);
 
     await page.click("a:has-text('Thi thử Tốt nghiệp'), a:has-text('Thi thử')");
-    await sleep(humanDelay(2, 4));
+    await sleep(humanDelay(1, 2));
 
     console.log('[3] Vào Thi thử lần 1 - Sinh học...');
     await page.waitForSelector("xpath=//*[contains(text(),'lần 1')]", { timeout: TIMEOUT });
@@ -174,12 +174,70 @@ async function main(): Promise<void> {
     await page.click(
       "xpath=//*[contains(text(),'lần 1')]/following::a[contains(text(),'Sinh học')][1]"
     );
-    await sleep(humanDelay(3, 5));
+    // Chờ trang bài thi load hoàn toàn trước khi kiểm tra giao diện
+    await page.waitForLoadState('networkidle', { timeout: 30_000 }).catch(() => {});
+    await sleep(humanDelay(2, 3));
 
-    console.log('[4] Bắt đầu làm bài...');
+    console.log('[4] Kiểm tra giao diện trước khi làm bài...');
     await dismissAndWaitXacThuc(page);
-    await page.click("button:has-text('Bắt đầu làm bài'), .btn-start-exam");
-    await sleep(humanDelay(3, 6));
+
+    // ── Kiểm tra nếu đang hiển thị màn hình kết quả (đã làm rồi) ──────────
+    // Dấu hiệu: nút "Làm lại bài" (btn-redo-exam) xuất hiện thay vì "Bắt đầu làm bài"
+    const btnLamLai = page.locator('button.btn-redo-exam');
+    const btnBatDau = page.locator([
+      "button:has-text('Bắt đầu làm bài')",
+      ".btn-start-exam",
+      "button.tw-olm-btn-primary-48:has-text('Bắt đầu')",
+      "button[class*='btn']:has-text('Bắt đầu')",
+    ].join(', '));
+
+    const coManHinhKetQua = await btnLamLai.isVisible({ timeout: 6000 }).catch(() => false);
+
+    if (coManHinhKetQua) {
+      console.log('  → Phát hiện màn hình kết quả bài cũ → Click "Làm lại bài"...');
+      await humanMouseMove(page);
+      await btnLamLai.click();
+      await sleep(humanDelay(1, 1.5));
+
+      // Có thể xuất hiện popup xác nhận làm lại
+      const popupXacNhan = page.locator(
+        '#btn-confirm-dialog-confirm, ' +
+        '.popup-primary-button, ' +
+        "button:has-text('Xác nhận'), " +
+        "button:has-text('Đồng ý')"
+      );
+      if (await popupXacNhan.isVisible({ timeout: 6000 }).catch(() => false)) {
+        console.log('  → Popup xác nhận làm lại → Đang xác nhận...');
+        await popupXacNhan.click();
+        await sleep(humanDelay(1, 1.5));
+      }
+
+      console.log('  ✓ Đã vào màn hình làm bài mới');
+    } else {
+      console.log('  → Chưa làm bài lần nào (hoặc chưa nộp) → Tiếp tục bình thường');
+    }
+
+    // ── Bắt đầu làm bài nếu vẫn còn nút Bắt đầu ────────────────────────────
+    // Chờ trang render xong (có thể là màn hình "Sẵn sàng làm bài?" hoặc câu hỏi)
+    await page.waitForLoadState('domcontentloaded').catch(() => {});
+    await sleep(1.5);
+    const coNutBatDau = await btnBatDau.isVisible({ timeout: 8000 }).catch(() => false);
+    if (coNutBatDau) {
+      console.log('[4b] Click Bắt đầu làm bài...');
+      await btnBatDau.click();
+      // Chờ trang câu hỏi load xong sau khi click Bắt đầu
+      await page.waitForSelector('td.tf-box, span.qiradio, span.qimage, div.qselect, .answer-option', {
+        timeout: 15_000,
+      }).catch(() => {});
+      await sleep(humanDelay(1.5, 3));
+    } else {
+      console.log('[4b] Đã vào thẳng giao diện làm bài (không cần click Bắt đầu)');
+      // Chờ câu hỏi render ra trước khi bắt đầu loop
+      await page.waitForSelector('td.tf-box, span.qiradio, span.qimage, div.qselect, .answer-option', {
+        timeout: 15_000,
+      }).catch(() => {});
+      await sleep(humanDelay(1, 2));
+    }
 
     console.log('\n[5] BẮT ĐẦU LÀM BÀI...');
     let cauSo = 0;
@@ -189,7 +247,7 @@ async function main(): Promise<void> {
         const activeNum = page.locator(
           '.list-question-container div.tw-text-accent-default'
         ).first();
-        if (await activeNum.isVisible({ timeout: 500 })) {
+        if (await activeNum.isVisible({ timeout: 250 })) {
           const txt = (await activeNum.innerText()).trim();
           if (txt && /^\d+$/.test(txt)) return txt;
         }
@@ -207,7 +265,7 @@ async function main(): Promise<void> {
 
     while (cauSo < MAX_CAU) {
       cauSo++;
-      await sleep(humanDelay(1.0, 2.0));
+      await sleep(humanDelay(0.5, 1.0));
       console.log(`\n--- Câu ${cauSo} ---`);
 
       let clicked = false;
@@ -227,7 +285,7 @@ async function main(): Promise<void> {
       if (!clicked) {
         try {
           // Chờ page render nội dung câu
-          await page.waitForSelector('td.tf-box', { timeout: 3000 }).catch(() => {});
+          await page.waitForSelector('td.tf-box', { timeout: 1500 }).catch(() => {});
 
           const tfBoxes = page.locator('td.tf-box');
           const boxCount = await tfBoxes.count();
@@ -248,14 +306,14 @@ async function main(): Promise<void> {
                 const label = wantDung ? 'Đúng' : 'Sai';
 
                 const target = box.locator(`span[data-tf-value="${wantedValue}"]`);
-                if (await target.isVisible({ timeout: 2000 })) {
+                if (await target.isVisible({ timeout: 1000 })) {
                   await humanMouseMove(page);
                   await target.click();
                   console.log(`     Ý ${String.fromCharCode(97 + gi)}: click [${label}]`);
                 } else {
                   console.log(`     Ý ${String.fromCharCode(97 + gi)}: ⚠ không thấy [${label}]`);
                 }
-                await sleep(humanDelay(1.0, 1.8));
+                await sleep(humanDelay(0.5, 0.9));
               }
               clicked = true;
             }
@@ -305,13 +363,13 @@ async function main(): Promise<void> {
             console.log(`  Câu ${cauSo}: [TỰ LUẬN] Tìm thấy ${visibleInputs.length} ô nhập`);
             for (const inp of visibleInputs) {
               await inp.click();
-              await sleep(humanDelay(0.2, 0.4));
+              await sleep(humanDelay(0.1, 0.2));
               await inp.fill('');
               await inp.type('1', { delay: 80 });
               await inp.blur();
-              await sleep(humanDelay(0.6, 1.2));
+              await sleep(humanDelay(0.3, 0.6));
             }
-            await sleep(humanDelay(1.5, 2.5));
+            await sleep(humanDelay(0.75, 1.25));
             clicked = true;
           }
         } catch {
@@ -329,7 +387,7 @@ async function main(): Promise<void> {
       // ── Chuyển câu tiếp hoặc phần tiếp ──────────────────────────────────
       try {
         await page.keyboard.press('Escape');
-        await sleep(0.4);
+        await sleep(0.2);
 
         const indexTruocKhiNext = await getCurrentCauIndex();
         const totalCauTruoc = await getTotalCau();
@@ -342,12 +400,12 @@ async function main(): Promise<void> {
           "button[class*='tw-']:has-text('Phần tiếp')"
         );
 
-        const coNutCauTiep  = await nextCauBtn.isVisible({ timeout: 1000 }).catch(() => false);
-        const coNutPhanTiep = await nextPhanBtn.isVisible({ timeout: 1000 }).catch(() => false);
+        const coNutCauTiep  = await nextCauBtn.isVisible({ timeout: 250 }).catch(() => false);
+        const coNutPhanTiep = await nextPhanBtn.isVisible({ timeout: 250 }).catch(() => false);
 
         if (coNutCauTiep) {
           await nextCauBtn.click();
-          await sleep(1.0);
+          await sleep(0.5);
 
           if (await isHoanThanhHetCau(page)) {
             console.log('\n🎉 [SAU NEXT CÂU] Toast hoàn thành → Dừng làm bài!');
@@ -365,11 +423,11 @@ async function main(): Promise<void> {
             indexSauNext !== null &&
             indexTruocKhiNext === indexSauNext
           ) {
-            const coNutPhanTiepSau = await nextPhanBtn.isVisible({ timeout: 1500 }).catch(() => false);
+            const coNutPhanTiepSau = await nextPhanBtn.isVisible({ timeout: 750 }).catch(() => false);
             if (coNutPhanTiepSau) {
               console.log('   → Câu cuối phần, còn Phần tiếp → chuyển phần...');
               await nextPhanBtn.click();
-              await sleep(humanDelay(2, 3));
+              await sleep(humanDelay(1, 1.5));
               console.log('   ✓ Đã chuyển sang phần mới');
             } else {
               console.log('\n🎉 [INDEX KHÔNG ĐỔI + HẾT PHẦN] Đã làm hết toàn bộ!');
@@ -377,12 +435,12 @@ async function main(): Promise<void> {
             }
           }
 
-          await sleep(humanDelay(0.5, 1.2));
+          await sleep(humanDelay(0.25, 0.6));
 
         } else if (coNutPhanTiep) {
           console.log('   → Hết câu phần này → click Phần tiếp...');
           await nextPhanBtn.click();
-          await sleep(humanDelay(2, 3));
+          await sleep(humanDelay(1, 1.5));
           console.log('   ✓ Đã chuyển sang phần mới');
 
         } else {
@@ -401,17 +459,17 @@ async function main(): Promise<void> {
     try {
       await page.click("button.btn-submit-cate, button:has-text('Nộp bài')");
       console.log('  → Đã click Nộp bài lần 1');
-      await sleep(humanDelay(2, 3));
+      await sleep(humanDelay(1, 1.5));
 
       const popupNopBai = page.locator(
         "#btn-confirm-dialog-confirm, " +
         ".popup-primary-button"
       );
 
-      if (await popupNopBai.isVisible({ timeout: 4000 })) {
+      if (await popupNopBai.isVisible({ timeout: 8000 })) {
         console.log('  → Popup xác nhận xuất hiện → Đang xác nhận nộp bài...');
         await popupNopBai.click();
-        await sleep(humanDelay(2, 3));
+        await sleep(humanDelay(1, 1.5));
         console.log('✅ ĐÃ XÁC NHẬN NỘP BÀI!');
       } else {
         console.log('✅ ĐÃ NỘP BÀI! (không có popup xác nhận)');
@@ -422,7 +480,7 @@ async function main(): Promise<void> {
   } catch (e) {
     console.error(`\n[LỖI] ${e}`);
   } finally {
-    await sleep(humanDelay(5, 8));
+    await sleep(humanDelay(2.5, 4));
     await browser.close();
     console.log('\n[DONE] Đã đóng trình duyệt.');
   }

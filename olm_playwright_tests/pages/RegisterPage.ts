@@ -1,10 +1,48 @@
 import { REGISTER_URL } from '../config/config';
 import { BasePage } from './BasePage';
+import {
+  REGISTER_INPUT_FULLNAME,
+  REGISTER_INPUT_USERNAME,
+  REGISTER_INPUT_PHONE,
+  REGISTER_INPUT_EMAIL,
+  REGISTER_INPUT_PASSWORD,
+  REGISTER_SUBMIT_BTN,
+  REGISTER_ERROR_SELECTORS,
+} from '../config/constants';
 
+/**
+ * RegisterPage — khớp DOM thực tế OLM /dang-ky (inspect 2026-06-29)
+ *
+ * Form đơn nhất, không có bước chọn loại tài khoản trước:
+ *   #name       Nhập họ và tên
+ *   #username   Nhập tên đăng nhập
+ *   #tel        Nhập số điện thoại
+ *   #email      Nhập email
+ *   #password   Nhập mật khẩu   (type="password")
+ *   #btn-submit-register  "Đăng ký"
+ *
+ * Error boxes: id="box-error-{field}" — ẩn bằng class "tw-hidden",
+ *              hiện khi có lỗi (OLM xóa class tw-hidden đi).
+ */
 export class RegisterPage extends BasePage {
   static readonly URL = REGISTER_URL;
 
-  // Bước chọn loại tài khoản (trang đầu - nếu có)
+  // ── Static selectors (string) để dùng trong test trực tiếp ────────────────
+  // Dùng selector đơn nhất nhất có thể (id) → ít fragile nhất
+  static readonly INPUT_FULLNAME = '#name';
+  static readonly INPUT_USERNAME = '#username';
+  static readonly INPUT_PHONE   = '#tel';
+  static readonly INPUT_EMAIL   = '#email';
+  static readonly INPUT_PASSWORD = '#password';
+  static readonly SUBMIT_BTN    = '#btn-submit-register';
+  static readonly GOOGLE_BTN    = "a[href*='google/redirect']";
+  static readonly SSO_GDDT_BTN  = "a[href*='hanoi/redirect']";
+  // Link đăng nhập: DOM thực tế: <a href="https://olm.vn/dangnhap">Đăng nhập ngay</a>
+  static readonly LOGIN_LINK    = "a[href*='dangnhap']";
+  static readonly MODAL_EMAIL_EXISTS = '.modal.show, .modal-content';
+
+  // ── Bước chọn loại tài khoản (nếu OLM có) ────────────────────────────────
+  // DOM hiện tại không thấy bước này — selectStudentAccount() là no-op an toàn
   static readonly ACCOUNT_TYPE_STUDENT = [
     "xpath=//label[contains(text(),'Học sinh')]",
     "xpath=//div[contains(text(),'Học sinh')]",
@@ -18,38 +56,29 @@ export class RegisterPage extends BasePage {
     ".teacher-type, [data-type='teacher']",
   ].join(', ');
 
-  // Form đăng ký - dựa trên HTML thực tế OLM (placeholder tiếng Việt)
-  static readonly INPUT_FULLNAME = "input[placeholder*='họ và tên'], input[placeholder*='Họ tên'], input[name='name'], input[placeholder*='họ tên']";
-  static readonly INPUT_USERNAME = "input[placeholder*='tên đăng nhập'], input[name='username'], input[placeholder*='Tên đăng nhập']";
-  static readonly INPUT_PHONE   = "input[name='tel'], input[placeholder*='số điện thoại'], input[placeholder*='điện thoại'], input[name='phone']";
-  static readonly INPUT_EMAIL   = "input[placeholder*='email'], input[name='email'], input[type='email']";
-  static readonly INPUT_PASSWORD = "input[placeholder*='mật khẩu'], input[name='password'], input[type='password']";
-  static readonly CHECKBOX_NOTIFICATION = "input[type='checkbox']";
-  static readonly SUBMIT_BTN    = "button[type='submit'], button:has-text('Đăng ký')";
-  static readonly GOOGLE_BTN    = "a[href*='google']";
-  static readonly SSO_GDDT_BTN  = "a[href*='hanoi']";
-  // Link về trang đăng nhập - OLM dùng nhiều text khác nhau tùy phiên bản
-  static readonly LOGIN_LINK    = "a:has-text('Đăng nhập'), a:has-text('Đã có tài khoản'), a[href*='dangnhap']";
-  static readonly MODAL_EMAIL_EXISTS = '.modal.show, .modal-content';
-  static readonly ERROR_MESSAGE = '.alert-danger, .error-message, .text-danger';
+  // ── Navigation ────────────────────────────────────────────────────────────
 
   async open(): Promise<this> {
     await this.navigateTo(RegisterPage.URL);
     return this;
   }
 
+  // ── Account type selection (safe no-op nếu OLM không có bước này) ─────────
+
   async selectStudentAccount(): Promise<this> {
-    // OLM có thể không có bước chọn loại tài khoản (form thẳng)
-    const el = await this.findVisible([RegisterPage.ACCOUNT_TYPE_STUDENT], 3);
+    const el = await this.findVisible([RegisterPage.ACCOUNT_TYPE_STUDENT], 2);
     if (el) await this.jsClick(el);
+    // Không throw nếu không có element → form đã sẵn sàng
     return this;
   }
 
   async selectTeacherAccount(): Promise<this> {
-    const el = await this.findVisible([RegisterPage.ACCOUNT_TYPE_TEACHER], 3);
+    const el = await this.findVisible([RegisterPage.ACCOUNT_TYPE_TEACHER], 2);
     if (el) await this.jsClick(el);
     return this;
   }
+
+  // ── Form fill ─────────────────────────────────────────────────────────────
 
   async fillRegistrationForm(
     fullname: string,
@@ -58,61 +87,95 @@ export class RegisterPage extends BasePage {
     password: string,
     phone = ''
   ): Promise<this> {
-    const fields: [string, string][] = [
-      [RegisterPage.INPUT_FULLNAME, fullname],
-      [RegisterPage.INPUT_USERNAME, username],
-      [RegisterPage.INPUT_EMAIL, email],
-      [RegisterPage.INPUT_PASSWORD, password],
+    // Dùng array từ constants để có fallback nếu id thay đổi
+    const fields: [string[], string][] = [
+      [REGISTER_INPUT_FULLNAME,  fullname],
+      [REGISTER_INPUT_USERNAME,  username],
+      [REGISTER_INPUT_EMAIL,     email],
+      [REGISTER_INPUT_PASSWORD,  password],
     ];
 
-    for (const [selector, value] of fields) {
+    for (const [selectors, value] of fields) {
       if (value) {
-        const el = await this.findVisible([selector], 5);
-        if (el) await this.jsClearAndType(el, value);
+        const el = await this.findVisible(selectors, 5);
+        if (el) {
+          await el.click();
+          await el.fill(value);
+        }
       }
     }
 
     if (phone) {
-      const el = await this.findVisible([RegisterPage.INPUT_PHONE], 5);
-      if (el) await this.jsClearAndType(el, phone);
+      const el = await this.findVisible(REGISTER_INPUT_PHONE, 5);
+      if (el) {
+        await el.click();
+        await el.fill(phone);
+      }
     }
 
     return this;
   }
 
+  // ── Submit ────────────────────────────────────────────────────────────────
+
   async clickSubmit(): Promise<this> {
-    const el = await this.findVisible([RegisterPage.SUBMIT_BTN]);
+    const el = await this.findVisible(REGISTER_SUBMIT_BTN, 5);
     if (el) await this.jsClick(el);
     return this;
   }
 
+  // ── Validation helpers ────────────────────────────────────────────────────
+
+  /**
+   * Kiểm tra có validation error hiển thị không.
+   *
+   * OLM hiển thị lỗi theo 3 cách:
+   *   1. id="box-error-{field}" bị xóa class tw-hidden → visible
+   *   2. HTML5 input:invalid (browser native)
+   *   3. #box-response-register (lỗi từ server)
+   */
+  async hasValidationMessage(): Promise<boolean> {
+    // Cách 1: OLM error boxes
+    for (const sel of REGISTER_ERROR_SELECTORS) {
+      try {
+        const count = await this.page.locator(sel).count();
+        if (count > 0) return true;
+      } catch { /* tiếp tục */ }
+    }
+    // Cách 2: HTML5 constraint validation
+    try {
+      if ((await this.page.locator('input:invalid').count()) > 0) return true;
+    } catch { /* ignore */ }
+    // Cách 3: Modal lỗi (email/username trùng)
+    if (await this.isEmailExistsModalShown()) return true;
+    return false;
+  }
+
   isRegistrationSuccessful(): boolean {
-    return !this.getCurrentUrl().includes('dang-ky');
+    const url = this.getCurrentUrl();
+    // Thành công khi không còn ở trang đăng ký
+    return !url.includes('dang-ky') && !url.includes('register');
   }
 
   async getErrorMessage(): Promise<string> {
-    const el = await this.findVisible([RegisterPage.ERROR_MESSAGE], 5);
-    return el ? ((await el.textContent()) ?? '').trim() : '';
+    for (const sel of REGISTER_ERROR_SELECTORS) {
+      try {
+        const el = this.page.locator(sel).first();
+        if (await el.isVisible({ timeout: 2_000 })) {
+          return ((await el.textContent()) ?? '').trim();
+        }
+      } catch { /* thử selector tiếp */ }
+    }
+    return '';
   }
 
   async isEmailExistsModalShown(): Promise<boolean> {
-    const el = await this.findVisible([RegisterPage.MODAL_EMAIL_EXISTS], 5);
+    const el = await this.findVisible([RegisterPage.MODAL_EMAIL_EXISTS], 3);
     return el !== null;
   }
 
   async getFieldValue(selector: string): Promise<string> {
     const el = await this.findVisible([selector], 5);
     return el ? (await el.inputValue()) : '';
-  }
-
-  async hasValidationMessage(): Promise<boolean> {
-    try {
-      if ((await this.page.locator('input:invalid').count()) > 0) return true;
-    } catch {
-      // ignore
-    }
-    if (await this.findVisible([RegisterPage.ERROR_MESSAGE], 3)) return true;
-    if (await this.isEmailExistsModalShown()) return true;
-    return false;
   }
 }

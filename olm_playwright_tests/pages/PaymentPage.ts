@@ -5,94 +5,146 @@ import { BasePage } from './BasePage';
  * Luồng thực tế OLM /gio-hang (2026):
  *
  *  Bước 0: Mở /gio-hang
- *  Bước 1 (nếu cần): Chọn loại tài khoản → click "Đăng ký" (Học sinh)
+ *  Bước 1 (nếu cần): Trang hiện #box-select-target → click card "Học sinh"
+ *                    (.select-target-vip-trigger[data-id-target="student"] button.btn)
  *                    → trang reload, hiện section chọn thời gian + gói VIP
- *  Bước 2: Chọn thời gian (plan button .select-plan-vip-trigger)
- *  Bước 3: Chọn gói VIP → click "Đăng ký" (.register-package-trigger)
- *           → sidebar "Giá trị đơn hàng" xuất hiện bên phải
- *  Bước 4: Click "THANH TOÁN" trong sidebar
- *           → scroll xuống section nhập SĐT + chọn PTTT (cùng trang, CHỈ khi đã đăng nhập)
- *  Bước 5: Nhập SĐT → chọn PTTT → redirect sang cổng thanh toán (không test)
+ *  Bước 2: Chọn thời gian (button.select-plan-vip-trigger[data-plan="..."])
+ *  Bước 3: Chọn gói VIP → click "Đăng ký" (button.register-package-trigger[data-type="..."])
+ *           → sidebar .shopping-cart-value / .checkout-payment xuất hiện bên phải
+ *  Bước 4: Click "Thanh toán" (button.confirm-pay)
+ *           → scroll xuống section nhập SĐT + PTTT (cùng trang, CHỈ khi đã đăng nhập)
+ *  Bước 5: Nhập SĐT → chọn PTTT (.method-pay[data-type="..."]) → redirect cổng TT (không test)
  *
- * Sidebar "Giá trị đơn hàng" HTML (xác nhận từ ảnh):
- *   <div class="gio-hang-right"> (hoặc tương tự)
- *     Tổng tiền      800,000 VND
- *     Số tiền được giảm  0 VND
- *     Số tiền phải thanh toán  800,000 VND  ← màu đỏ
- *     [THANH TOÁN]
+ * ─── Ghi chú DOM thực tế ─────────────────────────────────────────────────────
  *
- * data-type-vip thực tế: "vip" | "subject" | "exam"
- * data-type trên register button: "vip" | "subject" | "exam"
+ * Sidebar "Giá trị đơn hàng":
+ *   <div class="shopping-cart-value">
+ *     <div class="checkout-payment card px-3 py-4 ...">
+ *       <span class="init-price mr-1">1,400,000</span> VND      ← Tổng tiền
+ *       <span class="reduced-price mr-1">0</span> VND           ← Giảm
+ *       <span class="final-price mr-1">1,400,000</span> VND     ← Phải TT
+ *       <button class="... confirm-pay">Thanh toán</button>
+ *     </div>
+ *   </div>
+ *
+ * Lưu ý: .init-price / .final-price / .reduced-price chỉ chứa số ("1,400,000"),
+ *         text "VND" là text node tách biệt — KHÔNG nằm trong span.
+ *
+ * Nút THANH TOÁN: text DOM là "Thanh toán" (CSS text-transform: uppercase tạo hiệu ứng in hoa),
+ *                 class xác định: confirm-pay
+ *
+ * PTTT (phương thức thanh toán): .method-pay[data-type="transfer|vn-pay|bank|momo"]
+ *   - transfer  → Nộp tiền vào tài khoản ngân hàng của OLM
+ *   - vn-pay    → Ví điện tử VNPay
+ *   - bank      → Internet Banking, thẻ VISA, Master Card
+ *   - momo      → Ví điện tử MoMo
+ *
+ * data-type-vip trên .price-package: "vip" | "subject" | "exam"
+ * data-type trên button.register-package-trigger: "vip" | "subject" | "exam"
  */
 export class PaymentPage extends BasePage {
   static readonly GIO_HANG_URL = GIO_HANG_URL;
 
-  // ── Chọn loại tài khoản ──────────────────────────────────────────────────
-  static readonly ACCOUNT_TYPE_REGISTER_BTN =
-    '.card-body button.btn.text-white.font-weight-bold';
+  // ── Chọn loại tài khoản (#box-select-target) ──────────────────────────────
+  /**
+   * Nút "Đăng ký" trong card Học sinh.
+   * HTML: .select-target-vip-trigger[data-id-target="student"] > .card-body > ... > button.btn
+   */
+  static readonly ACCOUNT_TYPE_STUDENT_BTN =
+    '.select-target-vip-trigger[data-id-target="student"] button.btn';
 
-  // ── Chọn thời gian ────────────────────────────────────────────────────────
+  /**
+   * Fallback: nút "Đăng ký" của loại tài khoản đầu tiên bất kỳ
+   * (dùng khi card Học sinh không visible).
+   */
+  static readonly ACCOUNT_TYPE_ANY_BTN =
+    '.select-target-vip-trigger button.btn';
+
+  // ── Chọn thời gian (#box-select-plan) ─────────────────────────────────────
   static readonly PLAN_BTN    = 'button.select-plan-vip-trigger';
   static readonly PLAN_ACTIVE = 'button.select-plan-vip-trigger.active';
 
-  // ── Card gói VIP ──────────────────────────────────────────────────────────
-  /** Giá trong card — data-type-vip: "vip" | "subject" | "exam" */
+  // ── Card gói VIP (#box-info-package) ──────────────────────────────────────
+  /**
+   * Hiển thị giá trong mỗi card gói VIP.
+   * Attribute data-type-vip: "vip" | "subject" | "exam"
+   * Text chứa số và "VND", ví dụ: "1,400,000 VND"
+   */
   static readonly PRICE_IN_CARD = '.price-package';
-  /** Nút "Đăng ký" trong card — data-type: "vip" | "subject" | "exam" */
+
+  /**
+   * Nút "Đăng ký" bên trong card gói VIP.
+   * Attribute data-type: "vip" | "subject" | "exam"
+   */
   static readonly REGISTER_PKG_BTN = 'button.register-package-trigger';
 
-  // ── Sidebar "Giá trị đơn hàng" ───────────────────────────────────────────
+  // ── Sidebar "Giá trị đơn hàng" (.shopping-cart-value) ────────────────────
   /**
-   * Nút THANH TOÁN trong sidebar (xuất hiện sau khi click Đăng ký gói).
-   * HTML xác nhận từ ảnh: button màu xanh chứa text "THANH TOÁN"
+   * Container sidebar — DOM thực tế:
+   *   div.shopping-cart-value > div.checkout-payment.card
    */
-  static readonly CONFIRM_PAY_BTN =
-    'button.confirm-pay, ' +
-    'button:has-text("THANH TOÁN"), ' +
-    '.btn-thanh-toan, ' +
-    'a:has-text("THANH TOÁN")';
+  static readonly SIDEBAR_CONTAINER = '.shopping-cart-value';
 
   /**
-   * Sidebar container — dùng để lấy toàn bộ text sidebar khi không biết class chính xác.
-   * Ưu tiên phần tử chứa "Giá trị đơn hàng" hoặc nút THANH TOÁN.
+   * Nút Thanh toán trong sidebar.
+   * Class chính xác: confirm-pay
+   * Lưu ý: text DOM là "Thanh toán" (CSS tạo UPPERCASE, không phải text thật)
    */
-  static readonly SIDEBAR_CONTAINER =
-    '.gio-hang-sidebar, .cart-sidebar, .package-vip-sidebar, ' +
-    '[class*="sidebar"], [class*="cart-right"], [class*="gio-hang-right"], ' +
-    // fallback: div chứa nút THANH TOÁN (chắc chắn là sidebar)
-    'div:has(button:has-text("THANH TOÁN")), div:has(.confirm-pay)';
+  static readonly CONFIRM_PAY_BTN = 'button.confirm-pay';
 
   /**
-   * Giá "Số tiền phải thanh toán" (màu đỏ, giá cuối cùng).
-   * Thử nhiều selector vì class chính xác chưa xác nhận được từ DOM tĩnh.
+   * Giá "Số tiền phải thanh toán" — span.final-price
+   * Chỉ chứa số (ví dụ "1,400,000"), KHÔNG có "VND".
    */
-  static readonly SIDEBAR_FINAL_PRICE =
-    '.final-price, .price-must-pay, .total-must-pay, ' +
-    '[class*="final"], [class*="must-pay"], ' +
-    // fallback: text màu đỏ trong sidebar container
-    '.text-danger, .text-red, [style*="color: red"], [style*="color:#"]';
+  static readonly SIDEBAR_FINAL_PRICE = 'span.final-price';
 
-  // ── Section nhập SĐT + PTTT (chỉ sau khi đăng nhập + click THANH TOÁN) ──
-  static readonly PHONE_INPUT =
-    'input[placeholder*="điện thoại"], input[type="tel"], input[name="phone"]';
+  /**
+   * Giá gốc "Tổng tiền" — span.init-price
+   * Chỉ chứa số (ví dụ "1,400,000"), KHÔNG có "VND".
+   */
+  static readonly SIDEBAR_INIT_PRICE = 'span.init-price';
 
-  // Text labels của 4 PTTT hiển thị ở trang /gio-hang sau click THANH TOÁN
-  static readonly PAYMENT_BANK  = ':text("Nộp tiền vào tài khoản ngân hàng")';
-  static readonly PAYMENT_VNPAY = ':text("Ví điện tử VNPay")';
-  static readonly PAYMENT_VISA  = ':text("Internet Banking")';
-  static readonly PAYMENT_MOMO  = ':text("MoMo")';
+  /**
+   * Số tiền được giảm — span.reduced-price
+   * Thường là "0" khi không có khuyến mãi.
+   */
+  static readonly SIDEBAR_REDUCED_PRICE = 'span.reduced-price';
 
-  // ── Internal helpers ──────────────────────────────────────────────────────
+  // ── Section nhập SĐT + PTTT (#box-select-method-pay) ─────────────────────
+  /**
+   * Input số điện thoại — name="phone" (xác nhận từ HTML)
+   */
+  static readonly PHONE_INPUT = 'input[name="phone"]';
+
+  /**
+   * 4 phương thức thanh toán — dùng data-type để bắt chính xác,
+   * không phụ thuộc vào text hiển thị (dễ thay đổi).
+   */
+  static readonly PAYMENT_BANK  = '.method-pay[data-type="transfer"]';
+  static readonly PAYMENT_VNPAY = '.method-pay[data-type="vn-pay"]';
+  static readonly PAYMENT_VISA  = '.method-pay[data-type="bank"]';
+  static readonly PAYMENT_MOMO  = '.method-pay[data-type="momo"]';
+
+  // ── Section chọn loại tài khoản (ẩn/hiện tùy trạng thái) ─────────────────
+  static readonly BOX_SELECT_TARGET = '#box-select-target';
+  static readonly BOX_SELECT_PLAN   = '#box-select-plan';
+  static readonly BOX_INFO_PACKAGE  = '#box-info-package';
+  static readonly BOX_METHOD_PAY    = '#box-select-method-pay';
+
+  // ── Internal helpers ───────────────────────────────────────────────────────
 
   private async _waitForPlanSection(timeout = 30_000): Promise<void> {
     await this.page.waitForSelector(PaymentPage.PLAN_BTN, { timeout });
   }
 
-  // ── Navigation ────────────────────────────────────────────────────────────
+  // ── Navigation ─────────────────────────────────────────────────────────────
 
   /**
    * Mở /gio-hang.
-   * Nếu trang hiện card chọn loại tài khoản, tự click "Đăng ký" đầu tiên.
+   * Nếu trang hiện #box-select-target (chọn loại tài khoản), tự click
+   * card "Học sinh" (hoặc card đầu tiên nếu Học sinh không có).
+   *
+   * @param autoSelectAccountType true = tự chọn Học sinh nếu cần (mặc định)
    */
   async openGioHang(autoSelectAccountType = true): Promise<this> {
     await this.navigateTo(PaymentPage.GIO_HANG_URL);
@@ -104,11 +156,18 @@ export class PaymentPage extends BasePage {
         .isVisible().catch(() => false);
 
       if (!planVisible) {
-        const acctBtn = this.page
-          .locator(PaymentPage.ACCOUNT_TYPE_REGISTER_BTN).first();
-        if ((await acctBtn.count()) > 0) {
-          await acctBtn.waitFor({ state: 'visible', timeout: 20_000 });
-          await acctBtn.click();
+        // Ưu tiên card Học sinh; fallback sang card đầu tiên
+        const studentBtn = this.page.locator(PaymentPage.ACCOUNT_TYPE_STUDENT_BTN).first();
+        const anyBtn     = this.page.locator(PaymentPage.ACCOUNT_TYPE_ANY_BTN).first();
+        const btn = (await studentBtn.count()) > 0 ? studentBtn : anyBtn;
+
+        if ((await btn.count()) > 0) {
+          // Dismiss popup "Xác thực" (#modal-form-active-mail) ngay trước khi
+          // click — popup này hay xuất hiện có delay sau navigateTo() và
+          // đứng chắn pointer events trên nút "Đăng ký" gây timeout 20s.
+          await this.dismissPopups();
+          await btn.waitFor({ state: 'visible', timeout: 20_000 });
+          await this.jsClick(btn);
           await this.page.waitForLoadState('domcontentloaded');
         }
       }
@@ -127,8 +186,12 @@ export class PaymentPage extends BasePage {
     return url.includes('gio-hang') || url.includes('mua-vip') || url.includes('thanh-toan');
   }
 
-  // ── Chọn thời gian ────────────────────────────────────────────────────────
+  // ── Chọn thời gian ─────────────────────────────────────────────────────────
 
+  /**
+   * Lấy danh sách label của tất cả plan button.
+   * Ví dụ: ["Trọn đời (12 năm)", "1 năm", "2 năm", "6 tháng", "3 tháng", "1 tháng"]
+   */
   async getPlanLabels(): Promise<string[]> {
     await this._waitForPlanSection();
     const btns = await this.page.locator(PaymentPage.PLAN_BTN).all();
@@ -139,7 +202,10 @@ export class PaymentPage extends BasePage {
     return labels;
   }
 
-  /** @param dataPlan '12-y' | '1-y' | '2-y' | '6-m' | '3-m' | '1-m' */
+  /**
+   * Click plan button theo data-plan.
+   * @param dataPlan '12-y' | '1-y' | '2-y' | '6-m' | '3-m' | '1-m'
+   */
   async selectPlan(dataPlan: string): Promise<this> {
     await this._waitForPlanSection();
     const btn = this.page.locator(
@@ -151,6 +217,10 @@ export class PaymentPage extends BasePage {
     return this;
   }
 
+  /**
+   * Trả về data-plan của plan đang active.
+   * Ví dụ: '1-y'
+   */
   async getActivePlan(): Promise<string> {
     await this.page.waitForSelector(PaymentPage.PLAN_ACTIVE, { timeout: 20_000 });
     return (
@@ -158,8 +228,13 @@ export class PaymentPage extends BasePage {
     );
   }
 
-  // ── Gói VIP ───────────────────────────────────────────────────────────────
+  // ── Gói VIP ────────────────────────────────────────────────────────────────
 
+  /**
+   * Lấy danh sách gói VIP đang hiển thị.
+   * Mỗi phần tử: { typeVip: "vip"|"subject"|"exam", price: "1,400,000 VND" }
+   * Lưu ý: price lấy từ .price-package, text đầy đủ bao gồm "VND".
+   */
   async getVipPackages(): Promise<Array<{ typeVip: string; price: string }>> {
     await this.page.waitForSelector(PaymentPage.PRICE_IN_CARD, { timeout: 20_000 });
     const els = await this.page.locator(PaymentPage.PRICE_IN_CARD).all();
@@ -174,7 +249,7 @@ export class PaymentPage extends BasePage {
   }
 
   /**
-   * Click nút "Đăng ký" của một gói VIP → sidebar "Giá trị đơn hàng" xuất hiện.
+   * Click nút "Đăng ký" của một gói VIP → sidebar xuất hiện bên phải.
    * @param dataType 'vip' | 'subject' | 'exam'
    */
   async clickRegisterPackage(dataType: 'vip' | 'subject' | 'exam'): Promise<this> {
@@ -184,26 +259,25 @@ export class PaymentPage extends BasePage {
     await btn.first().waitFor({ state: 'visible', timeout: 20_000 });
     await this.jsClick(btn.first());
 
-    // Cuộn xuống để đảm bảo sidebar hiển thị trong viewport
+    // Scroll nhẹ để sidebar vào viewport
     await this.page.waitForTimeout(600);
     await this.page.evaluate(() => window.scrollBy(0, 200));
     await this.page.waitForTimeout(400);
 
-    // Chờ nút THANH TOÁN xuất hiện trong sidebar
+    // Chờ nút Thanh toán xuất hiện trong sidebar
     await this.page
       .waitForSelector(PaymentPage.CONFIRM_PAY_BTN, { timeout: 16_000 })
       .catch(() => {});
     return this;
   }
 
-  // ── Sidebar ───────────────────────────────────────────────────────────────
+  // ── Sidebar "Giá trị đơn hàng" ────────────────────────────────────────────
 
   /**
-   * Lấy toàn bộ text của sidebar "Giá trị đơn hàng".
-   * Dùng để kiểm tra sidebar có hiển thị giá trị hợp lệ không.
+   * Lấy toàn bộ text của sidebar.
+   * Hữu ích để assert sidebar có hiển thị hay không (chứa "VND", "Thanh toán"...).
    */
   async getSidebarText(): Promise<string> {
-    // Thử lấy text từ sidebar container
     const container = this.page.locator(PaymentPage.SIDEBAR_CONTAINER).first();
     if ((await container.count()) > 0) {
       return ((await container.textContent().catch(() => '')) ?? '').trim();
@@ -212,60 +286,80 @@ export class PaymentPage extends BasePage {
   }
 
   /**
-   * Lấy giá "Số tiền phải thanh toán" từ sidebar.
-   * Thử nhiều selector, fallback sang lấy text toàn sidebar.
+   * Lấy giá "Số tiền phải thanh toán" từ span.final-price.
+   * Trả về dạng "1,400,000" (chỉ số, KHÔNG có "VND").
+   * Fallback: trả về text toàn sidebar.
    */
   async getSidebarFinalPrice(): Promise<string> {
-    // Thử selector cụ thể trước
-    const selectors = PaymentPage.SIDEBAR_FINAL_PRICE.split(',').map(s => s.trim());
-    for (const sel of selectors) {
-      try {
-        const el = this.page.locator(sel).first();
-        if ((await el.count()) > 0 && await el.isVisible({ timeout: 2_000 })) {
-          const text = ((await el.textContent()) ?? '').trim();
-          if (text.match(/\d/)) return text;
-        }
-      } catch { /* tiếp tục thử selector khác */ }
-    }
-    // Fallback: lấy text toàn sidebar và trả về
-    return this.getSidebarText();
-  }
-
-  async getSidebarInitPrice(): Promise<string> {
-    // "Tổng tiền" là dòng đầu của sidebar
-    const rows = await this.page.locator(
-      '.gio-hang-sidebar td, [class*="sidebar"] td, div:has(button:has-text("THANH TOÁN")) tr'
-    ).all();
-    for (const row of rows) {
-      const text = ((await row.textContent()) ?? '').trim();
-      if (text.match(/\d/) && text.includes('VND')) return text;
-    }
-    return this.getSidebarText();
-  }
-
-  async getSidebarReducedPrice(): Promise<string> {
-    const el = this.page.locator('.reduced-price, [class*="reduced"], [class*="giam"]').first();
+    const el = this.page.locator(PaymentPage.SIDEBAR_FINAL_PRICE).first();
     if ((await el.count()) > 0) {
-      return ((await el.textContent()) ?? '').trim();
+      try {
+        await el.waitFor({ state: 'visible', timeout: 5_000 });
+        return ((await el.textContent()) ?? '').trim();
+      } catch { /* fallback */ }
+    }
+    return this.getSidebarText();
+  }
+
+  /**
+   * Lấy giá gốc "Tổng tiền" từ span.init-price.
+   * Trả về dạng "1,400,000" (chỉ số, KHÔNG có "VND").
+   */
+  async getSidebarInitPrice(): Promise<string> {
+    const el = this.page.locator(PaymentPage.SIDEBAR_INIT_PRICE).first();
+    if ((await el.count()) > 0) {
+      try {
+        await el.waitFor({ state: 'visible', timeout: 5_000 });
+        return ((await el.textContent()) ?? '').trim();
+      } catch { /* fallback */ }
     }
     return '';
   }
 
-  /** Click THANH TOÁN trong sidebar → scroll xuống section SĐT (chỉ khi đã đăng nhập) */
+  /**
+   * Lấy số tiền được giảm từ span.reduced-price.
+   * Trả về dạng "0" khi không có khuyến mãi.
+   */
+  async getSidebarReducedPrice(): Promise<string> {
+    const el = this.page.locator(PaymentPage.SIDEBAR_REDUCED_PRICE).first();
+    if ((await el.count()) > 0) {
+      try {
+        const text = ((await el.textContent()) ?? '').trim();
+        return text || '0';
+      } catch { /* fallback */ }
+    }
+    return '0';
+  }
+
+  /**
+   * Kiểm tra sidebar đang hiển thị (có nút Thanh toán).
+   */
+  async isSidebarVisible(): Promise<boolean> {
+    return this.page
+      .locator(PaymentPage.CONFIRM_PAY_BTN).first()
+      .isVisible({ timeout: 3_000 })
+      .catch(() => false);
+  }
+
+  /**
+   * Click nút Thanh toán trong sidebar → section SĐT scroll ra (khi đã đăng nhập).
+   * Lưu ý: text DOM là "Thanh toán", CSS mới render thành "THANH TOÁN".
+   */
   async clickSidebarThanhToan(): Promise<this> {
+    await this.dismissPopups();
     const btn = this.page.locator(PaymentPage.CONFIRM_PAY_BTN).first();
     if ((await btn.count()) > 0) {
       await btn.waitFor({ state: 'visible', timeout: 20_000 });
       await this.jsClick(btn);
     }
-    // Chờ section SĐT (chỉ xuất hiện khi đã đăng nhập)
+    // Chờ section nhập SĐT xuất hiện (chỉ khi đã đăng nhập)
     await this.page
       .waitForSelector(PaymentPage.PHONE_INPUT, { timeout: 20_000 })
       .catch(() => {});
     return this;
   }
 
-  // ── Nhập SĐT / PTTT ──────────────────────────────────────────────────────
+  // ── Section nhập SĐT / PTTT ───────────────────────────────────────────────
 
   async enterPhoneNumber(phone: string): Promise<this> {
     const input = this.page.locator(PaymentPage.PHONE_INPUT).first();
@@ -274,6 +368,20 @@ export class PaymentPage extends BasePage {
     return this;
   }
 
+  /**
+   * Kiểm tra section PTTT (#box-select-method-pay) có hiển thị hay không.
+   */
+  async isPaymentMethodSectionVisible(): Promise<boolean> {
+    return this.page
+      .locator(PaymentPage.BOX_METHOD_PAY)
+      .isVisible({ timeout: 5_000 })
+      .catch(() => false);
+  }
+
+  /**
+   * Kiểm tra từng PTTT có hiển thị.
+   * Dùng data-type để bắt chính xác, không phụ thuộc text.
+   */
   async getVisiblePaymentMethods(): Promise<{
     bank: boolean; vnpay: boolean; visa: boolean; momo: boolean;
   }> {
@@ -285,9 +393,19 @@ export class PaymentPage extends BasePage {
     };
   }
 
-  /** Kiểm tra đã đăng nhập chưa (dựa vào URL không chứa dangnhap) */
+  // ── Utility ────────────────────────────────────────────────────────────────
+
+  /** Kiểm tra đã đăng nhập chưa (dựa vào URL không chứa dangnhap/login) */
   isLoggedIn(): boolean {
     return !this.getCurrentUrl().includes('dangnhap') &&
            !this.getCurrentUrl().includes('login');
+  }
+
+  /**
+   * Chuyển đổi chuỗi giá "1,400,000" → number 1400000.
+   * Dùng để so sánh giá trị số học giữa plan / package khác nhau.
+   */
+  static parsePrice(priceStr: string): number {
+    return parseInt(priceStr.replace(/[^\d]/g, ''), 10) || 0;
   }
 }
