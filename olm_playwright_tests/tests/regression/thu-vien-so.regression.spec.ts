@@ -115,7 +115,7 @@ test.describe('2. Header Navigation @library @regression', () => {
     const tvs = new ThuVienSoPage(page);
     await tvs.openSachGiaoKhoa();
     await page.locator(ThuVienSoPage.LOGO).first().click();
-    await page.waitForLoadState('domcontentloaded');
+    await page.waitForURL(/thu-vien-so/, { timeout: 15000 });
     expect(tvs.getCurrentUrl()).toContain('thu-vien-so');
   });
 
@@ -158,7 +158,7 @@ test.describe('2. Header Navigation @library @regression', () => {
     const tvs = new ThuVienSoPage(page);
     await tvs.open();
     await page.locator(ThuVienSoPage.HEADER_LOGIN_BTN).first().click();
-    await page.waitForLoadState('domcontentloaded');
+    await page.waitForURL(/dangnhap/, { timeout: 15000 });
     expect(tvs.getCurrentUrl()).toContain('dangnhap');
   });
 
@@ -166,7 +166,7 @@ test.describe('2. Header Navigation @library @regression', () => {
     const tvs = new ThuVienSoPage(page);
     await tvs.open();
     await page.locator(ThuVienSoPage.HEADER_REGISTER_BTN).first().click();
-    await page.waitForLoadState('domcontentloaded');
+    await page.waitForURL(/dang-ky/, { timeout: 15000 });
     expect(tvs.getCurrentUrl()).toContain('dang-ky');
   });
 
@@ -691,7 +691,7 @@ test.describe('8. Footer @library @regression', () => {
     await tvs.open();
     await tvs.scrollToFooter();
     await page.locator(ThuVienSoPage.FOOTER_NAV_SACH_GK).first().click();
-    await page.waitForLoadState('domcontentloaded');
+    await page.waitForURL(/sach-giao-khoa/, { timeout: 15000 });
     expect(tvs.isSachGiaoKhoaLoaded()).toBeTruthy();
   });
 
@@ -700,7 +700,7 @@ test.describe('8. Footer @library @regression', () => {
     await tvs.open();
     await tvs.scrollToFooter();
     await page.locator(ThuVienSoPage.FOOTER_NAV_TAP_CHI).first().click();
-    await page.waitForLoadState('domcontentloaded');
+    await page.waitForURL(/tap-chi/, { timeout: 15000 });
     expect(tvs.isTapChiLoaded()).toBeTruthy();
   });
 
@@ -772,9 +772,9 @@ test.describe('9. Unhappy paths @library @regression', () => {
     await tvs.openSachGiaoKhoa(1);
     if (await tvs.getBookCount() > 0) {
       await tvs.clickFirstBook();
-      await page.waitForLoadState('domcontentloaded', { timeout: 15000 });
+      await page.waitForURL(/doc-sach/, { timeout: 15000 });
       await page.goBack();
-      await page.waitForLoadState('domcontentloaded');
+      await page.waitForURL(/sach-giao-khoa/, { timeout: 15000 });
       expect(tvs.isSachGiaoKhoaLoaded()).toBeTruthy();
     }
   });

@@ -19,13 +19,34 @@ export class BasePage {
   /**
    * Goto URL + tự dismiss popup sau khi load.
    *
+   * waitUntil: 'commit' (thay vì 'domcontentloaded') — một số trang
+   * (VD: /hoi-dap) đã ghi nhận trường hợp sự kiện 'domcontentloaded'
+   * không bao giờ fire dù nội dung trang đã render đầy đủ (nghi do
+   * script nền/kết nối third-party — VD request gtag/js bị "canceled" —
+   * khiến trạng thái load của trang không "settle" được). 'commit' chỉ
+   * đợi navigation được commit (response bắt đầu), không phụ thuộc vào
+   * lifecycle event có thể bị treo này, nên tránh được timeout giả.
+   *
+   * Sau khi commit, vẫn thử đợi 'domcontentloaded' thêm một khoảng ngắn
+   * (best-effort, KHÔNG throw nếu quá timeout) để _dismissPopupsInline()
+   * có cơ hội chạy trên DOM đã settle trong trường hợp bình thường.
+   * Readiness thật sự của từng trang nên do page object tự
+   * waitForSelector() phần tử đặc trưng (VD: HoiDapPage.open() đợi
+   * QUESTION_CARD) — đây mới là gate đáng tin cậy nhất.
+   *
    * timeout tăng lên 45_000 (từ 20_000) vì olm.vn production
    * thường load 20-40s trên các trang nặng (/thongtin, /gio-hang, /hoi-dap).
    * Có thể override qua env NAV_TIMEOUT (đơn vị ms).
    */
   async navigateTo(url: string): Promise<void> {
     const timeout = Number(process.env.NAV_TIMEOUT ?? 45_000);
-    await this.page.goto(url, { waitUntil: 'domcontentloaded', timeout });
+
+    await this.page.goto(url, { waitUntil: 'commit', timeout });
+
+    // Best-effort: cho DOM một khoảng thời gian giới hạn để settle trước
+    // khi chạy popup-dismiss, nhưng không để bước này làm navigateTo() fail.
+    await this.page.waitForLoadState('domcontentloaded', { timeout: 15_000 }).catch(() => {});
+
     await this._dismissPopupsInline();
     await this.dismissAllNotifications();
   }
@@ -39,18 +60,44 @@ export class BasePage {
   /**
    * Thử lần lượt các selector; trả về Locator đầu tiên visible trong timeout.
    * Nhận cả string[] (array) lẫn string (selector đơn).
-   * Trả về null nếu không tìm thấy cái nào.
+   *
+   * QUAN TRỌNG: nếu một selector khớp NHIỀU element (VD: logo desktop +
+   * logo mobile cùng dùng alt="OLM Logo", ẩn/hiện qua CSS responsive
+   * tw-hidden/lg:tw-hidden), hàm này duyệt qua TỪNG element khớp thay vì
+   * chỉ lấy .first() — tránh false negative khi element đầu tiên trong DOM
+   * bị ẩn ở viewport hiện tại nhưng một element khác cùng selector vẫn
+   * đang hiển thị.
+   * (Bug thực tế: test "Logo phải hiển thị ở 768px" fail vì .first() luôn
+   * lấy trúng <img> logo desktop — bị tw-hidden dưới breakpoint lg — dù
+   * <img> logo mobile ngay cạnh đó đang hiển thị bình thường.)
+   *
+   * Trả về null nếu không tìm thấy element nào visible trong toàn bộ
+   * danh sách selector, sau khi đã đợi tối đa timeoutSec.
    */
   async findVisible(selectors: string | string[], timeoutSec = 5): Promise<Locator | null> {
     const list = Array.isArray(selectors) ? selectors : [selectors];
-    for (const sel of list) {
-      try {
-        const loc = this.page.locator(sel).first();
-        if (await loc.isVisible({ timeout: timeoutSec * 1_000 })) return loc;
-      } catch {
-        // selector không khớp, thử tiếp
+    const deadline = Date.now() + timeoutSec * 1_000;
+
+    while (true) {
+      for (const sel of list) {
+        try {
+          const loc = this.page.locator(sel);
+          const count = await loc.count();
+          for (let i = 0; i < count; i++) {
+            const el = loc.nth(i);
+            if (await el.isVisible().catch(() => false)) {
+              return el;
+            }
+          }
+        } catch {
+          // selector không khớp hoặc lỗi tạm thời, thử selector kế tiếp
+        }
       }
+
+      if (Date.now() >= deadline) break;
+      await this.page.waitForTimeout(200); // poll nhẹ, tránh spin CPU
     }
+
     return null;
   }
 

@@ -414,27 +414,36 @@ export class ThuVienSoPage extends BasePage {
     return this.page.title();
   }
 
+  /**
+   * NOTE: dùng page.waitForURL() thay vì page.waitForLoadState('domcontentloaded')
+   * sau click(). click() KHÔNG đợi navigation do nó gây ra — nó chỉ đợi sự kiện
+   * click được dispatch. Nếu gọi waitForLoadState() ngay sau đó, có khả năng
+   * navigation thật sự CHƯA bắt đầu, nên waitForLoadState() trả về ngay lập tức
+   * dựa trên trạng thái của trang CŨ (đã "domcontentloaded" từ trước) — dẫn đến
+   * assertion URL chạy sớm hơn navigation thật, gây fail giả (race condition).
+   * waitForURL() đợi đúng URL đích nên tránh được race này.
+   */
   async clickHoiVienBtn(): Promise<this> {
     await this.page.locator(ThuVienSoPage.HEADER_HOI_VIEN_BTN).first().click();
-    await this.page.waitForLoadState('domcontentloaded');
+    await this.page.waitForURL(/gio-hang/, { timeout: 15_000 });
     return this;
   }
 
   async clickExploreBooks(): Promise<this> {
     await this.page.locator(ThuVienSoPage.EXPLORE_BOOKS_BTN).first().click();
-    await this.page.waitForLoadState('domcontentloaded');
+    await this.page.waitForURL(/sach-giao-khoa/, { timeout: 15_000 });
     return this;
   }
 
   async clickExploreMemberBtn(): Promise<this> {
     await this.page.locator(ThuVienSoPage.EXPLORE_MEMBER_BTN).first().click();
-    await this.page.waitForLoadState('domcontentloaded');
+    await this.page.waitForURL(/gio-hang/, { timeout: 15_000 });
     return this;
   }
 
   async clickExploreLibraryBtn(): Promise<this> {
     await this.page.locator(ThuVienSoPage.EXPLORE_LIBRARY_BTN).first().click();
-    await this.page.waitForLoadState('domcontentloaded');
+    await this.page.waitForURL(/tap-chi/, { timeout: 15_000 });
     return this;
   }
 }

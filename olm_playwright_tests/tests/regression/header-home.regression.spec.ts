@@ -139,15 +139,16 @@ test.describe('Header Trang Chủ @header-home @regression', () => {
     const link = await header.findVisible([HeaderComponent.NAV_BAI_VIET], 10);
     expect(link, '"Bài viết" phải hiển thị').not.toBeNull();
 
-    // "Bài viết" là dropdown toggle (href="#"), click để mở
-    await link!.click();
-    await page.waitForTimeout(500);
+    // "Bài viết" là dropdown toggle (href="#"), click để mở rồi chọn
+    // sub-item "Tin tức". Dùng HeaderComponent.clickBaiVietTinTuc() —
+    // selector sub-item đã được SCOPE vào đúng dropdown "Bài viết"
+    // (xem NAV_BAI_VIET_TIN_TUC), tránh bắt nhầm dropdown-item ẩn của
+    // menu khác (VD: "Cuộc thi vui" dùng chung class ".dropdown-item").
+    await header.clickBaiVietTinTuc();
+    await page.waitForLoadState('networkidle', { timeout: 30_000 }).catch(() => {});
 
-    // Dropdown sub-item phải xuất hiện
-    const subItem = page.locator(
-      "a[href*='/thongtin'], a[href*='/cuoc-thi'], a[href*='/bai-viet'], a[href*='/chu-de-bai-viet']"
-    ).first();
-    await expect(subItem).toBeVisible({ timeout: 10_000 });
+    // Đích thực tế của "Tin tức" là /thongtin (khớp TinTucPage.URL).
+    await expect(page).toHaveURL(/thongtin/, { timeout: 10_000 });
   });
 
   test('[Happy] Nav "Học bài" điều hướng đúng (chỉ học sinh)', async ({ page }) => {

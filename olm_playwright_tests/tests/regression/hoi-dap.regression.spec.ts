@@ -121,7 +121,16 @@ test.describe('Hỏi đáp Regression @hoi_dap @regression', () => {
     await times.first().waitFor({ state: 'attached', timeout: 10_000 }).catch(() => {});
     // Ít nhất 1 câu hỏi có thời gian
     expect(await times.count()).toBeGreaterThan(0);
-    const timeText = await times.first().textContent();
+
+    // NOTE: KHÔNG dùng times.first() theo thứ tự DOM — một số phần tử
+    // ".card-body .extra.time" có thể vẫn RỖNG tại thời điểm này do
+    // lazy-render (thứ tự DOM không đảm bảo trùng thứ tự card đã render
+    // xong nội dung, VD: card đang chờ populate qua JS/template). Dùng
+    // filter() để lấy phần tử ĐẦU TIÊN có text thực sự (non-whitespace),
+    // tránh đọc trúng placeholder rỗng gây fail giả.
+    const nonEmptyTime = times.filter({ hasText: /\S/ }).first();
+    await expect(nonEmptyTime).toBeVisible({ timeout: 10_000 });
+    const timeText = await nonEmptyTime.textContent();
     expect(timeText?.trim().length).toBeGreaterThan(0);
   });
 

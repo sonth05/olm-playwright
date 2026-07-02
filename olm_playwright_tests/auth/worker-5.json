@@ -2,93 +2,307 @@
   "cookies": [
     {
       "name": "XSRF-TOKEN",
-      "value": "Fg0goW1WI6LmSHpXmUE3AXTdbFHDjPPhpAhjRGkG",
+      "value": "gGmxRhSvI4AEGTrMkqP8X6ZJeIX3smrWY7fHEw58",
       "domain": "olm.vn",
       "path": "/",
-      "expires": 1782813233.179413,
+      "expires": 1782972469.064732,
       "httpOnly": false,
       "secure": true,
       "sameSite": "Lax"
     },
     {
       "name": "__cflb",
-      "value": "0H28vCM2b9mA6aALHjSw6UbneJrcruBKM3JxS3DxFMn",
+      "value": "02DiuEw7pxKAZNcwuU91HVkt1oi9zcehUm1id4xR1eDKz",
       "domain": "olm.vn",
       "path": "/",
-      "expires": 1782888826.98772,
+      "expires": 1783048058.151724,
       "httpOnly": true,
       "secure": true,
       "sameSite": "None"
     },
     {
       "name": "_gcl_au",
-      "value": "1.1.1095792108.1782806031",
+      "value": "1.1.1170761831.1782965261",
       "domain": ".olm.vn",
       "path": "/",
-      "expires": 1790582031,
+      "expires": 1790741261,
       "httpOnly": false,
       "secure": false,
       "sameSite": "Lax"
     },
     {
-      "name": "test_cookie",
-      "value": "CheckForPermission",
+      "name": "IDE",
+      "value": "AHWqTUlp5YiV2R-fPypfmXd2tQnVw_BDIwvn-h939hcMQ5Rm5vbzQ2AnRHiRxL1k",
       "domain": ".doubleclick.net",
       "path": "/",
-      "expires": 1782806931.67887,
-      "httpOnly": false,
+      "expires": 1817525261.172746,
+      "httpOnly": true,
       "secure": true,
       "sameSite": "None"
     },
     {
+      "name": "_gid",
+      "value": "GA1.2.1641742688.1782965262",
+      "domain": ".olm.vn",
+      "path": "/",
+      "expires": 1783051667,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_gat_UA-42755702-1",
+      "value": "1",
+      "domain": ".olm.vn",
+      "path": "/",
+      "expires": 1782965321,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
       "name": "onlinemath_session",
-      "value": "1rCl4BB2abW7TUlWdpcyLVfhwt10LFWuHDfx8BRo",
+      "value": "Q4BCIg9EWIiSHRjKNFaH690yPQ84a5Ay5Z3zQlSa",
       "domain": "olm.vn",
       "path": "/",
-      "expires": 1782813244.005106,
+      "expires": 1782972469.064915,
       "httpOnly": true,
       "secure": false,
       "sameSite": "Lax"
     },
     {
       "name": "remember_web_59ba36addc2b2f9401580f014c7f58ea4e30989d",
-      "value": "17305435660809%7CVuPO8JtBA8SfDhWd1l67NIJK3FaEJy9ggRo9Ao0PHPRTNUFO56n9UVS4bMfx%7C%242y%2410%24Z8Ymg7uyUPVFrv2JXrMGJucW049frSgSN8Da6LRZeFqnZcbHuaB.K",
+      "value": "17305435660809%7CMOB6hzxm1JYlhUPXuvZaDwf3QGIyx7GPDKmFbvz6TrXs0QBIUAx4bLN7dVhX%7C%242y%2410%24Z8Ymg7uyUPVFrv2JXrMGJucW049frSgSN8Da6LRZeFqnZcbHuaB.K",
       "domain": "olm.vn",
       "path": "/",
-      "expires": 1817366032.371375,
+      "expires": 1817525262.615539,
       "httpOnly": true,
       "secure": true,
       "sameSite": "Lax"
     },
     {
       "name": "access_token",
-      "value": "2177cd386cdbbde981ca8b55249f8ac991700a8e",
+      "value": "d8a81b748b7b2281a0b238f42ddf37d9d8b73797",
       "domain": ".olm.vn",
       "path": "/",
-      "expires": 1782892433.179215,
+      "expires": 1783051662.214299,
       "httpOnly": false,
       "secure": true,
       "sameSite": "None"
     },
     {
       "name": "refresh_token",
-      "value": "7893cf90159e62706dc6e38d64056cbe333cdb48",
+      "value": "fd9f858a67f4e8fb3cd6435bd0dce75cd6acd128",
       "domain": ".olm.vn",
       "path": "/",
-      "expires": 1814342033.179358,
+      "expires": 1785557267.214392,
       "httpOnly": false,
       "secure": true,
       "sameSite": "None"
     },
     {
-      "name": "1rCl4BB2abW7TUlWdpcyLVfhwt10LFWuHDfx8BRo",
-      "value": "%7B%22data%22%3A%22a%3A4%3A%7Bs%3A6%3A%5C%22_token%5C%22%3Bs%3A40%3A%5C%22Fg0goW1WI6LmSHpXmUE3AXTdbFHDjPPhpAhjRGkG%5C%22%3Bs%3A7%3A%5C%22auth_id%5C%22%3Bs%3A32%3A%5C%22a512897f8d53fe52ebcc5ad9892b7e4a%5C%22%3Bs%3A50%3A%5C%22login_web_59ba36addc2b2f9401580f014c7f58ea4e30989d%5C%22%3Bs%3A14%3A%5C%2217305435660809%5C%22%3Bs%3A6%3A%5C%22_flash%5C%22%3Ba%3A2%3A%7Bs%3A3%3A%5C%22new%5C%22%3Ba%3A0%3A%7B%7Ds%3A3%3A%5C%22old%5C%22%3Ba%3A0%3A%7B%7D%7D%7D%22%2C%22expires%22%3A1782813254%7D",
+      "name": "_ga_H8ZLXJK1D6",
+      "value": "GS2.1.s1782965261$o1$g1$t1782965267$j54$l0$h0",
+      "domain": ".olm.vn",
+      "path": "/",
+      "expires": 1817525267.052851,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_ga",
+      "value": "GA1.2.1381604092.1782965262",
+      "domain": ".olm.vn",
+      "path": "/",
+      "expires": 1817525267.104806,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "third_party",
+      "value": "enabled",
+      "domain": ".olm.vn",
+      "path": "/",
+      "expires": 1807792229.213963,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "user",
+      "value": "%7B%22_id%22%3A%2217305435660809%22%2C%22name%22%3A%22Nguyen%20Thanh%20Son%22%2C%22username%22%3A%22hsptolm_sonthanh%22%2C%22email%22%3A%22%22%7D",
+      "domain": ".olm.vn",
+      "path": "/",
+      "expires": 1785557267.214118,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Strict"
+    },
+    {
+      "name": "Q4BCIg9EWIiSHRjKNFaH690yPQ84a5Ay5Z3zQlSa",
+      "value": "%7B%22data%22%3A%22a%3A4%3A%7Bs%3A6%3A%5C%22_token%5C%22%3Bs%3A40%3A%5C%22gGmxRhSvI4AEGTrMkqP8X6ZJeIX3smrWY7fHEw58%5C%22%3Bs%3A7%3A%5C%22auth_id%5C%22%3Bs%3A32%3A%5C%22e40de0592f4cb21ef7fe1890d1d5f27a%5C%22%3Bs%3A50%3A%5C%22login_web_59ba36addc2b2f9401580f014c7f58ea4e30989d%5C%22%3Bs%3A14%3A%5C%2217305435660809%5C%22%3Bs%3A6%3A%5C%22_flash%5C%22%3Ba%3A2%3A%7Bs%3A3%3A%5C%22old%5C%22%3Ba%3A0%3A%7B%7Ds%3A3%3A%5C%22new%5C%22%3Ba%3A0%3A%7B%7D%7D%7D%22%2C%22expires%22%3A1782972484%7D",
       "domain": "olm.vn",
       "path": "/",
-      "expires": 1782813244.005256,
+      "expires": 1782972469.064979,
       "httpOnly": true,
       "secure": true,
       "sameSite": "Lax"
+    },
+    {
+      "name": "__gads",
+      "value": "ID=0a54e1e5e15ad45f:T=1782965284:RT=1782965284:S=ALNI_Mamat8Gy7Al1irxgjxODNH3-acESQ",
+      "domain": ".olm.vn",
+      "path": "/",
+      "expires": 1816661284,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "__gpi",
+      "value": "UID=0000140dc16cf5aa:T=1782965284:RT=1782965284:S=ALNI_MZOFVFMQkGdWEj3O2MVN6tkutgn4A",
+      "domain": ".olm.vn",
+      "path": "/",
+      "expires": 1816661284,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "__eoi",
+      "value": "ID=80262ae22a211fb3:T=1782965284:RT=1782965284:S=AA-Afjbo6QMaYdwK7g7RoETpp551",
+      "domain": ".olm.vn",
+      "path": "/",
+      "expires": 1798517284,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "DSID",
+      "value": "NO_DATA",
+      "domain": ".doubleclick.net",
+      "path": "/",
+      "expires": 1782968870.193608,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "uid",
+      "value": "9a610930-6a34-4435-9dd8-4c326b0255a3",
+      "domain": ".criteo.com",
+      "path": "/",
+      "expires": 1816661271.969703,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "cto_bundle",
+      "value": "tcLiL196YmVKRHN3Ung0R2xuYzNKd296MTNMRlI1WFdOM29zemc1UFlUM1phS0ZrTDFTMzBOUWtQbmllelloZlRrY2UlMkJVMHI3czh1VVFuaVpoaiUyQmhZMmU2OVlOSm9DbkwxaHBVcURzRVRhSnB4NnBQVERUVVUyVWNLaUlqUWY1ZFJlbzg",
+      "domain": ".criteo.com",
+      "path": "/",
+      "expires": 1816661271.969833,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None",
+      "partitionKey": "https://olm.vn",
+      "_crHasCrossSiteAncestor": true
+    },
+    {
+      "name": "bcookie",
+      "value": "\"v=2&164d38f6-1d49-41f1-8901-156e113bb20f\"",
+      "domain": ".linkedin.com",
+      "path": "/",
+      "expires": 1814501271.292929,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "li_gc",
+      "value": "MTswOzE3ODI5NjUyODY7MjswMjGkCEIZyOWqsm3bY5uHK45pM+EQJ5+Y5sqniHJIQQ2Kkw==",
+      "domain": ".linkedin.com",
+      "path": "/",
+      "expires": 1798517271.293033,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "lidc",
+      "value": "\"b=OGST03:s=O:r=O:a=O:p=O:g=3814:u=1:x=1:i=1782965286:t=1783051686:v=2:sig=AQGZCY5Xq-yVFU5Tv4_6Xfnr1hFSxHMn\"",
+      "domain": ".linkedin.com",
+      "path": "/",
+      "expires": 1783051671.293067,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "__cf_bm",
+      "value": "feCE6YUrhUtPOyO_ncikJlUhCJOiXZkqNKtmi8ud.VY-1782965286.7171934-1.0.1.1-izR.IDfr.SQ1MVbtDcSBd56pgLx__1l_ZDIQXeDpLljhCvbiRnaBKgkSn5j3C1AFk9g2ygjtBfKml0skdLcCBr0ciLF6FbMw6DhACKbZ4IrLUKRwq1T0Ydu6yaBOkcBx",
+      "domain": ".linkedin.com",
+      "path": "/",
+      "expires": 1782967071.293096,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "g",
+      "value": "u3H0vgx7YbRDE9neXPWp_1782965287316",
+      "domain": ".creativecdn.com",
+      "path": "/",
+      "expires": 1814501271.634104,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "ts",
+      "value": "1782965287",
+      "domain": ".creativecdn.com",
+      "path": "/",
+      "expires": 1814501271.634218,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None",
+      "partitionKey": "https://olm.vn",
+      "_crHasCrossSiteAncestor": true
+    },
+    {
+      "name": "everest_g_v2",
+      "value": "g_surferid~akXkKAADm1WsYABJ",
+      "domain": ".everesttech.net",
+      "path": "/",
+      "expires": 1814501272.554443,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "ADK_EX_11",
+      "value": "1",
+      "domain": ".adkernel.com",
+      "path": "/",
+      "expires": 1784174872.839885,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "ADKUID",
+      "value": "A9150518269746293133",
+      "domain": ".adkernel.com",
+      "path": "/",
+      "expires": 1785557272.83999,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
     }
   ],
   "origins": [
@@ -96,12 +310,57 @@
       "origin": "https://olm.vn",
       "localStorage": [
         {
-          "name": "pusherTransportTLS",
-          "value": "{\"timestamp\":1782806043399,\"transport\":\"ws\",\"latency\":438}"
+          "name": "last:change-password",
+          "value": "1782965278"
+        },
+        {
+          "name": "google_adsense_settings",
+          "value": "{\"ca-pub-7325137874728698\":[\"ca-pub-7325137874728698\"]}"
+        },
+        {
+          "name": "accessTokenChecked",
+          "value": "d8a81b748b7b2281a0b238f42ddf37d9d8b73797"
+        },
+        {
+          "name": "show-modal-form-active-mail-17305435660809",
+          "value": "true"
+        },
+        {
+          "name": "chatbot_widget_open",
+          "value": "false"
+        },
+        {
+          "name": "google_ama_settings",
+          "value": "[1783051668600,1]"
+        },
+        {
+          "name": "show-modal-form-active-mail-17305435660809_expiresIn",
+          "value": "1783001268874"
         },
         {
           "name": "_gcl_ls",
-          "value": "{\"schema\":\"gcl\",\"version\":1,\"gsid_dc\":{\"value\":{\"joinId\":\"ClX2k84B57B545sp5ox8DXoJyuyT2JLLWw\",\"lastJoinedTimeMs\":1782806030758},\"expires\":1782806330758},\"gcl_ctr\":{\"value\":{\"value\":0,\"timeouts\":0,\"errors\":0,\"eopCount\":0,\"creationTimeMs\":1782806030764},\"expires\":1790582030764}}"
+          "value": "{\"schema\":\"gcl\",\"version\":1,\"gsid_dc\":{\"value\":{\"joinId\":\"C9hGaMlff15cuxaRtT_l3kSVBlIwtK1fUw\",\"lastJoinedTimeMs\":1782965260508},\"expires\":1782965560508},\"gcl_ctr\":{\"value\":{\"value\":0,\"timeouts\":0,\"errors\":0,\"eopCount\":0,\"creationTimeMs\":1782965260516},\"expires\":1790741260516},\"last_convs\":{\"value\":[],\"expires\":1790741266957}}"
+        },
+        {
+          "name": "google_ama_config",
+          "value": "[[[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-bg-white\"],4,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,3,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION>DIV.tw-olm-container\"],4,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV#carousel-homepage>DIV.owl-stage-outer>DIV.owl-stage\"],4,[\"10px\",\"10px\",0],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-bg-white>DIV.tw-olm-container>.tw-font-semibold.tw-leading-tight.tw-text-center\"],1,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,5,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION>DIV.tw-olm-container\"],4,[\"24px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV.main-wrap>DIV.header-wrapper.shadow-sm.align-items-center.bg-white\"],3,[\"10px\",\"10px\",1],[4],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV.main-wrap>FOOTER.footer-olm\"],1,[\"24px\",\"10px\",1],[0],null,[],[],1,[],[2,4]],[[null,0,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV>DIV.card.card-post.bg-post-single>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",0],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION>DIV.tw-olm-container>DIV.tw-flex.tw-flex-col.tw-items-center\"],4,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,1,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-bg-white>DIV.tw-olm-container\"],4,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV.main-wrap>DIV.header-wrapper.shadow-sm.align-items-center.bg-white\"],4,[\"10px\",\"10px\",1],[4],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV#carousel-homepage\"],4,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,1,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>DIV.tw-bg-background-default.tw-olm-container.tw-block\"],1,[\"10px\",\"10px\",1],[2],null,[],[],1,[],[]],[[null,1,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-olm-container\"],4,[\"10px\",\"80px\",1],[1],null,[],[],1,[],[]],[[null,4,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,1,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION>DIV.tw-olm-container>.tw-font-semibold.tw-leading-tight.tw-text-center\"],1,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,9,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,5,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION\"],4,[\"24px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV.main-wrap>DIV.header-wrapper.shadow-none.d-none.d-lg-block>DIV.container>DIV.row>DIV.text-right.text-white\"],1,[\"10px\",\"10px\",1],[4],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV.main-wrap-body>DIV.container-fluid>DIV.vertical-wrapper>DIV.container>DIV.row.justify-content-center\"],4,[\"24px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,3,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION>DIV.tw-olm-container\"],1,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,6,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,7,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-relative.tw-overflow-hidden.tw-bg-cover.tw-bg-center\"],4,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,2,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"DIV.main-wrap>DIV.header-wrapper.shadow-none.d-none.d-lg-block\"],4,[\"16px\",\"10px\",1],[2],null,[],[],1,[],[]],[[null,8,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-bg-white\"],1,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV.footer-top\"],1,[\"10px\",\"10px\",1],[3],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV.inner-content>DIV.row\"],4,[\"10px\",\"10px\",1],[5],null,[],[],1,[],[]],[[null,3,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"BODY\"],3,[\"10px\",\"10px\",1],[5],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV#ecosystem-products>DIV.owl-stage-outer>DIV.owl-stage\"],4,[\"10px\",\"10px\",0],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-olm-container\"],4,[\"10px\",\"80px\",1],[1],null,[],[],1,[],[]]],[],[1783051668544],\"20260628_091432\",[],[[[[null,0,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content>DIV.see-more>DIV.full-see-more.d-none\"],[null,null,null,[],null,null,\"P\"],null,[null,null,null,[],null,null,\"P\"]],[[null,7,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV>DIV.card.card-post.bg-post-single>DIV.wide-block.wide-comment-block>DIV.comment-block>DIV.card-comment>DIV.font-xss.text.text-dark.card-comment-content>P\"],[null,null,null,[]]],[[null,1,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content>P\"],[null,null,null,[]]],[[null,1,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV>DIV.card.card-post.bg-post-single>DIV.wide-block.wide-comment-block>DIV.comment-block>DIV.card-comment>DIV.font-xss.text.text-dark.card-comment-content>UL\"],[null,null,null,[],null,null,\"LI\"],null,[null,null,null,[],null,null,\"LI\"]],[[null,2,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV>DIV.card.card-post.bg-post-single>DIV.wide-block.wide-comment-block>DIV.comment-block>DIV.card-comment>DIV.font-xss.text.text-dark.card-comment-content\"],[null,null,null,[],null,null,\"P\"],null,[null,null,null,[],null,null,\"LI,P\"]],[[null,3,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content>P\"],[null,null,null,[]]],[[null,null,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-relative.tw-overflow-hidden.tw-bg-cover.tw-bg-center>DIV.tw-olm-container.tw-relative.tw-flex.tw-flex-col>DIV.tw-text-center\"],[null,null,null,[],null,null,\"P.tw-mx-auto.tw-text-content-secondary\"],null,[null,null,null,[],null,null,\"H2.tw-font-semibold.tw-text-content-primary,P.tw-mx-auto.tw-text-content-secondary\"]],[[null,1,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV>DIV.card.card-post.bg-post-single>DIV.wide-block.wide-comment-block>DIV.comment-block>DIV.card-comment>DIV.font-xss.text.text-dark.card-comment-content\"],[null,null,null,[],null,null,\"P\"],null,[null,null,null,[],null,null,\"H3,P\"]],[[null,8,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.wide-block.wide-comment-block>DIV.comment-block>DIV.card-comment>DIV.font-xss.text.text-dark.card-comment-content\"],[null,null,null,[],null,null,\"P\"],null,[null,null,null,[],null,null,\"P\"]],[[null,13,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV>DIV.card.card-post.bg-post-single>DIV.wide-block.wide-comment-block>DIV.comment-block>DIV.card-comment>DIV.font-xss.text.text-dark.card-comment-content>P\"],[null,null,null,[]]],[[null,null,null,[],null,null,\"DIV.see-more>DIV.full-see-more.d-none\"],[null,null,null,[],null,null,\"P\"],null,[null,null,null,[],null,null,\"P\"]],[[null,3,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV>DIV.card.card-post.bg-post-single>DIV.wide-block.wide-comment-block>DIV.comment-block>DIV.card-comment>DIV.font-xss.text.text-dark.card-comment-content>P\"],[null,null,null,[]]],[[null,null,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.wide-block.wide-comment-block>DIV.comment-block>DIV.card-comment>DIV.font-xss.text.text-dark.card-comment-content>P>FONT>SPAN\"],[null,null,null,[]]],[[null,1,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content>DIV.see-more>DIV.full-see-more.d-none\"],[null,null,null,[],null,null,\"P\"],null,[null,null,null,[],null,null,\"P\"]]]],[[null,[],null,\"9593528999\",[],[],[3667223351,2],null,null,null,[]],[null,[],null,\"9593528999\",[],[],[1256762199,2],null,null,null,[]],[null,[],null,\"9593528999\",[],[],[2113254418,2],null,null,null,[]],[null,[],null,\"9593528999\",[],[],[3932518507,2],null,null,null,[]],[null,[1,3,2],null,\"9593528999\",[],[],[0,2],null,null,[0.88999999,null,2,8,530,1],[]]],[null,[[1,\"1vp\",[[4,\"2vp\",\"2vp\"],[6,\"3vp\",\"3vp\"]],8,\"1vp\",0.30000001,[\"0.2vp\",\"0vp\",2]],[2,\"300px\",[[4,\"600px\",\"600px\"],[6,\"900px\",\"900px\"]],8,\"300px\",0.30000001,[\"60px\",\"0px\",2]]]],null,null,null,null,null,null,[null,null,null,null,null,null,null,null,null,null,null,0],null,null,null,null,[82508641],null,null,[1782789677464],null,null,null,null,null,null,null,null,null,[[\"Bật/tắt tính năng mở rộng thanh công cụ\",\"Bật/tắt chế độ hiển thị phần cài đặt về quyền riêng tư và pháp lý\",\"Đóng chế độ hiển thị phần cài đặt về quyền riêng tư và pháp lý\"]]]"
+        },
+        {
+          "name": "pusherTransportTLS",
+          "value": "{\"timestamp\":1782965267897,\"transport\":\"ws\",\"latency\":1757}"
+        },
+        {
+          "name": "auth.grades",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "origin": "https://www.google.com",
+      "localStorage": [
+        {
+          "name": "rc::h",
+          "value": "1782965292711"
         }
       ]
     }
