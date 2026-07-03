@@ -5,22 +5,28 @@
  *
  * Luồng:
  *   1.  Đăng nhập giáo viên
- *   2.  Vào /lop-12 → click card "Thi thử Tốt nghiệp Trung học Phổ thông"
- *       → click link "Vật lí" (href cố định)
+ *   2.  Nhảy thẳng vào trang "Thi thử Tốt nghiệp THPT" → tìm & click "Vật lí"
+ *       (tìm theo TEXT, không phụ thuộc href/ID vì đề hay đổi theo đợt)
  *   3.  Click Giao bài trên trang đề
  *   4.  Giao theo lớp → chọn tất cả Khối 12 → Tiếp tục
  *   5.  Thiết lập:
  *         • Thời gian làm bài : 50 phút
  *         • Giới hạn nộp sớm  :  0 phút
- *         • Giới hạn số lần làm bài: tick ô + nhập 100
- *   6.  Hoàn thành giao bài
- *   7.  Đăng xuất giáo viên
- *   8.  Đăng nhập học sinh
- *   9.  Tìm bài Vật lí trong trang lớp học → vào → Bắt đầu làm
- *   10. Verify câu hỏi load thành công
+ *         • Bỏ tick "Thời điểm mở đề"
+ *         • Bỏ tick "Lên lịch giao bài" và "Đặt hạn làm bài"
+ *   6.  Thiết lập nâng cao:
+ *         • Tick "Cho phép làm lại" → Giới hạn số lần làm bài = 100
+ *         • Thu bài ngay sau khi học sinh ra khỏi bài thi = 20 lần
+ *   7.  Áp dụng thiết lập cho các lớp khác
+ *   8.  Hoàn thành giao bài
+ *   9.  Đăng xuất giáo viên
+ *   10. Đăng nhập học sinh
+ *   11. Tìm bài Vật lí trong trang lớp học → vào → Bắt đầu làm
+ *   12. Làm bài đến hết qua lamBaiEngine
  *
  * Chạy:
- *   npx playwright test tests/e2e/giao-bai-lam-bai.e2e.spec.ts --headed
+ *   npx playwright test tests/e2e/Giao-bai-lam-bai.e2e.spec.ts --headed
+ *   npm run test:bai-tap          (chạy độc lập, bỏ qua dependency 'chromium')
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
@@ -32,18 +38,18 @@ import { lamBaiTaiBaiHoc } from '../../scripts/lamBaiEngine';
 const GIAO_VIEN = ACCOUNTS.school;       // role: school (giáo viên)
 const HOC_SINH  = ACCOUNTS.vip_student;  // role: student
 
-const BASE  = 'https://olm.vn';
-const LOP12 = `${BASE}/lop-12`;
+const BASE = 'https://olm.vn';
 
-// Href cố định lấy từ DOM thực tế
-const THI_THU_HREF = '/bg/thi-thu-tot-nghiep-trung-hoc-pho-thong';
-const VAT_LI_HREF  = '/chu-de/de-thi-thu-tot-nghiep-thpt-mon-vat-li-4637211975';
-// Href đề cụ thể "lần 2 môn Vật lí" — trang chứa nút Giao bài
-const DE_VAT_LI_LAN2_HREF = '/chu-de/de-thi-thu-tot-nghiep-thpt-mon-vat-li-2026-lan-2-4637226523';
+// Nhảy thẳng vào trang "Thi thử Tốt nghiệp THPT" — bỏ qua bước vào /lop-12
+// rồi click card, đỡ 1 điểm dễ vỡ khi OLM đổi layout trang /lop-12.
+const THI_THU_URL = `${BASE}/bg/thi-thu-tot-nghiep-trung-hoc-pho-thong`;
 
-const TEN_DE          = 'Đề thi thử tốt nghiệp THPT lần 2 môn Vật lí';
+const TEN_DE = 'Đề thi thử tốt nghiệp THPT lần 2 môn Vật lí';
 // Fragment nhận ra link bài tập trong trang học sinh
 // href thực tế: https://olm.vn/chu-de/100-4637226523?i_c=118679210598
+// LƯU Ý: fragment này (ID đề) có thể đổi theo từng đợt cập nhật đề của OLM.
+// Nếu bước [HS] Tìm và click bài Vật lí báo không tìm thấy, kiểm tra lại
+// ID thực tế trên trang bằng cách F12 sau khi giáo viên giao bài xong.
 const DE_URL_FRAGMENT = '4637226523';
 
 // ─── Utilities ───────────────────────────────────────────────────────────────
@@ -212,45 +218,66 @@ test.describe('Giao bài và làm bài — Vật lí THPT', () => {
     });
 
     // ─────────────────────────────────────────────────────────────────────────
-    // BƯỚC 2: Vào Lớp 12 → click card "Thi thử Tốt nghiệp THPT" → click "Vật lí"
+    // BƯỚC 2: Nhảy thẳng vào trang "Thi thử Tốt nghiệp THPT" → tìm Vật lí
+    //   Sau khi vào trang, nếu thấy nút "Giao bài" luôn thì đây đã là đề
+    //   cụ thể → dùng luôn. Nếu chưa, tìm tiếp link "... lần 2" trong trang
+    //   (trường hợp còn 1 bước trung gian "trang môn" trước khi vào đề).
     // ─────────────────────────────────────────────────────────────────────────
-    await test.step('[GV] Vào Lớp 12 → Thi thử THPT → Vật lí', async () => {
-      await page.goto(LOP12, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await test.step('[GV] Vào thẳng trang Thi thử THPT → tìm Vật lí', async () => {
+      await page.goto(THI_THU_URL, { waitUntil: 'domcontentloaded', timeout: 30_000 });
       await page.waitForTimeout(ms(1));
       await closePopups(page);
+      console.log(`✓ Đã vào trang Thi thử Tốt nghiệp THPT: ${page.url()}`);
 
-      // Bước 2a: Click card "Thi thử Tốt nghiệp Trung học Phổ thông"
-      const thiThuCard = page.locator(
-        `a[href='${THI_THU_HREF}'], a[href='${BASE}${THI_THU_HREF}']`
-      ).first();
-      await thiThuCard.waitFor({ state: 'visible', timeout: 10_000 });
-      await thiThuCard.scrollIntoViewIfNeeded();
-      await thiThuCard.click({ force: true });
-      await page.waitForLoadState('domcontentloaded', { timeout: 20_000 });
-      await page.waitForTimeout(ms(1));
-      await closePopups(page);
-      console.log('  ✓ Đã vào trang Thi thử Tốt nghiệp THPT');
+      // Tìm link "Vật lí" theo TEXT (không phụ thuộc href/ID vì hay đổi theo đợt đề).
+      // Regex chấp nhận cả "Vật lí" / "Vật Lí" (viết hoa/thường khác nhau).
+      const vatLiLink = page
+        .locator('a', { hasText: /Vật\s*[Ll]í/ })
+        .first();
 
-      // Bước 2b: Click link "Vật lí" (trang chủ đề môn) theo href cố định
-      const vatLiLink = page.locator(
-        `a[href='${VAT_LI_HREF}'], a[href='${BASE}${VAT_LI_HREF}']`
-      ).first();
+      // Cuộn tìm tối đa 8 lần nếu link nằm dưới fold
+      for (let i = 0; i < 8; i++) {
+        if (await vatLiLink.isVisible({ timeout: 600 }).catch(() => false)) break;
+        await page.evaluate(() => window.scrollBy(0, 400));
+        await page.waitForTimeout(300);
+      }
+
       await vatLiLink.waitFor({ state: 'visible', timeout: 10_000 });
       await vatLiLink.scrollIntoViewIfNeeded();
       await vatLiLink.click({ force: true });
       await page.waitForLoadState('domcontentloaded', { timeout: 20_000 });
       await page.waitForTimeout(ms(1));
       await closePopups(page);
-      console.log('  ✓ Đã vào trang chủ đề Vật lí');
+      console.log(`  ✓ Đã click vào Vật lí | URL: ${page.url()}`);
 
-      // Bước 2c: Click link đề cụ thể "Đề thi thử tốt nghiệp THPT lần 2 môn Vật lí"
-      //          Đây mới là trang chứa nút Giao bài
-      const deLan2Link = page.locator(
-        `a[href='${DE_VAT_LI_LAN2_HREF}'], a[href='${BASE}${DE_VAT_LI_LAN2_HREF}']`
-      ).first();
-      await deLan2Link.waitFor({ state: 'visible', timeout: 10_000 });
-      await deLan2Link.scrollIntoViewIfNeeded();
-      await deLan2Link.click({ force: true });
+      // ── Kiểm tra: đã tới đúng trang đề (có nút Giao bài) chưa? ────────────
+      const giaoBaiVisible = await page
+        .locator("button:has-text('Giao bài')").first()
+        .isVisible({ timeout: 4_000 })
+        .catch(() => false);
+
+      if (giaoBaiVisible) {
+        console.log('  ✓ Đây đã là trang đề cụ thể (có nút Giao bài) — không cần click thêm');
+        return;
+      }
+
+      // ── Chưa tới trang đề → đang ở trang môn Vật lí, tìm tiếp đề "lần 2" ──
+      const deLan2Link = page
+        .locator('a', { hasText: /lần\s*2/i })
+        .filter({ hasText: /Vật\s*[Ll]í/ })
+        .first();
+
+      // Nếu filter theo cả 2 điều kiện không match (vì text đề có thể tách
+      // "Vật lí" và "lần 2" ở 2 chỗ khác nhau trong DOM), fallback: chỉ tìm "lần 2"
+      const deLan2Fallback = page.locator('a', { hasText: /lần\s*2/i }).first();
+
+      const target = (await deLan2Link.isVisible({ timeout: 3_000 }).catch(() => false))
+        ? deLan2Link
+        : deLan2Fallback;
+
+      await target.waitFor({ state: 'visible', timeout: 10_000 });
+      await target.scrollIntoViewIfNeeded();
+      await target.click({ force: true });
       await page.waitForLoadState('networkidle', { timeout: 30_000 }).catch(() => {});
       await page.waitForTimeout(ms(1.5));
       await closePopups(page);
@@ -388,77 +415,104 @@ test.describe('Giao bài và làm bài — Vật lí THPT', () => {
     });
 
     // ─────────────────────────────────────────────────────────────────────────
-    // BƯỚC 8: Thiết lập nâng cao — giới hạn số lần làm = 100
+    // BƯỚC 7d: Bỏ tick "Lên lịch giao bài" và "Đặt hạn làm bài"
+    //   Bỏ 2 checkbox này sẽ ẩn luôn 2 ô ngày/giờ đi kèm — giao bài ngay,
+    //   không giới hạn hạn nộp.
     // ─────────────────────────────────────────────────────────────────────────
-    await test.step('[GV] Thiết lập nâng cao: giới hạn số lần làm = 100', async () => {
-      // Mở section "Thiết lập nâng cao" nếu còn đóng
-      const nangCaoHeader = page
-        .locator(
-          "button:has-text('Thiết lập nâng cao'), " +
-          "div[role='button']:has-text('Thiết lập nâng cao')"
-        )
+    await test.step('[GV] Bỏ tick Lên lịch giao bài & Đặt hạn làm bài', async () => {
+      const lenLichCb = page
+        .locator('label:has-text("Lên lịch giao bài") input[type="checkbox"]')
         .first();
-      if (await nangCaoHeader.isVisible({ timeout: 3_000 }).catch(() => false)) {
-        const quyTacVisible = await page
-          .locator("div:has-text('Quy tắc làm bài')").first()
-          .isVisible({ timeout: 1_000 })
-          .catch(() => false);
-        if (!quyTacVisible) {
-          await nangCaoHeader.click({ force: true });
-          await page.waitForTimeout(ms(0.8));
+      if (await lenLichCb.isVisible({ timeout: 4_000 }).catch(() => false)) {
+        if (await lenLichCb.isChecked().catch(() => false)) {
+          await lenLichCb.click({ force: true });
+          await page.waitForTimeout(300);
         }
+        await expect(lenLichCb).not.toBeChecked();
+        console.log('  ✓ Đã bỏ tick Lên lịch giao bài');
+      } else {
+        console.log('  ⚠ Không tìm thấy checkbox Lên lịch giao bài — bỏ qua');
       }
 
+      const datHanCb = page
+        .locator('label:has-text("Đặt hạn làm bài") input[type="checkbox"]')
+        .first();
+      if (await datHanCb.isVisible({ timeout: 4_000 }).catch(() => false)) {
+        if (await datHanCb.isChecked().catch(() => false)) {
+          await datHanCb.click({ force: true });
+          await page.waitForTimeout(300);
+        }
+        await expect(datHanCb).not.toBeChecked();
+        console.log('  ✓ Đã bỏ tick Đặt hạn làm bài');
+      } else {
+        console.log('  ⚠ Không tìm thấy checkbox Đặt hạn làm bài — bỏ qua');
+      }
+    });
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // BƯỚC 8: Thiết lập nâng cao
+    //   - Tick "Cho phép làm lại" → Giới hạn số lần làm bài = 100
+    //   - Thu bài ngay sau khi học sinh ra khỏi bài thi = 20 lần
+    // ─────────────────────────────────────────────────────────────────────────
+    await test.step('[GV] Thiết lập nâng cao: 100 lần làm + thu bài 20 lần thoát', async () => {
+      // "Thiết lập nâng cao" mặc định đã mở sẵn (không có nút để click mở nữa),
+      // chỉ cần scroll để các phần tử lọt vào viewport.
       const quyTacSec = page.locator('div:has-text("Quy tắc làm bài")').first();
+      await quyTacSec.scrollIntoViewIfNeeded();
+      await page.waitForTimeout(ms(0.5));
 
-      // Tick checkbox "Cho phép làm lại"
-      let chophepCb = page.locator(
-        "input[type='checkbox'] + span:has-text('Cho phép làm lại'), " +
-        "label:has-text('Cho phép làm lại') input[type='checkbox']"
-      ).first();
+      // ── 8a: Tick checkbox "Cho phép làm lại" ──────────────────────────────
+      const chophepCb = page
+        .locator('label:has-text("Cho phép làm lại") input[type="checkbox"]')
+        .first();
 
-      if (!(await chophepCb.isVisible({ timeout: 2_000 }).catch(() => false))) {
-        const allCbs = await quyTacSec.locator("input[type='checkbox']").all();
-        for (const cb of allCbs) {
-          const parent = await cb.locator('..').textContent().catch(() => '');
-          if (parent?.includes('Cho phép làm lại') || parent?.includes('Giới hạn số lần')) {
-            chophepCb = cb;
-            break;
-          }
-        }
+      await chophepCb.waitFor({ state: 'visible', timeout: 8_000 });
+      await chophepCb.scrollIntoViewIfNeeded();
+      if (!(await chophepCb.isChecked().catch(() => false))) {
+        await chophepCb.click({ force: true });
+        await page.waitForTimeout(400);
+        console.log('  ✓ Đã tick Cho phép làm lại');
       }
+      await expect(chophepCb).toBeChecked();
 
-      if (await chophepCb.isVisible({ timeout: 2_000 }).catch(() => false)) {
-        if (!(await chophepCb.isChecked().catch(() => false))) {
-          await chophepCb.click({ force: true });
-          await page.waitForTimeout(400);
-          console.log('  ✓ Đã tick Cho phép làm lại');
-        }
-      }
+      // ── 8b: Điền 100 vào "Giới hạn số lần làm bài" ────────────────────────
+      // Input chỉ thực sự dùng được sau khi đã tick "Cho phép làm lại" ở trên.
+      const lanInp = page
+        .locator('div:has-text("Giới hạn số lần làm bài") input[type="number"]')
+        .first();
 
-      // Điền 100 vào input giới hạn số lần
-      const lanInputSels = [
-        "input[type='number'][aria-label*='lần']",
-        "input[type='number'][placeholder*='lần']",
-      ];
-      let filledLan = false;
-      for (const sel of lanInputSels) {
-        filledLan = await fillNumber(page, sel, '100');
-        if (filledLan) break;
-      }
-      if (!filledLan) {
-        const lanInp = quyTacSec.locator("input[type='number'], input[type='text']").first();
-        if (await lanInp.isVisible({ timeout: 3_000 }).catch(() => false)) {
-          await lanInp.click({ clickCount: 3 });
-          await lanInp.fill('100');
-          filledLan = true;
-        }
-      }
+      await lanInp.waitFor({ state: 'visible', timeout: 5_000 });
+      await lanInp.click({ clickCount: 3 });
+      await lanInp.fill('100');
+      await expect(lanInp).toHaveValue('100');
+      console.log('  ✓ Giới hạn số lần làm bài: 100');
 
-      console.log(filledLan
-        ? '  ✓ Giới hạn số lần làm bài: 100'
-        : '  ⚠ Không tìm thấy input số lần — bỏ qua');
+      // ── 8c: Chọn "20" cho "Thu bài ngay sau khi học sinh ra khỏi bài thi" ─
+      const thuBaiSelect = page
+        .locator('div:has-text("Thu bài ngay sau khi học sinh ra khỏi bài thi") select')
+        .first();
+
+      await thuBaiSelect.waitFor({ state: 'visible', timeout: 5_000 });
+      await thuBaiSelect.scrollIntoViewIfNeeded();
+      await thuBaiSelect.selectOption('20');
+      await expect(thuBaiSelect).toHaveValue('20');
+      console.log('  ✓ Thu bài ngay sau khi HS ra khỏi bài thi: 20 lần');
+
       await page.waitForTimeout(500);
+    });
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // BƯỚC 8b: Áp dụng toàn bộ thiết lập hiện tại (Lớp 12A1) cho các lớp khác
+    //   Đặt SAU bước 8 (thiết lập nâng cao) để copy đầy đủ mọi thứ đã điền,
+    //   tránh trường hợp lớp khác thiếu thiết lập nâng cao.
+    // ─────────────────────────────────────────────────────────────────────────
+    await test.step('[GV] Áp dụng cho các lớp khác', async () => {
+      const apDungBtn = page.locator("button:has-text('Áp dụng cho các lớp khác')").first();
+      await apDungBtn.waitFor({ state: 'visible', timeout: 8_000 });
+      await apDungBtn.scrollIntoViewIfNeeded();
+      await apDungBtn.click({ force: true });
+      await page.waitForTimeout(ms(1));
+      console.log('  ✓ Đã áp dụng thiết lập cho các lớp khác');
     });
 
     // ─────────────────────────────────────────────────────────────────────────

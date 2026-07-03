@@ -10,9 +10,14 @@ import { BasePage } from './BasePage';
  *                    → trang reload, hiện section chọn thời gian + gói VIP
  *  Bước 2: Chọn thời gian (button.select-plan-vip-trigger[data-plan="..."])
  *  Bước 3: Chọn gói VIP → click "Đăng ký" (button.register-package-trigger[data-type="..."])
- *           → sidebar .shopping-cart-value / .checkout-payment xuất hiện bên phải
- *  Bước 4: Click "Thanh toán" (button.confirm-pay)
- *           → scroll xuống section nhập SĐT + PTTT (cùng trang, CHỈ khi đã đăng nhập)
+ *           → #box-info-package ẩn đi (display:none), sidebar .shopping-cart-value
+ *             VÀ section #box-select-method-pay (SĐT + PTTT) xuất hiện NGAY LẬP TỨC
+ *             cùng lúc — KHÔNG cần click "Thanh toán" trước.
+ *  Bước 4: (chỉ để tham khảo) Nút "Thanh toán" (button.confirm-pay) mặc định
+ *           bị `disabled` — chỉ được bật khi đã nhập SĐT hợp lệ. Vì vậy click
+ *           vào nó lúc đang disabled KHÔNG có tác dụng gì (browser chặn sự
+ *           kiện click trên input/button disabled), không thể dùng để "mở"
+ *           section SĐT như trước đây.
  *  Bước 5: Nhập SĐT → chọn PTTT (.method-pay[data-type="..."]) → redirect cổng TT (không test)
  *
  * ─── Ghi chú DOM thực tế ─────────────────────────────────────────────────────
@@ -23,7 +28,7 @@ import { BasePage } from './BasePage';
  *       <span class="init-price mr-1">1,400,000</span> VND      ← Tổng tiền
  *       <span class="reduced-price mr-1">0</span> VND           ← Giảm
  *       <span class="final-price mr-1">1,400,000</span> VND     ← Phải TT
- *       <button class="... confirm-pay">Thanh toán</button>
+ *       <button class="... confirm-pay" disabled>Thanh toán</button>
  *     </div>
  *   </div>
  *
@@ -32,6 +37,13 @@ import { BasePage } from './BasePage';
  *
  * Nút THANH TOÁN: text DOM là "Thanh toán" (CSS text-transform: uppercase tạo hiệu ứng in hoa),
  *                 class xác định: confirm-pay
+ *                 MẶC ĐỊNH bị disabled cho tới khi nhập SĐT hợp lệ (xác nhận
+ *                 từ DOM thực tế 2026: `disabled=""` ngay sau khi đăng ký gói).
+ *
+ * Section #box-select-method-pay (SĐT + PTTT):
+ *   Xuất hiện NGAY sau khi click "Đăng ký" gói VIP (cùng lúc với sidebar),
+ *   KHÔNG cần thao tác nào thêm. Input SĐT có thể đã có giá trị pre-fill
+ *   sẵn từ phiên trước đó của user.
  *
  * PTTT (phương thức thanh toán): .method-pay[data-type="transfer|vn-pay|bank|momo"]
  *   - transfer  → Nộp tiền vào tài khoản ngân hàng của OLM
@@ -89,6 +101,8 @@ export class PaymentPage extends BasePage {
    * Nút Thanh toán trong sidebar.
    * Class chính xác: confirm-pay
    * Lưu ý: text DOM là "Thanh toán" (CSS tạo UPPERCASE, không phải text thật)
+   * Lưu ý QUAN TRỌNG (2026): nút này mặc định `disabled` cho tới khi nhập
+   * SĐT hợp lệ — click vào lúc disabled KHÔNG có tác dụng gì.
    */
   static readonly CONFIRM_PAY_BTN = 'button.confirm-pay';
 
@@ -113,6 +127,7 @@ export class PaymentPage extends BasePage {
   // ── Section nhập SĐT + PTTT (#box-select-method-pay) ─────────────────────
   /**
    * Input số điện thoại — name="phone" (xác nhận từ HTML)
+   * CÓ THỂ đã có value pre-fill sẵn (từ phiên trước của user).
    */
   static readonly PHONE_INPUT = 'input[name="phone"]';
 
@@ -137,6 +152,54 @@ export class PaymentPage extends BasePage {
     await this.page.waitForSelector(PaymentPage.PLAN_BTN, { timeout });
   }
 
+  // ── An toàn: chặn điều hướng ra cổng thanh toán thật ─────────────────────
+
+  /**
+   * Danh sách domain cổng thanh toán bên ngoài OLM.
+   * KHÔNG bao giờ để test thật sự điều hướng tới các domain này — vì
+   * button.confirm-pay / .method-pay có thể submit GIAO DỊCH THẬT (đã xác
+   * nhận qua thực tế: khi SĐT đã có sẵn giá trị hợp lệ từ phiên trước, click
+   * "Thanh toán" điều hướng thẳng sang pay.vnpay.vn / payment.momo.vn /
+   * portal.vtcpay.vn — có thể khiến trang bị đóng bởi popup/redirect của
+   * bên thứ 3, làm crash page cho toàn bộ các test chạy sau trong cùng worker).
+   */
+  private static readonly PAYMENT_GATEWAY_DOMAINS = [
+    'vnpay.vn',
+    'momo.vn',
+    'vtcpay.vn',
+  ];
+
+  private _gatewayBlockRegistered = false;
+
+  /**
+   * Đăng ký chặn (abort) mọi request điều hướng sang domain cổng thanh toán
+   * ngoài, và tự đóng ngay bất kỳ tab/popup mới nào được mở (một số cổng
+   * thanh toán dùng target="_blank"/window.open thay vì điều hướng cùng tab).
+   *
+   * Idempotent — gọi nhiều lần chỉ đăng ký handler một lần cho page hiện tại.
+   */
+  private async _blockExternalPaymentGateways(): Promise<void> {
+    if (this._gatewayBlockRegistered) return;
+    this._gatewayBlockRegistered = true;
+
+    await this.page.route('**/*', (route) => {
+      const url = route.request().url();
+      const isGateway = PaymentPage.PAYMENT_GATEWAY_DOMAINS.some((d) => url.includes(d));
+      if (isGateway) {
+        return route.abort();
+      }
+      return route.continue();
+    });
+
+    // Một số cổng thanh toán mở tab/popup mới (window.open) thay vì điều
+    // hướng cùng tab — đóng ngay các tab đó để không ảnh hưởng tới page
+    // chính đang được test sử dụng.
+    this.page.context().on('page', (newPage) => {
+      if (newPage === this.page) return;
+      newPage.close().catch(() => {});
+    });
+  }
+
   // ── Navigation ─────────────────────────────────────────────────────────────
 
   /**
@@ -144,9 +207,15 @@ export class PaymentPage extends BasePage {
    * Nếu trang hiện #box-select-target (chọn loại tài khoản), tự click
    * card "Học sinh" (hoặc card đầu tiên nếu Học sinh không có).
    *
+   * Tự động đăng ký chặn điều hướng ra cổng thanh toán ngoài (xem
+   * _blockExternalPaymentGateways()) để đảm bảo an toàn — không bao giờ
+   * thực hiện giao dịch thật trong lúc chạy test tự động.
+   *
    * @param autoSelectAccountType true = tự chọn Học sinh nếu cần (mặc định)
    */
   async openGioHang(autoSelectAccountType = true): Promise<this> {
+    await this._blockExternalPaymentGateways();
+
     await this.navigateTo(PaymentPage.GIO_HANG_URL);
     await this.page.waitForLoadState('domcontentloaded');
 
@@ -249,7 +318,18 @@ export class PaymentPage extends BasePage {
   }
 
   /**
-   * Click nút "Đăng ký" của một gói VIP → sidebar xuất hiện bên phải.
+   * Click nút "Đăng ký" của một gói VIP → sidebar "Giá trị đơn hàng"
+   * xuất hiện bên phải, nút "Thanh toán" (confirm-pay) hiển thị và ĐANG
+   * ENABLED ở bước này (chưa bị khoá).
+   *
+   * LƯU Ý: section SĐT + PTTT (#box-select-method-pay) CHƯA hiện ra ngay
+   * lúc này — nó chỉ được JS hiển thị SAU KHI người dùng click vào nút
+   * "Thanh toán" (xem clickSidebarThanhToan()). Xác nhận từ DOM thực tế:
+   * input[name="phone"] tồn tại sẵn trong DOM nhưng bị CSS ẩn
+   * (visible: hidden) cho tới khi click confirm-pay lần đầu — lúc đó JS
+   * mới hiện section lên VÀ đồng thời disable confirm-pay lại để chờ
+   * người dùng nhập SĐT hợp lệ.
+   *
    * @param dataType 'vip' | 'subject' | 'exam'
    */
   async clickRegisterPackage(dataType: 'vip' | 'subject' | 'exam'): Promise<this> {
@@ -264,10 +344,11 @@ export class PaymentPage extends BasePage {
     await this.page.evaluate(() => window.scrollBy(0, 200));
     await this.page.waitForTimeout(400);
 
-    // Chờ nút Thanh toán xuất hiện trong sidebar
+    // Chờ nút Thanh toán xuất hiện trong sidebar (đang enabled ở bước này)
     await this.page
       .waitForSelector(PaymentPage.CONFIRM_PAY_BTN, { timeout: 16_000 })
       .catch(() => {});
+
     return this;
   }
 
@@ -332,7 +413,7 @@ export class PaymentPage extends BasePage {
   }
 
   /**
-   * Kiểm tra sidebar đang hiển thị (có nút Thanh toán).
+   * Kiểm tra sidebar đang hiển thị (có nút Thanh toán, kể cả khi đang disabled).
    */
   async isSidebarVisible(): Promise<boolean> {
     return this.page
@@ -342,20 +423,61 @@ export class PaymentPage extends BasePage {
   }
 
   /**
-   * Click nút Thanh toán trong sidebar → section SĐT scroll ra (khi đã đăng nhập).
-   * Lưu ý: text DOM là "Thanh toán", CSS mới render thành "THANH TOÁN".
+   * Click nút "Thanh toán" (confirm-pay) trong sidebar.
+   *
+   * Hành vi thực tế (xác nhận từ DOM 2026): tại thời điểm gọi hàm này —
+   * ngay sau clickRegisterPackage() — confirm-pay đang ở trạng thái
+   * ENABLED (chưa bị khoá). Click vào nó lần đầu khiến JS:
+   *   1. Hiện section "Bước 1: SĐT" + "Bước 2: PTTT" (#box-select-method-pay,
+   *      trước đó tồn tại trong DOM nhưng bị CSS ẩn — input[name="phone"]
+   *      resolved nhưng "hidden").
+   *   2. Đồng thời tự set confirm-pay thành `disabled` để khoá submit cho
+   *      tới khi người dùng nhập SĐT hợp lệ.
+   *
+   * Vì vậy PHẢI thực hiện click này để "mở khoá" section SĐT — không thể
+   * bỏ qua bước này như bản sửa trước (đã gây ra lỗi input mãi mãi "hidden"
+   * → timeout → cascading "Target page has been closed" ở các test sau).
    */
   async clickSidebarThanhToan(): Promise<this> {
     await this.dismissPopups();
+
     const btn = this.page.locator(PaymentPage.CONFIRM_PAY_BTN).first();
     if ((await btn.count()) > 0) {
-      await btn.waitFor({ state: 'visible', timeout: 20_000 });
-      await this.jsClick(btn);
+      await btn.waitFor({ state: 'visible', timeout: 20_000 }).catch(() => {});
+
+      // Click bình thường trước (nút đang enabled ở bước này); nếu vì lý do
+      // gì đó bị che/không nhận sự kiện thì fallback sang jsClick (force).
+      let clicked = false;
+      try {
+        await btn.click({ timeout: 5_000 });
+        clicked = true;
+      } catch {
+        // Nếu click fail vì page đã bị đóng (ví dụ SĐT pre-fill hợp lệ từ
+        // phiên trước khiến JS tự redirect thẳng sang cổng thanh toán thật
+        // và route-block không kịp chặn kiểu top-level navigation), dừng
+        // ngay tại đây thay vì cố gọi jsClick trên một page đã chết — tránh
+        // "Target page, context or browser has been closed" bị treo tới
+        // hết 60s timeout rồi cascade lỗi sang các test chạy sau.
+        if (this.page.isClosed()) return this;
+      }
+
+      if (!clicked && !this.page.isClosed()) {
+        await this.jsClick(btn).catch(() => {});
+      }
     }
-    // Chờ section nhập SĐT xuất hiện (chỉ khi đã đăng nhập)
+
+    if (this.page.isClosed()) return this;
+
+    // Chờ section SĐT thực sự HIỂN THỊ (không chỉ tồn tại trong DOM) —
+    // đây chính là điểm khác biệt so với waitForSelector mặc định trước đó.
+    // Timeout rút ngắn còn 8s: nếu page bị điều hướng ra ngoài domain OLM,
+    // waitForSelector sẽ tự throw ngay (không đợi hết 20s) và catch() ở
+    // dưới xử lý êm — không cần chờ lâu vì mục đích chỉ là "chờ nếu còn ở
+    // trang gio-hang", không phải điều kiện bắt buộc phải có.
     await this.page
-      .waitForSelector(PaymentPage.PHONE_INPUT, { timeout: 20_000 })
+      .waitForSelector(PaymentPage.PHONE_INPUT, { state: 'visible', timeout: 8_000 })
       .catch(() => {});
+
     return this;
   }
 

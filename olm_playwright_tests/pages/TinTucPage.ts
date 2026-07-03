@@ -1,3 +1,4 @@
+import { ElementHandle } from '@playwright/test';
 import { HOC_TAP_URL, THONG_BAO_NEWS_URL, TIN_TUC_URL } from '../config/config';
 import { BasePage } from './BasePage';
 
@@ -18,8 +19,17 @@ export class TinTucPage extends BasePage {
   static readonly HERO_IMG          = 'div.mb-3.shadow-sm.p-3 img[width="275"]';
 
   // ── Section articles (/thongtin và /chu-de-bai-viet/*) ───────────────────
-  // Các bài viết trong section: div.shadow-sm.p-3 > div.media.mb-3
-  static readonly SECTION_ARTICLE   = 'div.shadow-sm.p-3 div.media.mb-3';
+  // Các bài viết trong section thường là div.shadow-sm.p-3 > div.media.mb-3,
+  // nhưng một số section (vd: "Thông báo") hiện render dạng danh sách
+  // li.list-group-item thay vì card div.media.mb-3. Selector gộp cả hai
+  // dạng để không bỏ sót bài viết khi site thay đổi layout theo section.
+  static readonly SECTION_ARTICLE   =
+    'div.shadow-sm.p-3 div.media.mb-3, div.shadow-sm.p-3 li.list-group-item';
+
+  // Gộp cả hai dạng bài viết bên trong 1 section (card hoặc list item), dùng
+  // cho getArticlesInSection / getFirstArticleInSection sau khi đã khoanh
+  // vùng sectionBox.
+  static readonly SECTION_ARTICLE_ANY = 'div.media.mb-3, li.list-group-item';
 
   // Đếm chung khi chưa biết trang nào
   static readonly ANY_ARTICLE_MEDIA = 'div.media.mb-2, div.media.mb-3';
@@ -191,15 +201,27 @@ export class TinTucPage extends BasePage {
   /**
    * Lấy bài viết đầu tiên trong một section theo tên tiêu đề section.
    *
-   * Cấu trúc DOM thực tế:
-   *   <div>
-   *     <h2 class="my-3"><a title="Section Name">...</a></h2>
-   *   </div>
+   * Cấu trúc DOM thực tế (đã xác nhận qua HTML thật của section "Thông báo"):
+   *   <div>...<h2 class="my-3"><a title="Section Name">...</a></h2>...</div>
    *   <div class="shadow-sm p-3 mb-4 bg-white rounded">
+   *     <div class="media mb-3">
+   *       <a class="olm-text-link" title="..." href="...">...</a>
+   *     </div>
    *     <div class="media mb-3">...</div>
+   *     ...
    *   </div>
    *
-   * Dùng XPath lên ancestor div.my-3 rồi sang sibling div.shadow-sm.
+   * Container bài viết ("div.shadow-sm.p-3...") luôn xuất hiện NGAY SAU
+   * heading trong document order, nhưng KHÔNG chắc là một
+   * following-sibling trực tiếp của ancestor chứa h2 (tuỳ độ sâu wrapper
+   * thực tế trên từng section có thể khác nhau). Vì vậy dùng trục XPath
+   * `following::` (thay vì `following-sibling::`) để lấy div.shadow-sm.p-3
+   * gần nhất theo sau heading, bất kể nó nằm ở cấp lồng nào — tránh bug cũ
+   * khiến các section như "Thông báo" bị coi là rỗng dù có bài viết thật.
+   *
+   * SECTION_ARTICLE_ANY vẫn gộp thêm `li.list-group-item` như một fallback
+   * phòng trường hợp có section khác dùng dạng danh sách gọn; card
+   * `div.media.mb-3` vẫn là dạng chính và được ưu tiên khớp trước.
    */
   async getFirstArticleInSection(
     sectionTitle: string
@@ -213,10 +235,10 @@ export class TinTucPage extends BasePage {
 
       // Lên div chứa h2.my-3, rồi lấy div.shadow-sm kế tiếp
       const sectionBox = sectionH2Link.locator(
-        'xpath=ancestor::div[contains(@class,"my-3")]/following-sibling::div[contains(@class,"shadow-sm")][1]'
+        'xpath=following::div[contains(@class,"shadow-sm") and contains(@class,"p-3")][1]'
       );
 
-      const firstMedia = sectionBox.locator('div.media.mb-3').first();
+      const firstMedia = sectionBox.locator(TinTucPage.SECTION_ARTICLE_ANY).first();
       const link = firstMedia.locator('a.olm-text-link').first();
 
       const title =
@@ -245,10 +267,10 @@ export class TinTucPage extends BasePage {
         .first();
 
       const sectionBox = sectionH2Link.locator(
-        'xpath=ancestor::div[contains(@class,"my-3")]/following-sibling::div[contains(@class,"shadow-sm")][1]'
+        'xpath=following::div[contains(@class,"shadow-sm") and contains(@class,"p-3")][1]'
       );
 
-      const medias = await sectionBox.locator('div.media.mb-3').all();
+      const medias = await sectionBox.locator(TinTucPage.SECTION_ARTICLE_ANY).all();
       const results: Array<{ title: string; url: string }> = [];
 
       for (const media of medias) {
@@ -273,6 +295,69 @@ export class TinTucPage extends BasePage {
    * Click bài viết đầu tiên trên trang.
    * Bắt cả link /bai-viet/ (thongtin) lẫn /tin-tuc/ (hoc-tap).
    */
+  /**
+   * Kiểm tra href có phải link bài viết THẬT hay không.
+   *
+   * Selector ARTICLE_LINK dùng chung class "olm-text-link" — class này bị
+   * tái sử dụng cho cả link chuyên mục gốc trong menu điều hướng
+   * (VD: href="/tin-tuc/", href="/thongtin") lẫn các banner/quảng cáo dùng
+   * href="#" (VD: banner "XEM NGAY!!" cố định đầu trang). Nếu vô tình click
+   * nhầm các link này, kết quả điều hướng sẽ là "/thongtin#" hoặc thậm chí
+   * về trang chủ — chứ không phải trang chi tiết bài viết.
+   *
+   * Mọi URL bài viết thật của OLM đều có dạng "/bai-viet/<slug>-<id số>"
+   * hoặc "/tin-tuc/<slug>-<id số>" (id số ở cuối), khác hẳn link chuyên
+   * mục gốc (không có slug + id). Dùng đặc điểm này để lọc.
+   */
+  private isRealArticleHref(href: string | null): href is string {
+    return !!href && /\/(bai-viet|tin-tuc)\/[^/?#]+-\d+/.test(href);
+  }
+
+  /**
+   * Click an toàn vào 1 link bài viết — ưu tiên gọi thẳng DOM API
+   * `element.click()` qua JS thay vì click theo toạ độ.
+   *
+   * jsClick() (dùng chung ở BasePage) click({force:true}) TRƯỚC — force chỉ
+   * bỏ qua kiểm tra actionability của Playwright, KHÔNG bỏ qua việc trình
+   * duyệt click theo toạ độ thật. Nếu có banner/quảng cáo cố định đè lên
+   * đúng vị trí link (rất hay gặp ở /thongtin), trình duyệt sẽ gửi sự kiện
+   * click cho banner đó thay vì link bài viết — mà click({force:true})
+   * KHÔNG throw lỗi trong trường hợp này, nên nhánh dự phòng gọi
+   * `el.click()` bằng JS (mới thực sự click đúng phần tử mục tiêu, không
+   * phụ thuộc toạ độ/lớp phủ) sẽ không bao giờ chạy tới.
+   *
+   * Ở đây đảo ngược thứ tự: gọi `element.click()` bằng JS làm ưu tiên vì nó
+   * kích hoạt thẳng handler của chính thẻ <a>, không bị banner che chắn;
+   * chỉ fallback sang click theo toạ độ nếu không lấy được element handle.
+   */
+  /**
+   * Click an toàn vào 1 link bài viết — nhận ElementHandle (tham chiếu DOM
+   * CỐ ĐỊNH) thay vì Locator.
+   *
+   * LƯU Ý QUAN TRỌNG (bug đã gặp): Locator lấy từ `.all()` thực chất là
+   * "nth-match(selector, i)" — mỗi lần gọi hành động trên nó (vd:
+   * `elementHandle()`, `click()`), Playwright RE-QUERY lại toàn bộ selector
+   * TẠI THỜI ĐIỂM ĐÓ rồi mới lấy phần tử thứ i. Nếu ta validate href ở một
+   * Locator từ `.all()` rồi mới click SAU MỘT NHỊP (scrollIntoView, await…),
+   * mà DOM đã thay đổi trong lúc đó (banner/quảng cáo lazy-load chèn thêm
+   * phần tử `.olm-text-link` mới phía trước, khiến thứ tự dịch chuyển), thì
+   * lúc click, index i có thể trỏ sang MỘT PHẦN TỬ KHÁC hẳn — không còn là
+   * phần tử ta đã kiểm tra href hợp lệ ban đầu. Đây là nguyên nhân khiến
+   * việc lọc href ở `clickFirstArticle()` không ăn thua nếu vẫn truyền
+   * Locator xuống đây.
+   *
+   * ElementHandle thì khác: nó là tham chiếu tới ĐÚNG node DOM tại thời
+   * điểm lấy handle, không re-query theo index nữa — dù trang có chèn thêm
+   * phần tử khác, node ta đang cầm vẫn là node đó (trừ khi chính nó bị gỡ
+   * khỏi DOM). Click thẳng qua `element.click()` bằng JS trên handle này
+   * đảm bảo click đúng phần tử đã validate, không bị lệch do overlay hay
+   * do DOM dịch chuyển.
+   */
+  private async clickArticleLink(handle: ElementHandle<HTMLElement>): Promise<void> {
+    await handle.scrollIntoViewIfNeeded().catch(() => {});
+    await this.page.evaluate((el) => el.click(), handle);
+  }
+
   async clickFirstArticle(): Promise<this> {
     try {
       await this.page
@@ -281,22 +366,43 @@ export class TinTucPage extends BasePage {
         .waitFor({ state: 'visible', timeout: 10_000 });
 
       const links = await this.page.locator(TinTucPage.ARTICLE_LINK).all();
-      if (links.length > 0) {
-        const href = await links[0].getAttribute('href');
-        await this.jsClick(links[0]);
 
-        // QUAN TRỌNG: jsClick() chỉ thực hiện click, KHÔNG đợi điều hướng.
+      // Chọn link ĐẦU TIÊN trong danh sách khớp thực sự là bài viết (có
+      // slug + id số ở cuối href) — bỏ qua link chuyên mục gốc/banner dùng
+      // chung class "olm-text-link" nhưng không dẫn tới bài viết cụ thể.
+      //
+      // QUAN TRỌNG: lấy elementHandle() NGAY khi vừa xác nhận href hợp lệ,
+      // trong cùng một vòng lặp — không giữ lại Locator để dùng sau, vì
+      // Locator từ .all() sẽ re-query theo index và có thể trỏ nhầm sang
+      // phần tử khác nếu DOM đổi giữa lúc validate và lúc click (xem giải
+      // thích chi tiết ở clickArticleLink()).
+      let targetHandle: ElementHandle<HTMLElement> | null = null;
+      let targetHref: string | null = null;
+      for (const link of links) {
+        const href = await link.getAttribute('href');
+        if (this.isRealArticleHref(href)) {
+          targetHandle = (await link.elementHandle().catch(() => null)) as ElementHandle<HTMLElement> | null;
+          if (targetHandle) {
+            targetHref = href;
+            break;
+          }
+        }
+      }
+
+      if (targetHandle && targetHref) {
+        const href = targetHref;
+        await this.clickArticleLink(targetHandle);
+
+        // QUAN TRỌNG: click chỉ thực hiện thao tác, KHÔNG đợi điều hướng.
         // Nếu gọi getArticleTitle() ngay sau đó, trang có thể vẫn còn ở
         // danh sách cũ (chưa có <h1>) → trả về '' dù bài viết click hoàn
         // toàn hợp lệ. Đợi URL đổi sang trang bài viết (hoặc tối thiểu đợi
         // load state) trước khi trả về.
-        if (href) {
-          await this.page
-            .waitForURL((url) => url.toString().includes(href.split('?')[0]), {
-              timeout: 15_000,
-            })
-            .catch(() => {});
-        }
+        await this.page
+          .waitForURL((url) => url.toString().includes(href.split('?')[0]), {
+            timeout: 15_000,
+          })
+          .catch(() => {});
         await this.page.waitForLoadState('domcontentloaded', { timeout: 15_000 }).catch(() => {});
         await this.dismissPopups();
         // Trang danh sách trước đó đã scrollTo(0, 300) — nếu là SPA điều

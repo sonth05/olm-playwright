@@ -365,16 +365,12 @@ test.describe('Payment @payment @regression', () => {
       expect(typeof price).toBe('string');
     });
 
-    test('[Unhappy] Thanh toán không navigate sang trang success khi bỏ qua chọn gói', async ({ authenticatedPage }) => {
-      const pp = new PaymentPage(authenticatedPage);
-      await pp.openGioHang();
-
-      // Click Thanh toán mà không click Đăng ký gói trước
-      await pp.clickSidebarThanhToan();
-      await authenticatedPage.waitForTimeout(1_000);
-
-      expect(authenticatedPage.url()).not.toContain('thanh-toan-thanh-cong');
-    });
+    // Đã xoá test "[Unhappy] Thanh toán không navigate sang trang success khi
+    // bỏ qua chọn gói" — kịch bản này không hợp lệ trong thực tế: sidebar
+    // "Giá trị đơn hàng" và nút Thanh toán (confirm-pay) CHỈ xuất hiện SAU
+    // KHI người dùng bấm "Đăng ký" một gói VIP. Nếu chưa đăng ký gói nào thì
+    // không có nút "Thanh toán" nào để bấm, nên test không mô phỏng đúng
+    // luồng thật của trang /gio-hang.
 
   });
 
