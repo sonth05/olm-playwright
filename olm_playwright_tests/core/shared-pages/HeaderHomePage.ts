@@ -1,0 +1,1 @@
+export { HeaderHomePage } from '../../pages/HeaderHomePage';

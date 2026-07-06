@@ -1,0 +1,1 @@
+export { LopPage } from '../../../pages/LopPage';

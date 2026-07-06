@@ -1,0 +1,1 @@
+export { CoursePage, type LessonInfo } from '../../../pages/CoursePage';

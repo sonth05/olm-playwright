@@ -1,0 +1,1 @@
+export { ThuVienSoPage } from '../../../pages/ThuVienSoPage';
