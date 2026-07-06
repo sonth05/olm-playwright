@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { HoiDapPage } from '../../pages/HoiDapPage';
+import { BASE_URL } from '../../config/config';
 
 test.describe('Hỏi đáp Regression @hoi_dap @regression', () => {
   // ── Happy path ────────────────────────────────────────────────────────────
@@ -149,7 +150,7 @@ test.describe('Hỏi đáp Regression @hoi_dap @regression', () => {
     // Sau khi load trang sau vẫn có câu hỏi
     expect(await hoiDapPage.getQuestionCount()).toBeGreaterThan(0);
     // URL phải thay đổi (có cursor)
-    expect(hoiDapPage.getCurrentUrl()).not.toBe('https://olm.vn/hoi-dap');
+    expect(hoiDapPage.getCurrentUrl()).not.toBe(`${BASE_URL}/hoi-dap`);
     expect(countBefore).toBeGreaterThan(0);
   });
 

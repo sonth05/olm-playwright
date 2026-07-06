@@ -12,8 +12,9 @@
 import { chromium, type Browser, type BrowserContext, type Page } from 'playwright';
 import { USERNAME, PASSWORD } from '../config/testData';
 import { sleep, dongModal, timElement, jsClick } from './lamBaiEngine';
+import { BASE_URL } from '../config/config';
 
-export const BASE = 'https://olm.vn';
+export const BASE = BASE_URL;
 
 // ─── Khởi động browser ───────────────────────────────────────────────────────
 export async function khoiBrowser(headless = false): Promise<{ browser: Browser; context: BrowserContext; page: Page }> {

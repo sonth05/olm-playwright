@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { HeaderCoursePage } from '../../pages/HeaderCoursePage';
+import { BASE_URL } from '../../config/config';
 
 /**
  * Test suite: Header trang khóa học olm.vn
@@ -29,7 +30,7 @@ test.describe('Header Trang Khóa Học @header-course @regression', () => {
 
     await cp.clickLogo();
     const url = cp.getCurrentUrl().replace(/\/$/, '');
-    expect(['https://olm.vn', 'https://olm.vn/index']).toContain(url);
+    expect([BASE_URL, `${BASE_URL}/index`]).toContain(url);
   });
 
   test('[Happy] Search bar hiển thị', async ({ page }) => {

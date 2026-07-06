@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import testUsers from '../data/test-users.json';
-import { DATA_DIR } from './config.js';
+import { DATA_DIR, BASE_URL } from './config.js';
 
 export interface AccountInfo {
   username: string;
@@ -80,18 +80,18 @@ export const LOGIN_TEST_CASES: Record<string, LoginCredentials> = {
 };
 
 export const SAMPLE_LESSON_URLS: Record<number, string> = {
-  1: 'https://olm.vn/chu-de/toan-lop-1',
-  2: 'https://olm.vn/chu-de/toan-lop-2',
+  1: `${BASE_URL}/chu-de/toan-lop-1`,
+  2: `${BASE_URL}/chu-de/toan-lop-2`,
 };
 
 export const SAMPLE_COURSE_URLS: Record<number, string> = {
-  1: 'https://olm.vn/lop-1',
-  2: 'https://olm.vn/lop-2',
+  1: `${BASE_URL}/lop-1`,
+  2: `${BASE_URL}/lop-2`,
 };
 
 export const INVALID_URLS = {
-  lesson_not_found: 'https://olm.vn/chu-de/khong-ton-tai-12345',
-  course_not_found: 'https://olm.vn/lop-99',
+  lesson_not_found: `${BASE_URL}/chu-de/khong-ton-tai-12345`,
+  course_not_found: `${BASE_URL}/lop-99`,
 };
 
 export const REGISTER_DATA: RegisterFormData = {

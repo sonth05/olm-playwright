@@ -1,4 +1,4 @@
-import { KIDS_URL } from '../config/config';
+import { KIDS_URL, BASE_URL } from '../config/config';
 import { BasePage } from './BasePage';
 
 /**
@@ -21,7 +21,7 @@ export class KidsPage extends BasePage {
   // =========================================================================
 
   // ── Header ─────────────────────────────────────────────────────────────
-  static readonly HEADER_LOGO          = 'a[href="https://olm.vn/kids"] img';
+  static readonly HEADER_LOGO          = `a[href="https://olm.vn/kids"] img, a[href="${BASE_URL}/kids"] img`;
   static readonly USER_MENU_TRIGGER    = '.kids-popup-menu-trigger';
   static readonly USER_MENU_POPUP      = '.kids-popup-menu';
   static readonly USER_MENU_NAME       = '.kids-popup-menu span.tw-text-20.tw-font-semibold';
@@ -51,7 +51,7 @@ export class KidsPage extends BasePage {
 
   // ── Footer ─────────────────────────────────────────────────────────────
   static readonly FOOTER               = 'footer';
-  static readonly FOOTER_LOGO          = 'footer a[href="https://olm.vn/kids"] img';
+  static readonly FOOTER_LOGO          = `footer a[href="https://olm.vn/kids"] img, footer a[href="${BASE_URL}/kids"] img`;
   static readonly FOOTER_LINK_ABOUT    = 'footer a[href="/gioi-thieu"]';
   static readonly FOOTER_LINK_CONTACT  = 'footer a[href="/gioi-thieu/lien-he"]';
   static readonly FOOTER_LINK_GUIDE    = 'footer a[href="/bg/hotroolm"]';

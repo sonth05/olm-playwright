@@ -15,11 +15,21 @@
     "report": "playwright show-report reports/html",
     "thi-thu": "tsx scripts/thiThuThptSinhHoc.ts",
     "toan9": "tsx scripts/toan9Bai2PhuongPhapThe.ts",
-    "auto-learning": "tsx scripts/auto-learning.ts"
+    "auto-learning": "tsx scripts/auto-learning.ts",
+    "test:dev": "cross-env ENV_FILE=.env.dev playwright test",
+    "test:dev:fast": "cross-env ENV_FILE=.env.dev playwright test --project=chromium",
+    "test:dev:bai-tap": "cross-env ENV_FILE=.env.dev playwright test --project=bai-tap --no-deps",
+    "test:dev:smoke": "cross-env ENV_FILE=.env.dev playwright test tests/smoke",
+    "test:dev:regression": "cross-env ENV_FILE=.env.dev playwright test tests/regression",
+    "test:dev:e2e": "cross-env ENV_FILE=.env.dev playwright test tests/e2e",
+    "test:dev:api": "cross-env ENV_FILE=.env.dev playwright test tests/api",
+    "test:dev:headed": "cross-env ENV_FILE=.env.dev playwright test --headed",
+    "test:dev:login": "cross-env ENV_FILE=.env.dev playwright test tests/smoke/login.smoke.spec.ts tests/regression/login.regression.spec.ts"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.0",
     "@types/node": "^22.19.21",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",
     "playwright": "^1.61.0",
     "tsx": "^4.19.2",

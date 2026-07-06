@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import { CoursePage } from '../../pages/CoursePage';
 import { LessonPage } from '../../pages/LessonPage';
 import { SAMPLE_COURSE_URLS, SAMPLE_LESSON_URLS } from '../../config/testData';
+import { BASE_URL } from '../../config/config';
 
 test.describe('Lesson interaction @navigation @regression @e2e', () => {
   test('Lấy danh sách môn học (lop-1)', async ({ page }) => {
@@ -24,7 +25,7 @@ test.describe('Lesson interaction @navigation @regression @e2e', () => {
     // Vào trang chi tiết môn đầu tiên để lấy bài học
     const firstCourseUrl = courses[0].url.startsWith('http')
       ? courses[0].url
-      : `https://olm.vn${courses[0].url}`;
+      : `${BASE_URL}${courses[0].url}`;
     await coursePage.open(firstCourseUrl);
     const lessons = await coursePage.getLessons();
     // Trang môn học có thể có hoặc không có lesson list — không crash là đủ

@@ -30,7 +30,7 @@ test.describe('Kids /kids @kids @regression', () => {
 
   // ── Header / user menu ──────────────────────────────────────────────────
 
-  test('[Happy] Mở user menu hiển thị popup với tên người dùng', async ({ authenticatedPage }) => {
+  test('[Happyr] Mở use menu hiển thị popup với tên người dùng', async ({ authenticatedPage }) => {
     const p = new KidsPage(authenticatedPage);
     await p.open();
     await p.openUserMenu();

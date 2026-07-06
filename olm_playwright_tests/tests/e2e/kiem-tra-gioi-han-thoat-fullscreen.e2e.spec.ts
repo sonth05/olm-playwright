@@ -80,11 +80,12 @@
 
 import { test, expect, type Page } from '@playwright/test';
 import { ACCOUNTS } from '../../config/testData';
+import { BASE_URL } from '../../config/config';
 
 // ─── Tài khoản ────────────────────────────────────────────────────────────────
 const HOC_SINH = ACCOUNTS.vip_student;
 
-const BASE = 'https://olm.vn';
+const BASE = BASE_URL;
 
 // Fragment ID đề — đồng bộ với DE_URL_FRAGMENT trong Giao-bai-lam-bai.e2e.spec.ts.
 // LƯU Ý: ID này có thể đổi theo từng đợt cập nhật đề của OLM.

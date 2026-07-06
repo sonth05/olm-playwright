@@ -1,7 +1,13 @@
 import dotenv from 'dotenv';
 import path from 'path';
 
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
+// ─── Chọn file env theo môi trường ──────────────────────────────────────────
+// Mặc định vẫn đọc '.env' (bản chính olm.vn) để không phá vỡ luồng cũ.
+// Chạy nhắm tới dev.olm.vn bằng cách set biến ENV_FILE trước khi chạy test, ví dụ:
+//   ENV_FILE=.env.dev npx playwright test
+// (đã có sẵn script "test:dev*" tương ứng trong package.json)
+const envFile = process.env.ENV_FILE ?? '.env';
+dotenv.config({ path: path.resolve(__dirname, '..', envFile) });
 
 const env = (key: string, fallback: string): string => process.env[key] ?? fallback;
 const envNum = (key: string, fallback: number): number => {

@@ -1,9 +1,10 @@
 /** Script tự động làm bài luyện tập Toán 9 - Phương pháp thế */
 import { chromium, type Locator, type Page } from 'playwright';
 import { PASSWORD, USERNAME } from '../config/testData';
+import { BASE_URL } from '../config/config';
 
 const LUYEN_TAP_URL =
-  'https://olm.vn/chu-de/giai-he-hai-phuong-trinh-bang-phuong-phap-the-2377747568';
+  `${BASE_URL}/chu-de/giai-he-hai-phuong-trinh-bang-phuong-phap-the-2377747568`;
 const TIMEOUT = 15_000;
 const PAGE_WAIT = 2;
 
@@ -32,7 +33,7 @@ async function timElement(page: Page, selectors: string[], timeout = 5000): Prom
 
 async function dangNhap(page: Page): Promise<void> {
   console.log('[1] Đăng nhập OLM...');
-  await page.goto('https://olm.vn/dangnhap');
+  await page.goto(`${BASE_URL}/dangnhap`);
   await sleep(PAGE_WAIT);
   await page.waitForSelector("input[type='password']", { timeout: TIMEOUT });
 

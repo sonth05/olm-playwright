@@ -8,6 +8,7 @@
 
 import { test, expect } from '@playwright/test';
 import { ThuVienSoPage } from '../../pages/ThuVienSoPage';
+import { BASE_URL } from '../../config/config';
 
 // ════════════════════════════════════════════════════════════════
 // 1. TRANG CHỦ THƯ VIỆN SỐ
@@ -760,7 +761,7 @@ test.describe('9. Unhappy paths @library @regression', () => {
   });
 
   test('[TVS-UH-005] URL trực tiếp /thu-vien-so/khong-ton-tai không throw exception', async ({ page }) => {
-    await page.goto('https://olm.vn/thu-vien-so/khong-ton-tai', {
+    await page.goto(`${BASE_URL}/thu-vien-so/khong-ton-tai`, {
       waitUntil: 'domcontentloaded',
       timeout: 20000,
     });

@@ -33,12 +33,13 @@
 import { test, expect, type Page } from '@playwright/test';
 import { ACCOUNTS } from '../../config/testData';
 import { lamBaiTaiBaiHoc } from '../../scripts/lamBaiEngine';
+import { BASE_URL } from '../../config/config';
 
 // ─── Tài khoản ────────────────────────────────────────────────────────────────
 const GIAO_VIEN = ACCOUNTS.school;       // role: school (giáo viên)
 const HOC_SINH  = ACCOUNTS.vip_student;  // role: student
 
-const BASE = 'https://olm.vn';
+const BASE = BASE_URL;
 
 // Nhảy thẳng vào trang "Thi thử Tốt nghiệp THPT" — bỏ qua bước vào /lop-12
 // rồi click card, đỡ 1 điểm dễ vỡ khi OLM đổi layout trang /lop-12.

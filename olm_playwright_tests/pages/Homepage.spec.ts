@@ -266,7 +266,9 @@ test.describe('E. Learning Library (Kho học liệu số)', () => {
   test('E06 – Desktop: section THCS có link lớp 6-9', async ({ authenticatedPage: page }) => {
     await getHomePage(page);
     for (let grade = 6; grade <= 9; grade++) {
-      const link = page.locator(`a[href="https://olm.vn/lop-${grade}"]`).first();
+      const link = page
+        .locator(`a[href="https://olm.vn/lop-${grade}"], a[href="${BASE_URL}/lop-${grade}"]`)
+        .first();
       await expect(link).toHaveCount(1);
     }
   });
@@ -274,7 +276,9 @@ test.describe('E. Learning Library (Kho học liệu số)', () => {
   test('E07 – Desktop: section THPT có link lớp 10-12', async ({ authenticatedPage: page }) => {
     await getHomePage(page);
     for (let grade = 10; grade <= 12; grade++) {
-      const link = page.locator(`a[href="https://olm.vn/lop-${grade}"]`).first();
+      const link = page
+        .locator(`a[href="https://olm.vn/lop-${grade}"], a[href="${BASE_URL}/lop-${grade}"]`)
+        .first();
       await expect(link).toHaveCount(1);
     }
   });

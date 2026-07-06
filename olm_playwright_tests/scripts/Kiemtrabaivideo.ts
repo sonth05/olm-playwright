@@ -41,11 +41,11 @@
  * ─────────────────────────────────────────────────────────────────────────────
  */
 import { type Locator, type Page } from 'playwright';
-import { khoiBrowser, dangNhap } from './olmUtils';
+import { khoiBrowser, dangNhap, BASE } from './olmUtils';
 import { sleep, jsClick, timElement, dongModal } from './lamBaiEngine';
 
-const KIDS_URL = 'https://olm.vn/kids';
-const CHUONG_TRINH_5_TUOI_URL = 'https://olm.vn/bg/chuong-trinh-hoc-cho-tre-5-tuoi';
+const KIDS_URL = `${BASE}/kids`;
+const CHUONG_TRINH_5_TUOI_URL = `${BASE}/bg/chuong-trinh-hoc-cho-tre-5-tuoi`;
 
 const MAX_SEEK_LOOPS = 30;   // giới hạn vòng lặp an toàn (số mốc câu hỏi tối đa xử lý trong 1 bài)
 const SEEK_WAIT_SEC = 1.5;   // đợi sau khi seek để player kịp phản ứng (lùi lại nếu có mốc)
