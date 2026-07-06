@@ -717,7 +717,7 @@ async function khoiDongThiThu(page: Page): Promise<void> {
   }
 }
 
-async function khoiDongLuyenTap(page: Page): Promise<void> {
+export async function khoiDongLuyenTap(page: Page): Promise<void> {
   const btnRetry = await timElement(page, [
     "xpath=//button[contains(normalize-space(text()),'Luyện tập lại')]",
     "xpath=//a[contains(normalize-space(text()),'Luyện tập lại')]",
@@ -788,6 +788,43 @@ async function loopThiThu(page: Page): Promise<void> {
  * Loop luyện tập.
  * Thứ tự xử lý: DungSai → Dropdown → KeoTha → TuLuan → TracNghiem
  */
+/**
+ * Loop luyện tập — giới hạn số câu (dùng regression test, không chạy hết bài).
+ */
+export async function loopLuyenTapPartial(page: Page, maxCau = 3): Promise<void> {
+  let cauSo = 0;
+  let vongRong = 0;
+
+  while (cauSo < maxCau) {
+    await sleep(0.6);
+
+    if (await isHetLuot(page)) break;
+    if (await xuLyTiepTuc(page)) {
+      vongRong = 0;
+      continue;
+    }
+
+    cauSo++;
+
+    const clicked =
+      (await xuLyDungSai(page, cauSo)) ||
+      (await xuLyDropdown(page, cauSo)) ||
+      (await xuLyKeoTha(page, cauSo)) ||
+      (await xuLyTuLuan(page, cauSo)) ||
+      (await xuLyTracNghiem(page, cauSo));
+
+    if (clicked) {
+      vongRong = 0;
+      continue;
+    }
+
+    cauSo--;
+    vongRong++;
+    if (vongRong >= MAX_VONG_RONG) break;
+    await sleep(0.8);
+  }
+}
+
 async function loopLuyenTap(page: Page): Promise<void> {
   let cauSo = 0;
   let vongRong = 0;

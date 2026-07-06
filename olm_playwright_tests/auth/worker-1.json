@@ -2,50 +2,50 @@
   "cookies": [
     {
       "name": "XSRF-TOKEN",
-      "value": "rVZnrbsCI1lLGJbWtMD9H12nfbrg289nLsjs0vvh",
+      "value": "SolTNkP5c6Ht5Itsk7FfmbxPuuAPBc4NTvJMePUl",
       "domain": "olm.vn",
       "path": "/",
-      "expires": 1783319800.195288,
+      "expires": 1783330868.814352,
       "httpOnly": false,
       "secure": true,
       "sameSite": "Lax"
     },
     {
       "name": "__cflb",
-      "value": "0H28vCM2b9mA6aALHjdYz2BzFmEvaZ4JnWfkmtRdhbr",
+      "value": "0H28vCM2b9mA6aALHjdYz2BzFmEvaZ3TCm51yCS9Dxp",
       "domain": "olm.vn",
       "path": "/",
-      "expires": 1783395393.461087,
+      "expires": 1783406462.580423,
       "httpOnly": true,
       "secure": true,
       "sameSite": "None"
     },
     {
       "name": "_gcl_au",
-      "value": "1.1.1336075726.1783312595",
+      "value": "1.1.1158869103.1783323666",
       "domain": ".olm.vn",
       "path": "/",
-      "expires": 1791088595,
+      "expires": 1791099666,
       "httpOnly": false,
       "secure": false,
       "sameSite": "Lax"
     },
     {
       "name": "IDE",
-      "value": "AHWqTUnMRPZZzJkBmtupKb28GxkKADUrQs27xgF8cUt_k356CXWUApk5Cn8XPMkJ",
+      "value": "AHWqTUneN3Nvcx-JsjpngUXzf2mVNkF1XNGX5B3M9ncLbvxUvSaHYS0juIfkvqVD",
       "domain": ".doubleclick.net",
       "path": "/",
-      "expires": 1817872595.71376,
+      "expires": 1817883667.720727,
       "httpOnly": true,
       "secure": true,
       "sameSite": "None"
     },
     {
       "name": "_gid",
-      "value": "GA1.2.1604061333.1783312597",
+      "value": "GA1.2.961762904.1783323668",
       "domain": ".olm.vn",
       "path": "/",
-      "expires": 1783399001,
+      "expires": 1783410067,
       "httpOnly": false,
       "secure": false,
       "sameSite": "Lax"
@@ -55,27 +55,47 @@
       "value": "1",
       "domain": ".olm.vn",
       "path": "/",
-      "expires": 1783312656,
+      "expires": 1783323727,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_ga",
+      "value": "GA1.1.114069951.1783323668",
+      "domain": ".olm.vn",
+      "path": "/",
+      "expires": 1817883668.039598,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_ga_H8ZLXJK1D6",
+      "value": "GS2.1.s1783323668$o1$g0$t1783323668$j60$l0$h0",
+      "domain": ".olm.vn",
+      "path": "/",
+      "expires": 1817883668.07388,
       "httpOnly": false,
       "secure": false,
       "sameSite": "Lax"
     },
     {
       "name": "onlinemath_session",
-      "value": "uy2ZtRqd9SmGQxvNEGAIvc49Q90dLxm1Dt0279nX",
+      "value": "vfaBFavJ6oE7e59hINExxPDx6Jf9ANCcmQZoGdmc",
       "domain": "olm.vn",
       "path": "/",
-      "expires": 1783319800.195669,
+      "expires": 1783330882.296006,
       "httpOnly": true,
       "secure": false,
       "sameSite": "Lax"
     },
     {
       "name": "remember_web_59ba36addc2b2f9401580f014c7f58ea4e30989d",
-      "value": "17184292870362%7CSOB8cmdIZAoSap5ecWdDyrO4eBvHTcpyHrPLgrW47BKAXNMsMCYlHV5nBAkn%7C%242y%2410%24RdOrzIGe0fXDtaADdIYnhe1eQnG52pm9YIk0k8oo5IW0cNyQ2tWhC",
+      "value": "17184292870362%7CITU2BC6vBAKnO8EUfPmFrILPn6LZnk28qCEiuHJKKzxEVfEbga0R1Cm19r8n%7C%242y%2410%24RdOrzIGe0fXDtaADdIYnhe1eQnG52pm9YIk0k8oo5IW0cNyQ2tWhC",
       "domain": "olm.vn",
       "path": "/",
-      "expires": 1817872597.244228,
+      "expires": 1817883668.419686,
       "httpOnly": true,
       "secure": true,
       "sameSite": "Lax"
@@ -85,7 +105,7 @@
       "value": "ccbec088d0c30a566659071446eeff5484bf4b16",
       "domain": ".olm.vn",
       "path": "/",
-      "expires": 1783388089.214305,
+      "expires": 1783388048.814137,
       "httpOnly": false,
       "secure": true,
       "sameSite": "None"
@@ -95,70 +115,20 @@
       "value": "012abb8a587f5c6135eb5f44b239bdb1712fcb2a",
       "domain": ".olm.vn",
       "path": "/",
-      "expires": 1785904601.214511,
+      "expires": 1814859668.814268,
       "httpOnly": false,
       "secure": true,
       "sameSite": "None"
     },
     {
-      "name": "uy2ZtRqd9SmGQxvNEGAIvc49Q90dLxm1Dt0279nX",
-      "value": "%7B%22data%22%3A%22a%3A4%3A%7Bs%3A6%3A%5C%22_token%5C%22%3Bs%3A40%3A%5C%22rVZnrbsCI1lLGJbWtMD9H12nfbrg289nLsjs0vvh%5C%22%3Bs%3A7%3A%5C%22auth_id%5C%22%3Bs%3A32%3A%5C%22704268e173db4dc5d2b7e213f5251bba%5C%22%3Bs%3A50%3A%5C%22login_web_59ba36addc2b2f9401580f014c7f58ea4e30989d%5C%22%3Bs%3A14%3A%5C%2217184292870362%5C%22%3Bs%3A6%3A%5C%22_flash%5C%22%3Ba%3A2%3A%7Bs%3A3%3A%5C%22old%5C%22%3Ba%3A0%3A%7B%7Ds%3A3%3A%5C%22new%5C%22%3Ba%3A0%3A%7B%7D%7D%7D%22%2C%22expires%22%3A1783319825%7D",
+      "name": "vfaBFavJ6oE7e59hINExxPDx6Jf9ANCcmQZoGdmc",
+      "value": "%7B%22data%22%3A%22a%3A4%3A%7Bs%3A6%3A%5C%22_token%5C%22%3Bs%3A40%3A%5C%22SolTNkP5c6Ht5Itsk7FfmbxPuuAPBc4NTvJMePUl%5C%22%3Bs%3A7%3A%5C%22auth_id%5C%22%3Bs%3A32%3A%5C%2267b6285d60c8d96d98616546fdffaa32%5C%22%3Bs%3A50%3A%5C%22login_web_59ba36addc2b2f9401580f014c7f58ea4e30989d%5C%22%3Bs%3A14%3A%5C%2217184292870362%5C%22%3Bs%3A6%3A%5C%22_flash%5C%22%3Ba%3A2%3A%7Bs%3A3%3A%5C%22new%5C%22%3Ba%3A0%3A%7B%7Ds%3A3%3A%5C%22old%5C%22%3Ba%3A0%3A%7B%7D%7D%7D%22%2C%22expires%22%3A1783330907%7D",
       "domain": "olm.vn",
       "path": "/",
-      "expires": 1783319800.19587,
+      "expires": 1783330882.296212,
       "httpOnly": true,
       "secure": true,
       "sameSite": "Lax"
-    },
-    {
-      "name": "_ga_H8ZLXJK1D6",
-      "value": "GS2.1.s1783312597$o1$g1$t1783312600$j57$l0$h0",
-      "domain": ".olm.vn",
-      "path": "/",
-      "expires": 1817872600.95881,
-      "httpOnly": false,
-      "secure": false,
-      "sameSite": "Lax"
-    },
-    {
-      "name": "_ga",
-      "value": "GA1.2.1235885802.1783312597",
-      "domain": ".olm.vn",
-      "path": "/",
-      "expires": 1817872601.012616,
-      "httpOnly": false,
-      "secure": false,
-      "sameSite": "Lax"
-    },
-    {
-      "name": "_fbp",
-      "value": "fb.1.1783312601101.183477773819810968",
-      "domain": ".olm.vn",
-      "path": "/",
-      "expires": 1791088601,
-      "httpOnly": false,
-      "secure": false,
-      "sameSite": "Lax"
-    },
-    {
-      "name": "third_party",
-      "value": "enabled",
-      "domain": ".olm.vn",
-      "path": "/",
-      "expires": 1807792220.213946,
-      "httpOnly": false,
-      "secure": true,
-      "sameSite": "None"
-    },
-    {
-      "name": "user",
-      "value": "%7B%22_id%22%3A%2217184292870362%22%2C%22name%22%3A%22Nguy%E1%BB%85n%20Th%C3%A0nh%20S%C6%A1n%22%2C%22username%22%3A%22nguyenthanhson2818%22%2C%22email%22%3A%22c29ubWFzdGVyeWkyMDA1QGdtYWlsLmNvbQ%3D%3D%22%7D",
-      "domain": ".olm.vn",
-      "path": "/",
-      "expires": 1785904601.214103,
-      "httpOnly": false,
-      "secure": true,
-      "sameSite": "Strict"
     }
   ],
   "origins": [
@@ -166,28 +136,12 @@
       "origin": "https://olm.vn",
       "localStorage": [
         {
-          "name": "last:change-password",
-          "value": "1783312623"
-        },
-        {
-          "name": "accessTokenChecked",
-          "value": "ccbec088d0c30a566659071446eeff5484bf4b16"
+          "name": "pusherTransportTLS",
+          "value": "{\"timestamp\":1783323682139,\"transport\":\"ws\",\"latency\":491}"
         },
         {
           "name": "_gcl_ls",
-          "value": "{\"schema\":\"gcl\",\"version\":1,\"gsid_dc\":{\"value\":{\"joinId\":\"obOYNqj8g6D20nXeJiGc32G7YwbaeebEXw\",\"lastJoinedTimeMs\":1783312594797},\"expires\":1783312894797},\"gcl_ctr\":{\"value\":{\"value\":0,\"timeouts\":0,\"errors\":0,\"eopCount\":0,\"creationTimeMs\":1783312594812},\"expires\":1791088594812}}"
-        },
-        {
-          "name": "pusherTransportTLS",
-          "value": "{\"timestamp\":1783312599599,\"transport\":\"ws\",\"latency\":731}"
-        },
-        {
-          "name": "chatbot_widget_open",
-          "value": "false"
-        },
-        {
-          "name": "auth.grades",
-          "value": "10,11,12"
+          "value": "{\"schema\":\"gcl\",\"version\":1,\"gsid_dc\":{\"value\":{\"joinId\":\"a4FemlgcMpNwrOHrGQmCGPv2c-rr7tdbag\",\"lastJoinedTimeMs\":1783323666208},\"expires\":1783323966208},\"gcl_ctr\":{\"value\":{\"value\":0,\"timeouts\":0,\"errors\":0,\"eopCount\":0,\"creationTimeMs\":1783323666215},\"expires\":1791099666215}}"
         }
       ]
     }

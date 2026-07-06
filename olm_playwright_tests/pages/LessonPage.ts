@@ -4,10 +4,14 @@ import { BasePage } from './BasePage';
 
 export class LessonPage extends BasePage {
   static readonly VIDEO_PLAYER = "iframe[src*='youtube'], video, .video-player";
-  static readonly EXERCISE_FRAME = '.exercise-container, .question-container';
-  static readonly SUBMIT_BTN = "button[type='submit'], .btn-submit, .nop-bai";
-  static readonly NEXT_BTN = '.btn-next, .next-question';
-  static readonly RESULT_PANEL = '.result-panel, .score-panel';
+  static readonly EXERCISE_FRAME =
+    '#quizz, .list-question-container, .exercise-container, .question-container';
+  static readonly SUBMIT_BTN =
+    "button.btn-save, button.btn-done, button[type='submit'], .btn-submit, .nop-bai";
+  static readonly NEXT_BTN =
+    '.btn-next, .next-question, button.btn-next-question, button[onclick*="nextQuestion"]';
+  static readonly RESULT_PANEL =
+    '.result-panel, .score-panel, .score-box, [class*="result-score"], div:has-text("điểm")';
   static readonly PROGRESS_BAR = '.progress-bar, progress';
 
   async open(url: string): Promise<this> {

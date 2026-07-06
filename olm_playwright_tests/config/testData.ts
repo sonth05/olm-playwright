@@ -84,6 +84,10 @@ export const SAMPLE_LESSON_URLS: Record<number, string> = {
   2: `${BASE_URL}/chu-de/toan-lop-2`,
 };
 
+/** Bài luyện tập Toán 9 — có iframe câu hỏi tương tác (dùng regression LessonPage) */
+export const SAMPLE_LUYEN_TAP_URL =
+  `${BASE_URL}/chu-de/giai-he-hai-phuong-trinh-bang-phuong-phap-the-2377747568`;
+
 export const SAMPLE_COURSE_URLS: Record<number, string> = {
   1: `${BASE_URL}/lop-1`,
   2: `${BASE_URL}/lop-2`,
