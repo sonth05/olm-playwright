@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { test as base, expect, type Page, type BrowserContext } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
@@ -77,6 +76,3 @@ export { expect };
 export function storageStateForRole(role: keyof typeof ROLE_WORKER_SLOT): string {
   return authPathForRole(role);
 }
-=======
-export * from '../../fixtures/auth.fixture';
->>>>>>> 4e7989663b3b88d34663e1c2b10ed000bf3f022f

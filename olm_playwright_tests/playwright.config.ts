@@ -3,13 +3,9 @@ import path from 'path';
 import { REPORTS_DIR } from './config/config';
 
 export default defineConfig({
-<<<<<<< HEAD
   testDir: '.',
   testMatch: ['tests/**/*.spec.ts', 'modules/**/tests/**/*.spec.ts'],
   testIgnore: ['**/node_modules/**', '**/pages/**'],
-=======
-  testDir: './modules',
->>>>>>> 4e7989663b3b88d34663e1c2b10ed000bf3f022f
   globalSetup: './global-setup.ts',
 
   fullyParallel: true,
