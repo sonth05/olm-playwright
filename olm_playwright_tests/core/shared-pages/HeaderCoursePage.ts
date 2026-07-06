@@ -1,0 +1,1 @@
+export { HeaderCoursePage } from '../../pages/HeaderCoursePage';

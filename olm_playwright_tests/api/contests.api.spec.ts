@@ -1,0 +1,1 @@
+export * from '../tests/api/contests.api.spec';

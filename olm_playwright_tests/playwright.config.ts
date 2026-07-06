@@ -3,7 +3,7 @@ import path from 'path';
 import { REPORTS_DIR } from './config/config';
 
 export default defineConfig({
-  testDir: './tests',
+  testDir: './modules',
   globalSetup: './global-setup.ts',
 
   fullyParallel: true,
@@ -77,7 +77,7 @@ export default defineConfig({
       // CÙNG MỘT page tuần tự — chạy song song dễ vướng race-condition.
       name: 'bai-tap',
       use: { ...devices['Desktop Chrome'] },
-      testMatch: [/Giao-bai-lam-bai\.e2e\.spec\.ts$/],
+      testMatch: [/cross-role-flows\/tests\/Giao-bai-lam-bai\.e2e\.spec\.ts$/],
       dependencies: ['chromium'],
       fullyParallel: false,
       workers: 1,
