@@ -1,1 +1,0 @@
-export * from '../tests/e2e/kiem-tra-gioi-han-thoat-fullscreen.e2e.spec';

@@ -6,7 +6,7 @@ import fs from 'fs';
 import path from 'path';
 import { BASE_URL, HEADLESS } from '../config/config';
 import { loadLessonsByGrade, PASSWORD, USERNAME } from '../config/testData';
-import { LoginPage } from '../pages/LoginPage';
+import { LoginPage } from '@modules/dung-chung/auth/pages/LoginPage';
 import { humanDelay } from '../utils/helpers';
 import { LOGS_DIR } from '../config/config';
 

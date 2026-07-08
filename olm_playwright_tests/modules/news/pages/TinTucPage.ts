@@ -1,1 +1,0 @@
-export { TinTucPage } from '../../../pages/TinTucPage';

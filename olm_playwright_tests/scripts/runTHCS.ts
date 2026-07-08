@@ -3,8 +3,8 @@
  * ─────────────────────────────────────────────────────────────────────────────
  * Chạy: npx tsx scripts/runTHCS.ts
  */
-import { khoiBrowser, dangNhap, layDanhSachKhoaHoc, layDanhSachBai, BASE } from './olmUtils';
-import { lamBaiTaiBaiHoc, sleep } from './lamBaiEngine';
+import { khoiBrowser, dangNhap, layDanhSachKhoaHoc, layDanhSachBai, BASE } from '../core/automation/olmUtils';
+import { lamBaiTaiBaiHoc, sleep } from '../core/automation/lamBaiEngine';
 
 const LOP_THCS = [
   { ten: 'Lớp 6', url: `${BASE}/lop-6` },

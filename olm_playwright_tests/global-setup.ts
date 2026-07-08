@@ -252,16 +252,61 @@ async function globalSetup(_config: FullConfig): Promise<void> {
 
   const headless = process.env.CI === 'true' ? true : HEADLESS;
 
-  // Login song song cho tất cả 6 accounts
-  await Promise.all(
-    WORKER_ACCOUNTS.map((acc, i) =>
-      loginAndSave({
-        ...acc,
-        savePath: authPathForWorker(i),
-        headless,
+  // ── Môi trường DEBUG: chỉ có 1 tài khoản seed sẵn ──────────────────────
+  // debug.olm.vn (ENV_FILE=.env.debug) chỉ có đúng 1 account dùng thử.
+  // Thay vì login song song 6 lần (dù .env.debug đã set cả 6 biến
+  // OLM_*_USERNAME/PASSWORD trỏ về cùng 1 account) → CHỈ mở 1 browser,
+  // login đúng 1 lần, rồi copy state đó sang tất cả worker slot còn lại.
+  // Tránh hoàn toàn race condition do nhiều session cùng đăng nhập 1 tài
+  // khoản cùng lúc (server có thể invalidate lẫn nhau).
+  const isDebugEnv =
+    process.env.ENV_FILE === '.env.debug' || BASE_URL.includes('debug.olm.vn');
+
+  if (isDebugEnv) {
+    const acc = WORKER_ACCOUNTS[0];
+    const primaryPath = authPathForWorker(0);
+
+    console.log(`[globalSetup] 🐛 Debug env — chỉ login 1 tài khoản (${acc.label}) bằng 1 browser`);
+    await loginAndSave({ ...acc, savePath: primaryPath, headless });
+
+    for (let i = 1; i < WORKER_ACCOUNTS.length; i++) {
+      const dupPath = authPathForWorker(i);
+      fs.copyFileSync(primaryPath, dupPath);
+      console.log(`[globalSetup] ↪ ${WORKER_ACCOUNTS[i].label} → ${dupPath} (copy từ ${acc.label})`);
+    }
+  } else {
+    // ── Môi trường thật (olm.vn / dev.olm.vn): nhiều account khác nhau ───
+    // Gom nhóm theo (username+password) đề phòng có entry nào đó vô tình
+    // trùng credential, rồi login song song 1 lần cho mỗi credential
+    // duy nhất — không login trùng, không tạo race trên cùng 1 account.
+    const groups = new Map<string, number[]>(); // key: "username|password" → list of worker index
+    WORKER_ACCOUNTS.forEach((acc, i) => {
+      const key = `${acc.username}|${acc.password}`;
+      const list = groups.get(key) ?? [];
+      list.push(i);
+      groups.set(key, list);
+    });
+
+    await Promise.all(
+      Array.from(groups.entries()).map(async ([key, indices]) => {
+        const primaryIdx = indices[0];
+        const acc = WORKER_ACCOUNTS[primaryIdx];
+        const primaryPath = authPathForWorker(primaryIdx);
+
+        await loginAndSave({
+          ...acc,
+          savePath: primaryPath,
+          headless,
+        });
+
+        for (const i of indices.slice(1)) {
+          const dupPath = authPathForWorker(i);
+          fs.copyFileSync(primaryPath, dupPath);
+          console.log(`[globalSetup] ↪ ${WORKER_ACCOUNTS[i].label} → ${dupPath} (copy từ ${acc.label}, cùng credential)`);
+        }
       })
-    )
-  );
+    );
+  }
 
   // Giữ auth/user.json (= worker-0) để không break code cũ
   const legacyPath = path.resolve(__dirname, 'auth/user.json');

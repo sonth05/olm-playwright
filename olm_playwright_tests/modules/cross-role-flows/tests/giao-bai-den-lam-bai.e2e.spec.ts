@@ -1,6 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 import { ACCOUNTS } from '../../../config/testData';
-import { lamBaiTaiBaiHoc } from '../../../scripts/lamBaiEngine';
+import { lamBaiTaiBaiHoc } from '@core/automation/lamBaiEngine';
 import { BASE_URL } from '../../../config/config';
 
 const GIAO_VIEN = ACCOUNTS.school;

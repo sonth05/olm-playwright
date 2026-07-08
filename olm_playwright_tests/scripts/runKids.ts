@@ -9,8 +9,8 @@
  *
  * Chạy: npx tsx scripts/runKids.ts
  */
-import { khoiBrowser, dangNhap, layDanhSachKhoaHoc, layDanhSachBai, BASE } from './olmUtils';
-import { lamBaiTaiBaiHoc, sleep } from './lamBaiEngine';
+import { khoiBrowser, dangNhap, layDanhSachKhoaHoc, layDanhSachBai, BASE } from '../core/automation/olmUtils';
+import { lamBaiTaiBaiHoc, sleep } from '../core/automation/lamBaiEngine';
 import { type Page } from 'playwright';
 
 // URL khối Kids — điều chỉnh nếu OLM thay đổi cấu trúc

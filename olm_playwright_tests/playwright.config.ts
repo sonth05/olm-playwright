@@ -68,7 +68,7 @@ export default defineConfig({
       // để không giành worker/account với các test nhanh khác.
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
-      testIgnore: [/Giao-bai-lam-bai\.e2e\.spec\.ts$/],
+      testIgnore: [/giao-bai-den-lam-bai\.e2e\.spec\.ts$/],
     },
     {
       // ── Project "bài tập": chỉ chứa Giao-bai-lam-bai.e2e.spec.ts ─────────
@@ -79,7 +79,7 @@ export default defineConfig({
       // CÙNG MỘT page tuần tự — chạy song song dễ vướng race-condition.
       name: 'bai-tap',
       use: { ...devices['Desktop Chrome'] },
-      testMatch: [/cross-role-flows\/tests\/Giao-bai-lam-bai\.e2e\.spec\.ts$/],
+      testMatch: [/modules\/cross-role-flows\/tests\/giao-bai-den-lam-bai\.e2e\.spec\.ts$/],
       dependencies: ['chromium'],
       fullyParallel: false,
       workers: 1,

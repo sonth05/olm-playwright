@@ -41,8 +41,8 @@
  * ─────────────────────────────────────────────────────────────────────────────
  */
 import { type Locator, type Page } from 'playwright';
-import { khoiBrowser, dangNhap, BASE } from './olmUtils';
-import { sleep, jsClick, timElement, dongModal } from './lamBaiEngine';
+import { khoiBrowser, dangNhap, BASE } from '../core/automation/olmUtils';
+import { sleep, jsClick, timElement, dongModal } from '../core/automation/lamBaiEngine';
 
 const KIDS_URL = `${BASE}/kids`;
 const CHUONG_TRINH_5_TUOI_URL = `${BASE}/bg/chuong-trinh-hoc-cho-tre-5-tuoi`;

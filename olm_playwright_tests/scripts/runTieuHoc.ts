@@ -7,8 +7,8 @@
  * ─────────────────────────────────────────────────────────────────────────────
  * Chạy: npx tsx scripts/runTieuHoc.ts
  */
-import { khoiBrowser, dangNhap, layDanhSachKhoaHoc, layDanhSachBai, BASE } from './olmUtils';
-import { lamBaiTaiBaiHoc, sleep } from './lamBaiEngine';
+import { khoiBrowser, dangNhap, layDanhSachKhoaHoc, layDanhSachBai, BASE } from '../core/automation/olmUtils';
+import { lamBaiTaiBaiHoc, sleep } from '../core/automation/lamBaiEngine';
 
 // Danh sách lớp của khối Tiểu Học
 const LOP_TIEU_HOC = [

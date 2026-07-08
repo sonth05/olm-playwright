@@ -1,1 +1,0 @@
-export { KidsCoursePathPage } from '../../../pages/KidsCoursePathPage';

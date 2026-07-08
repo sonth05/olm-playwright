@@ -3,8 +3,8 @@
  * ─────────────────────────────────────────────────────────────────────────────
  * Chạy: npx tsx scripts/runTHPT.ts
  */
-import { khoiBrowser, dangNhap, layDanhSachKhoaHoc, layDanhSachBai, BASE } from './olmUtils';
-import { lamBaiTaiBaiHoc, sleep } from './lamBaiEngine';
+import { khoiBrowser, dangNhap, layDanhSachKhoaHoc, layDanhSachBai, BASE } from '../core/automation/olmUtils';
+import { lamBaiTaiBaiHoc, sleep } from '../core/automation/lamBaiEngine';
 
 const LOP_THPT = [
   { ten: 'Lớp 10', url: `${BASE}/lop-10` },

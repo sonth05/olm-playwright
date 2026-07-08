@@ -1,7 +1,7 @@
 import { test as base, expect, type Page, type BrowserContext } from '@playwright/test';
 import fs from 'fs';
 import { authPathForWorker, WORKER_ACCOUNTS } from '../global-setup';
-import { LoginPage } from '../pages/LoginPage';
+import { LoginPage } from '@modules/dung-chung/auth/pages/LoginPage';
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 type AuthFixtures = {
