@@ -202,7 +202,7 @@ async function loginAndSave(opts: {
   const page = await context.newPage();
 
   try {
-    await page.goto('/dangnhap', { waitUntil: 'domcontentloaded', timeout: 15_000 });
+    await page.goto('/dangnhap', { waitUntil: 'domcontentloaded', timeout: 25_000 });
 
     for (const sel of LOGIN_USERNAME_SELECTORS) {
       const el = page.locator(sel).first();
