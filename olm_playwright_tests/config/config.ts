@@ -93,6 +93,33 @@ export const THONG_KE_DONG_BO_DTI_URL = truongHocUrl('thong-ke-dong-bo-dti');
 /** URL trang "Xếp hạng trong trường" (3.4) — slug 'xep-hang-thi-dua' suy ra từ
  *  tiêu đề hiển thị trên trang, CHƯA verify trực tiếp bằng trình duyệt thật. */
 export const XEP_HANG_TRUONG_URL = truongHocUrl('xep-hang-thi-dua');
+/** URL trang "Thiết lập trường học" (5.1.1) — trang giới thiệu trường (không
+ *  có sub-path riêng), chỉ khác bằng hash #menu-thiet-lap-truong-hoc trỏ tới
+ *  section "Thiết lập trường học" nằm ngay dưới block "Thông tin VIP". */
+export const THIET_LAP_TRUONG_HOC_URL = `${truongHocUrl()}#menu-thiet-lap-truong-hoc`;
+/** URL trang "Đồng bộ csdl ngành" (5.1.2) — UI React (Tailwind), khác hẳn
+ *  giao diện Bootstrap của các trang quản trị trường còn lại. */
+export const DONG_BO_CSDL_NGANH_URL = `${truongHocUrl('csdl-nganh')}#menu-dong-bo-csdl-nganh`;
+/** URL trang "Thiết lập năm học mới" (5.1.3) — CHÚ Ý: KHÔNG theo pattern
+ *  truongHocUrl (không có slug trường trong path), khác với các trang 5.1.x còn lại. */
+export const THIET_LAP_NAM_HOC_MOI_URL = `${BASE_URL}/truong-hoc/thiet-lap-nam-hoc-moi#menu-thiet-lap-nam-hoc-moi`;
+/** URL trang "Thiết lập môn học" (5.1.4) */
+export const THIET_LAP_MON_HOC_URL = `${truongHocUrl('thiet-lap-mon-hoc')}#menu-thiet-lap-mon-hoc`;
+/** URL trang "Quản lý dung lượng trường" (5.1.5) */
+export const QUAN_LY_DUNG_LUONG_TRUONG_URL =
+  `${truongHocUrl('thong-ke-dung-luong-truong')}#menu-quan-ly-dung-luong-truong`;
+/** URL trang "Tuyển sinh đầu cấp" (5.1.6), tab "Thiết lập" — MẶC ĐỊNH khi vào /tsdc */
+export const TUYEN_SINH_DAU_CAP_URL = `${truongHocUrl('tsdc')}#menu-school-tsdc`;
+/** URL tab "Tin tuyển sinh" (cùng trang 5.1.6) — CHƯA có HTML để verify DOM chi tiết,
+ *  suy ra path từ href thật trên `ul.nav.nav-tabs` của tab "Thiết lập". */
+export const TUYEN_SINH_DAU_CAP_TIN_TS_URL = truongHocUrl('tsdc-news');
+/** URL tab "Danh sách" (danh sách hồ sơ đã đăng ký, cùng trang 5.1.6) — CHƯA verify DOM chi tiết. */
+export const TUYEN_SINH_DAU_CAP_DANH_SACH_URL = truongHocUrl('tsdc-list');
+/** Trang tuyển sinh CÔNG KHAI (không cần đăng nhập) hiển thị ở cuối trang Thiết lập.
+ *  CHÚ Ý: dùng SCHOOL_ID (phần số), KHÔNG phải SCHOOL_SLUG đầy đủ — khác pattern truongHocUrl().
+ *  VD: tsdcPublicUrl() → BASE_URL/tsdc/{SCHOOL_ID}; tsdcPublicUrl('th') → …?level=th */
+export const tsdcPublicUrl = (level?: string): string =>
+  `${BASE_URL}/tsdc/${SCHOOL_ID}${level ? `?level=${level}` : ''}`;
 
 // ─── Đối tác / danh sách nhóm (giáo viên chủ trường quản lý lớp) ──────────
 // Username gắn với tài khoản test cố định (nguyenthanhson2818) — cùng tài
@@ -126,6 +153,16 @@ export const CAY_THU_MUC_URL = `${BASE_URL}/school-folder-${SCHOOL_ID}#menu-scho
 /** URL trang "Tùy chọn thư mục mặc định" (4.1.7) — bật/tắt danh mục hồ sơ mặc định của trường */
 export const TUY_CHON_THU_MUC_MAC_DINH_URL =
   `${BASE_URL}/school-folder-${SCHOOL_ID}/folder-merge-default#menu-folder-merge-default`;
+
+// ─── Hỗ trợ và báo lỗi (5.2) — KHÁC domain path, không theo pattern truongHocUrl ──
+/** URL trang "Danh sách báo lỗi" (5.2.1) — danh sách báo lỗi câu hỏi (HS/GV gửi) */
+export const DANH_SACH_BAO_LOI_URL = `${BASE_URL}/bao-loi-tat-ca-cau-hoi#menu-danh-sach-bao-loi`;
+/** URL trang "Danh sách câu hỏi đã bị xóa" (5.2.2), trang 1 (mặc định) */
+export const DANH_SACH_CAU_HOI_DA_XOA_URL =
+  `${BASE_URL}/danh-sach-cau-hoi-bi-xoa#menu-danh-sach-cau-hoi-bi-xoa`;
+/** VD: danhSachCauHoiDaXoaPageUrl(2) → BASE_URL/danh-sach-cau-hoi-bi-xoa/page-2 */
+export const danhSachCauHoiDaXoaPageUrl = (pageNum: number): string =>
+  `${BASE_URL}/danh-sach-cau-hoi-bi-xoa/page-${pageNum}#menu-danh-sach-cau-hoi-bi-xoa`;
 
 // ─── Timeouts (giảm xuống 1/2 so với bản gốc) ─────────────────────────────
 export const WAIT_TIMEOUT  = envNum('WAIT_TIMEOUT',  8);   // ← giảm từ 15 → 8  (giây)
