@@ -60,6 +60,73 @@ export const docSachUrl = (bookSlug: string): string => `${BASE_URL}/doc-sach/${
 export const baiVietDetailUrl = (slug: string): string => `${BASE_URL}/bai-viet/${slug}`;
 export const cauHoiUrl  = (questionId: number | string): string => `${BASE_URL}/cau-hoi/${questionId}`;
 
+// ─── Trường học (school-owner) — tài khoản ACCOUNTS.school / TEST_USERS.SCHOOL ──
+// Slug trường gắn với tài khoản test cố định (nguyenthanhson2818). Override
+// qua SCHOOL_SLUG nếu đổi sang tài khoản trường khác.
+export const SCHOOL_SLUG = env('SCHOOL_SLUG', 'truong-lien-cap-olm-son.41902384');
+/** Phần ID số của trường, tách từ SCHOOL_SLUG (VD: 'truong-lien-cap-olm-son.41902384' → '41902384').
+ *  Dùng cho các URL KHÔNG theo pattern /truong-hoc/{slug đầy đủ}/... như school-files-{id}/school-folder-{id}. */
+export const SCHOOL_ID = env('SCHOOL_ID', SCHOOL_SLUG.split('.').pop() ?? '41902384');
+/** VD: truongHocUrl('to-bo-mon') → BASE_URL/truong-hoc/{slug}/to-bo-mon */
+export const truongHocUrl = (subPath = ''): string =>
+  `${BASE_URL}/truong-hoc/${SCHOOL_SLUG}${subPath ? `/${subPath}` : ''}`;
+/** URL trang "Danh sách nhóm giáo viên" (tab Giáo viên trong quản trị trường) */
+export const TO_BO_MON_URL = truongHocUrl('to-bo-mon');
+/** URL trang "Nhóm đã xoá" (nhóm giáo viên đã xoá) */
+export const NHOM_GV_DA_XOA_URL = `${TO_BO_MON_URL}?deleted=1`;
+/** URL trang "Phân công giảng dạy" */
+export const PHAN_CONG_GIANG_DAY_URL = truongHocUrl('phan-cong-giang-day');
+/** URL trang "Phân công quản lý" (danh sách quyền giáo viên) */
+export const PHAN_CONG_QUAN_LY_URL = truongHocUrl('phan-cong-quan-ly');
+/** URL trang "Lớp học của trường" (tab Lớp học trong quản trị trường, 1.2.1) */
+export const LOP_HOC_CUA_TRUONG_URL = truongHocUrl('lop-hoc');
+/** URL trang "Lớp đã xóa" (lớp học của trường đã xoá mềm) */
+export const LOP_HOC_CUA_TRUONG_DA_XOA_URL = `${LOP_HOC_CUA_TRUONG_URL}?deleted=1`;
+/** URL trang "Thống kê bài giao toàn trường" (3.1, tab "Bài đã giao") */
+export const BAI_GIAO_TOAN_TRUONG_URL = truongHocUrl('bai-giao');
+/** URL trang "Thống kê đấu trường" (3.3) — CHÚ Ý: khác domain (dautruong.olm.vn),
+ *  KHÔNG dùng truongHocUrl/BASE_URL. Slug/param cụ thể CHƯA verify bằng trình
+ *  duyệt thật (chỉ có ảnh chụp màn hình) — override qua DAU_TRUONG_URL env nếu cần. */
+export const DAU_TRUONG_URL = env('DAU_TRUONG_URL', 'https://dautruong.olm.vn');
+/** URL trang "Thống kê đồng bộ DTI" (3.7) */
+export const THONG_KE_DONG_BO_DTI_URL = truongHocUrl('thong-ke-dong-bo-dti');
+/** URL trang "Xếp hạng trong trường" (3.4) — slug 'xep-hang-thi-dua' suy ra từ
+ *  tiêu đề hiển thị trên trang, CHƯA verify trực tiếp bằng trình duyệt thật. */
+export const XEP_HANG_TRUONG_URL = truongHocUrl('xep-hang-thi-dua');
+
+// ─── Đối tác / danh sách nhóm (giáo viên chủ trường quản lý lớp) ──────────
+// Username gắn với tài khoản test cố định (nguyenthanhson2818) — cùng tài
+// khoản với ACCOUNTS.school trong testData.ts. Override qua OLM_SCHOOL_USERNAME
+// (đã dùng sẵn cho việc đăng nhập ở testData.ts) để 2 nơi luôn khớp nhau.
+export const SCHOOL_USERNAME = env('OLM_SCHOOL_USERNAME', 'nguyenthanhson2818');
+/** VD: doiTacUrl('danh-sach-nhom') → BASE_URL/doi-tac/{username}/danh-sach-nhom */
+export const doiTacUrl = (subPath = ''): string =>
+  `${BASE_URL}/doi-tac/${SCHOOL_USERNAME}${subPath ? `/${subPath}` : ''}`;
+export const DANH_SACH_NHOM_URL = doiTacUrl('danh-sach-nhom');
+/** type=6 = tab "Nhóm học sinh" trong trang danh-sach-nhom */
+export const NHOM_HOC_SINH_URL = `${DANH_SACH_NHOM_URL}?type=6`;
+export const NHOM_HOC_SINH_DA_XOA_URL = `${DANH_SACH_NHOM_URL}?type=6&deleted=1`;
+/** URL trang "Lớp học của tôi" (1.2.3) — lớp GV tự tạo/được giao, KHÔNG thuộc quản lý trường */
+export const LOP_HOC_CUA_TOI_URL = `${DANH_SACH_NHOM_URL}#menu-danh-sach-lop-hoc`;
+export const LOP_HOC_CUA_TOI_DA_XOA_URL = `${DANH_SACH_NHOM_URL}?deleted=1`;
+
+// ─── Quản lý hồ sơ (4.x) — KHÁC domain path với khu vực /truong-hoc/{slug}/… ──
+/** URL trang "Nộp hồ sơ, kế hoạch" (4.1.1) — tab mặc định "Gần đây" (#menu-lesson-plan) */
+export const HO_SO_KE_HOACH_URL = `${BASE_URL}/school-task/lesson-plan#menu-lesson-plan`;
+/** URL trang "Duyệt hồ sơ, kế hoạch" (4.1.2) — tab mặc định "Kế hoạch bài dạy (Giáo án)" */
+export const DUYET_HO_SO_KE_HOACH_URL = `${BASE_URL}/school-task/lesson-plan-all#menu-lesson-plan-all`;
+/** URL trang "Được chia sẻ" (4.1.3) — hồ sơ được công khai trong tổ/toàn trường */
+export const HO_SO_DUOC_CHIA_SE_URL = `${BASE_URL}/school-task/lesson-plan-shared#menu-lesson-plan-shared`;
+/** URL trang "Thống kê" hồ sơ/kế hoạch (4.1.4) — thống kê giáo án theo tuần, theo giáo viên */
+export const THONG_KE_HO_SO_URL = `${BASE_URL}/school-task/lesson-plan-static#menu-lesson-plan-static`;
+/** URL trang "Cây thư mục" (4.1.5) — cây thư mục hồ sơ/giáo án theo TỪNG GIÁO VIÊN của trường */
+export const CAY_THU_MUC_TRUONG_URL = `${BASE_URL}/school-files-${SCHOOL_ID}#menu-lesson-plan-tree`;
+/** URL trang "Cây thư mục (tùy chỉnh)" (4.1.6) — Drive thư mục tùy chỉnh cấp trường của cá nhân GV */
+export const CAY_THU_MUC_URL = `${BASE_URL}/school-folder-${SCHOOL_ID}#menu-school-folder`;
+/** URL trang "Tùy chọn thư mục mặc định" (4.1.7) — bật/tắt danh mục hồ sơ mặc định của trường */
+export const TUY_CHON_THU_MUC_MAC_DINH_URL =
+  `${BASE_URL}/school-folder-${SCHOOL_ID}/folder-merge-default#menu-folder-merge-default`;
+
 // ─── Timeouts (giảm xuống 1/2 so với bản gốc) ─────────────────────────────
 export const WAIT_TIMEOUT  = envNum('WAIT_TIMEOUT',  8);   // ← giảm từ 15 → 8  (giây)
 export const PAGE_LOAD_WAIT = envNum('PAGE_LOAD_WAIT', 2);  // ← giảm từ 3  → 2  (giây)

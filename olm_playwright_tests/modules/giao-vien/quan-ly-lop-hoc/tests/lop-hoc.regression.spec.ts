@@ -1,5 +1,5 @@
 import { test, expect } from '../../../../core/fixtures/role.fixture';
-import { LopHocPage } from '../pages/LopHocPage';
+import { LopHocPage } from '../pages/LopHocCuaToiPage';
 
 test.describe('Quản lý lớp học @quan-ly-lop-hoc @regression', () => {
   test('GV mở danh sách lớp học — trang load + nút Thêm lớp học', async ({
