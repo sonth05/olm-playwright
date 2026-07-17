@@ -4,6 +4,7 @@
   "description": "OLM.vn test automation – Playwright TypeScript",
   "scripts": {
     "test": "playwright test",
+    "test:example": "playwright test --config=playwright.example.config.ts",
     "test:fast": "playwright test --project=chromium",
     "test:bai-tap": "playwright test --project=bai-tap --no-deps",
     "test:smoke": "playwright test tests/smoke",
