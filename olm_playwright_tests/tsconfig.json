@@ -29,7 +29,9 @@
     "tests/**/*",
     "modules/**/*",
     "core/**/*",
+    "example/**/*",
     "global-setup.ts",
-    "playwright.config.ts"
+    "playwright.config.ts",
+    "Playwright.example.config.ts"
   ]
 }

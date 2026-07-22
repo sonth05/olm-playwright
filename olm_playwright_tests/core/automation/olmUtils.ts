@@ -11,7 +11,7 @@
  */
 import { chromium, type Browser, type BrowserContext, type Page } from 'playwright';
 import { USERNAME, PASSWORD } from '../../config/testData';
-import { sleep, dongModal, timElement, jsClick } from './lamBaiEngine';
+import { sleep, dongModal, timElement, jsClick, lamBaiTaiBaiHoc } from './lamBaiEngine';
 import { BASE_URL } from '../../config/config';
 
 export const BASE = BASE_URL;
@@ -70,12 +70,14 @@ export async function dangNhap(page: Page): Promise<void> {
 
 // ─── Interfaces ──────────────────────────────────────────────────────────────
 export interface BaiHoc {
+  index: number; // index (0-based) của bài trong danh sách bài của khóa học — dùng để rà soát
   title: string;
   url:   string;
   type:  'luyen-tap' | 'kiem-tra' | 'khac';
 }
 
 export interface KhoaHoc {
+  index: number; // index (0-based) của khóa học trong danh sách khóa học của lớp — dùng để rà soát
   title: string;
   url:   string;
 }
@@ -116,7 +118,8 @@ export async function layDanhSachBai(page: Page, khoaHocUrl: string): Promise<Ba
     return results;
   }, BASE);
 
-  const bais: BaiHoc[] = rawItems.map(({ href, title, dataType }) => ({
+  const bais: BaiHoc[] = rawItems.map(({ href, title, dataType }, i) => ({
+    index: i, // đánh index 0..n-1 theo đúng thứ tự xuất hiện trong DOM
     title,
     url: href,
     type: dataType === '21' ? 'kiem-tra' : dataType === '3' ? 'luyen-tap' : 'khac',
@@ -166,7 +169,86 @@ export async function layDanhSachKhoaHoc(page: Page, lopUrl: string): Promise<Kh
     return results;
   }, BASE);
 
-  const khoas: KhoaHoc[] = rawKhoas.map(({ href, title }) => ({ title, url: href }));
+  const khoas: KhoaHoc[] = rawKhoas.map(({ href, title }, i) => ({
+    index: i, // đánh index 0..n-1 theo đúng thứ tự xuất hiện trong DOM (dedupe đã xử lý trong evaluate)
+    title,
+    url: href,
+  }));
   console.log(`  Tìm thấy ${khoas.length} khóa học trong: ${lopUrl}`);
   return khoas;
+}
+
+// ─── Chạy trọn 1 khối (Tiểu Học / THCS / THPT / Kids) trên page có sẵn ──────
+//
+// Dùng chung cho mọi runXxx.ts để khỏi lặp code: duyệt từng lớp → từng khóa
+// học (có index) → từng bài (có index) → gọi lamBaiTaiBaiHoc.
+// Lớp nào lỗi (VD: URL không tồn tại, hay gặp với khối Kids) sẽ được bỏ qua
+// và chạy tiếp lớp sau, không làm dừng cả khối.
+//
+export interface LopConfig {
+  ten: string;
+  url: string;
+}
+
+export interface ChayKhoiOptions {
+  lamLuyenTap?: boolean; // mặc định true
+  lamKiemTra?: boolean;  // mặc định true
+}
+
+export async function chayKhoi(
+  page: Page,
+  danhSachLop: LopConfig[],
+  tenKhoi: string,
+  opts: ChayKhoiOptions = {},
+): Promise<void> {
+  const lamLuyenTap = opts.lamLuyenTap ?? true;
+  const lamKiemTra  = opts.lamKiemTra  ?? true;
+
+  console.log(`\n${'█'.repeat(60)}`);
+  console.log(`🏫 BẮT ĐẦU KHỐI: ${tenKhoi}`);
+
+  for (const lop of danhSachLop) {
+    console.log(`\n${'═'.repeat(60)}`);
+    console.log(`📚 ${lop.ten}`);
+
+    let khoaHocs: KhoaHoc[] = [];
+    try {
+      khoaHocs = await layDanhSachKhoaHoc(page, lop.url);
+    } catch (e) {
+      console.log(`  ⚠ Không truy cập được ${lop.ten} (${lop.url}): ${e}`);
+      continue;
+    }
+
+    if (khoaHocs.length === 0) {
+      console.log(`  ⚠ Không tìm thấy khóa học nào ở ${lop.ten}`);
+      continue;
+    }
+
+    for (const khoa of khoaHocs) {
+      console.log(`\n  📖 [${khoa.index}] Khóa học: ${khoa.title}`);
+
+      const bais = await layDanhSachBai(page, khoa.url);
+      if (bais.length === 0) {
+        console.log(`    ⚠ Không có bài luyện tập/kiểm tra`);
+        continue;
+      }
+
+      for (const bai of bais) {
+        if (bai.type === 'luyen-tap' && !lamLuyenTap) continue;
+        if (bai.type === 'kiem-tra'  && !lamKiemTra)  continue;
+
+        console.log(`\n    [${bai.index}] [${bai.type.toUpperCase()}] ${bai.title}`);
+        try {
+          await lamBaiTaiBaiHoc(page, bai.url);
+        } catch (e) {
+          console.error(`    ❌ Lỗi bài "${bai.title}": ${e}`);
+        }
+        await sleep(1.5); // nghỉ giữa các bài
+      }
+
+      await sleep(1); // nghỉ giữa các khóa
+    }
+  }
+
+  console.log(`\n\n✅ HOÀN THÀNH KHỐI ${tenKhoi.toUpperCase()}!`);
 }

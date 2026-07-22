@@ -1,8 +1,8 @@
 /** Script tự động thi thử THPT Sinh học OLM.vn - ĐÃ FIX v4 */
 import { chromium } from 'playwright';
-import { BASE_URL, LOGIN_URL } from '../config/config';
-import { PASSWORD, USERNAME } from '../config/testData';
-import { humanDelay } from '../utils/helpers';
+import { BASE_URL, LOGIN_URL } from 'config/config';
+import { PASSWORD, USERNAME } from 'config/testData';
+import { humanDelay } from 'utils/helpers';
 
 const LOP12_URL = `${BASE_URL}/lop-12`;
 const TIMEOUT = 30_000;

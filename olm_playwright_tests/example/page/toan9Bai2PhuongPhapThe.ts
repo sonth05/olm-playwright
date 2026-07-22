@@ -1,7 +1,7 @@
 /** Script tự động làm bài luyện tập Toán 9 - Phương pháp thế */
 import { chromium, type Locator, type Page } from 'playwright';
-import { PASSWORD, USERNAME } from '../config/testData';
-import { BASE_URL } from '../config/config';
+import { PASSWORD, USERNAME } from 'config/testData';
+import { BASE_URL } from 'config/config';
 
 const LUYEN_TAP_URL =
   `${BASE_URL}/chu-de/giai-he-hai-phuong-trinh-bang-phuong-phap-the-2377747568`;

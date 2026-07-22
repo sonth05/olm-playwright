@@ -3,62 +3,22 @@
  * ─────────────────────────────────────────────────────────────────────────────
  * Chạy: npx tsx scripts/runTHCS.ts
  */
-import { khoiBrowser, dangNhap, layDanhSachKhoaHoc, layDanhSachBai, BASE } from '../core/automation/olmUtils';
-import { lamBaiTaiBaiHoc, sleep } from '../core/automation/lamBaiEngine';
+import { khoiBrowser, dangNhap, chayKhoi, BASE, type LopConfig } from '../core/automation/olmUtils';
+import { sleep } from '../core/automation/lamBaiEngine';
 
-const LOP_THCS = [
+export const LOP_THCS: LopConfig[] = [
   { ten: 'Lớp 6', url: `${BASE}/lop-6` },
   { ten: 'Lớp 7', url: `${BASE}/lop-7` },
   { ten: 'Lớp 8', url: `${BASE}/lop-8` },
   { ten: 'Lớp 9', url: `${BASE}/lop-9` },
 ];
 
-const LAM_LUYEN_TAP = true;
-const LAM_KIEM_TRA  = true;
-
 async function main(): Promise<void> {
   const { browser, page } = await khoiBrowser(process.env.HEADLESS === 'true');
 
   try {
     await dangNhap(page);
-
-    for (const lop of LOP_THCS) {
-      console.log(`\n${'═'.repeat(60)}`);
-      console.log(`📚 ${lop.ten}`);
-
-      const khoaHocs = await layDanhSachKhoaHoc(page, lop.url);
-      if (khoaHocs.length === 0) {
-        console.log(`  ⚠ Không tìm thấy khóa học nào ở ${lop.ten}`);
-        continue;
-      }
-
-      for (const khoa of khoaHocs) {
-        console.log(`\n  📖 Khóa học: ${khoa.title}`);
-
-        const bais = await layDanhSachBai(page, khoa.url);
-        if (bais.length === 0) {
-          console.log(`    ⚠ Không có bài luyện tập/kiểm tra`);
-          continue;
-        }
-
-        for (const bai of bais) {
-          if (bai.type === 'luyen-tap' && !LAM_LUYEN_TAP) continue;
-          if (bai.type === 'kiem-tra'  && !LAM_KIEM_TRA)  continue;
-
-          console.log(`\n    [${bai.type.toUpperCase()}] ${bai.title}`);
-          try {
-            await lamBaiTaiBaiHoc(page, bai.url);
-          } catch (e) {
-            console.error(`    ❌ Lỗi bài "${bai.title}": ${e}`);
-          }
-          await sleep(1.5);
-        }
-
-        await sleep(1);
-      }
-    }
-
-    console.log('\n\n✅ HOÀN THÀNH KHỐI THCS!');
+    await chayKhoi(page, LOP_THCS, 'THCS');
   } catch (e) {
     console.error(`\n[LỖI] ${e}`);
   } finally {

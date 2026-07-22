@@ -3,61 +3,21 @@
  * ─────────────────────────────────────────────────────────────────────────────
  * Chạy: npx tsx scripts/runTHPT.ts
  */
-import { khoiBrowser, dangNhap, layDanhSachKhoaHoc, layDanhSachBai, BASE } from '../core/automation/olmUtils';
-import { lamBaiTaiBaiHoc, sleep } from '../core/automation/lamBaiEngine';
+import { khoiBrowser, dangNhap, chayKhoi, BASE, type LopConfig } from '../core/automation/olmUtils';
+import { sleep } from '../core/automation/lamBaiEngine';
 
-const LOP_THPT = [
+export const LOP_THPT: LopConfig[] = [
   { ten: 'Lớp 10', url: `${BASE}/lop-10` },
   { ten: 'Lớp 11', url: `${BASE}/lop-11` },
   { ten: 'Lớp 12', url: `${BASE}/lop-12` },
 ];
-
-const LAM_LUYEN_TAP = true;
-const LAM_KIEM_TRA  = true;
 
 async function main(): Promise<void> {
   const { browser, page } = await khoiBrowser(process.env.HEADLESS === 'true');
 
   try {
     await dangNhap(page);
-
-    for (const lop of LOP_THPT) {
-      console.log(`\n${'═'.repeat(60)}`);
-      console.log(`📚 ${lop.ten}`);
-
-      const khoaHocs = await layDanhSachKhoaHoc(page, lop.url);
-      if (khoaHocs.length === 0) {
-        console.log(`  ⚠ Không tìm thấy khóa học nào ở ${lop.ten}`);
-        continue;
-      }
-
-      for (const khoa of khoaHocs) {
-        console.log(`\n  📖 Khóa học: ${khoa.title}`);
-
-        const bais = await layDanhSachBai(page, khoa.url);
-        if (bais.length === 0) {
-          console.log(`    ⚠ Không có bài luyện tập/kiểm tra`);
-          continue;
-        }
-
-        for (const bai of bais) {
-          if (bai.type === 'luyen-tap' && !LAM_LUYEN_TAP) continue;
-          if (bai.type === 'kiem-tra'  && !LAM_KIEM_TRA)  continue;
-
-          console.log(`\n    [${bai.type.toUpperCase()}] ${bai.title}`);
-          try {
-            await lamBaiTaiBaiHoc(page, bai.url);
-          } catch (e) {
-            console.error(`    ❌ Lỗi bài "${bai.title}": ${e}`);
-          }
-          await sleep(1.5);
-        }
-
-        await sleep(1);
-      }
-    }
-
-    console.log('\n\n✅ HOÀN THÀNH KHỐI THPT!');
+    await chayKhoi(page, LOP_THPT, 'THPT');
   } catch (e) {
     console.error(`\n[LỖI] ${e}`);
   } finally {
