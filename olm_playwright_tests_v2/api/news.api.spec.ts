@@ -1,0 +1,1 @@
+export * from '../tests/api/news.api.spec';

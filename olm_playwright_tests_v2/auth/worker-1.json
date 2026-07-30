@@ -1,0 +1,203 @@
+{
+  "cookies": [
+    {
+      "name": "XSRF-TOKEN",
+      "value": "V9txSKQ5ilr4g15Dog2vwqD0gDbr2j4XdibKlViD",
+      "domain": "olm.vn",
+      "path": "/",
+      "expires": 1784713941.472937,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "__cflb",
+      "value": "0H28vCM2b9mA6aALHjSw6UbneJrcruBd4s43grU6H56",
+      "domain": "olm.vn",
+      "path": "/",
+      "expires": 1784789533.326118,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_gcl_au",
+      "value": "1.1.310781056.1784706735",
+      "domain": ".olm.vn",
+      "path": "/",
+      "expires": 1792482735,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "IDE",
+      "value": "AHWqTUlIO-n8TXl0aYpFLxjJ4CXZqBQNib267sdQ3RZZzZE0PE4ZPNqOicymFC9Y",
+      "domain": ".doubleclick.net",
+      "path": "/",
+      "expires": 1819266736.552239,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "onlinemath_session",
+      "value": "MDWdMVdbcrkMYmbToqwgNCPoq1mxSnbo09PVVEoj",
+      "domain": "olm.vn",
+      "path": "/",
+      "expires": 1784713941.473186,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "remember_web_59ba36addc2b2f9401580f014c7f58ea4e30989d",
+      "value": "17184292870362%7COckBGsDhkHMRe2KTyc0NEBvcbnNiSPRVZqfJBpkGwaG6COMiWfAyBy3RrIyk%7C%242y%2410%24RdOrzIGe0fXDtaADdIYnhe1eQnG52pm9YIk0k8oo5IW0cNyQ2tWhC",
+      "domain": "olm.vn",
+      "path": "/",
+      "expires": 1819266736.908916,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_gid",
+      "value": "GA1.2.2020768789.1784706737",
+      "domain": ".olm.vn",
+      "path": "/",
+      "expires": 1784793139,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_gat_UA-42755702-1",
+      "value": "1",
+      "domain": ".olm.vn",
+      "path": "/",
+      "expires": 1784706797,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "access_token",
+      "value": "00e563abb1ea73dfede12997734f9f6183e7fae7",
+      "domain": ".olm.vn",
+      "path": "/",
+      "expires": 1784793137.671986,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "refresh_token",
+      "value": "ab3024b67fd861b7da75ee2b5fe2426af15e94fb",
+      "domain": ".olm.vn",
+      "path": "/",
+      "expires": 1787298740.672083,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_ga_H8ZLXJK1D6",
+      "value": "GS2.1.s1784706736$o1$g1$t1784706739$j57$l0$h0",
+      "domain": ".olm.vn",
+      "path": "/",
+      "expires": 1819266739.727951,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_ga",
+      "value": "GA1.2.239533110.1784706737",
+      "domain": ".olm.vn",
+      "path": "/",
+      "expires": 1819266739.821177,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "third_party",
+      "value": "enabled",
+      "domain": ".olm.vn",
+      "path": "/",
+      "expires": 1807792247.671578,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "user",
+      "value": "%7B%22_id%22%3A%2217184292870362%22%2C%22name%22%3A%22Nguy%E1%BB%85n%20Th%C3%A0nh%20S%C6%A1n%22%2C%22username%22%3A%22nguyenthanhson2818%22%2C%22email%22%3A%22c29ubWFzdGVyeWkyMDA1QGdtYWlsLmNvbQ%3D%3D%22%7D",
+      "domain": ".olm.vn",
+      "path": "/",
+      "expires": 1787298740.671701,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Strict"
+    },
+    {
+      "name": "_fbp",
+      "value": "fb.1.1784706740926.513804613302400406",
+      "domain": ".olm.vn",
+      "path": "/",
+      "expires": 1792482740,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "MDWdMVdbcrkMYmbToqwgNCPoq1mxSnbo09PVVEoj",
+      "value": "%7B%22data%22%3A%22a%3A4%3A%7Bs%3A6%3A%5C%22_token%5C%22%3Bs%3A40%3A%5C%22V9txSKQ5ilr4g15Dog2vwqD0gDbr2j4XdibKlViD%5C%22%3Bs%3A7%3A%5C%22auth_id%5C%22%3Bs%3A32%3A%5C%22d8d2730a8bb13d260b3d1843345d351d%5C%22%3Bs%3A50%3A%5C%22login_web_59ba36addc2b2f9401580f014c7f58ea4e30989d%5C%22%3Bs%3A14%3A%5C%2217184292870362%5C%22%3Bs%3A6%3A%5C%22_flash%5C%22%3Ba%3A2%3A%7Bs%3A3%3A%5C%22old%5C%22%3Ba%3A0%3A%7B%7Ds%3A3%3A%5C%22new%5C%22%3Ba%3A0%3A%7B%7D%7D%7D%22%2C%22expires%22%3A1784713941%7D",
+      "domain": "olm.vn",
+      "path": "/",
+      "expires": 1784713941.473331,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://olm.vn",
+      "localStorage": [
+        {
+          "name": "last:change-password",
+          "value": "1784706737"
+        },
+        {
+          "name": "accessTokenChecked",
+          "value": "00e563abb1ea73dfede12997734f9f6183e7fae7"
+        },
+        {
+          "name": "chatbot_widget_open",
+          "value": "false"
+        },
+        {
+          "name": "show-modal-form-active-mail-17184292870362",
+          "value": "true"
+        },
+        {
+          "name": "_gcl_ls",
+          "value": "{\"schema\":\"gcl\",\"version\":1,\"gsid_dc\":{\"value\":{\"joinId\":\"5ydbQd7ZA_6xNMiT_xBgnILA3T1ZSnV4hQ\",\"lastJoinedTimeMs\":1784706734746},\"expires\":1784707034746},\"gcl_ctr\":{\"value\":{\"value\":0,\"timeouts\":0,\"errors\":0,\"eopCount\":0,\"creationTimeMs\":1784706734756},\"expires\":1792482734756}}"
+        },
+        {
+          "name": "pusherTransportTLS",
+          "value": "{\"timestamp\":1784706739813,\"transport\":\"ws\",\"latency\":1365}"
+        },
+        {
+          "name": "show-modal-form-active-mail-17184292870362_expiresIn",
+          "value": "1784742741146"
+        },
+        {
+          "name": "auth.grades",
+          "value": "10,11,12"
+        }
+      ]
+    }
+  ]
+}

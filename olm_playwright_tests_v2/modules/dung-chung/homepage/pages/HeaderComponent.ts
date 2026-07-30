@@ -1,0 +1,1 @@
+export { HeaderComponent } from '@core/shared-pages/HeaderComponent';

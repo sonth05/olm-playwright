@@ -1,0 +1,1 @@
+export * from '../tests/api/authentication.api.spec';

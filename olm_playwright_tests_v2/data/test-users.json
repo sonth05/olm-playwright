@@ -1,0 +1,27 @@
+{
+  "vip_student": {
+    "username": "hsptolm_dothilananh",
+    "password": "Thanhson2@",
+    "role": "student",
+    "vip": true,
+    "email": "dothilananh@gmail.com"
+  },
+  "school": {
+    "username": "nguyenthanhson2818",
+    "password": "Thanhsin2@",
+    "role": "school",
+    "vip": false,
+    "email": ""
+  },
+  "normal_student": {
+    "username": "hsptolm_tranducanh",
+    "password": "123456",
+    "role": "student",
+    "vip": false,
+    "email": ""
+  },
+  "existing_account": {
+    "username": "hsptolm_dothilananh",
+    "email": "dothilananh@gmail.com"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "outDir": "dist",
+    "rootDir": ".",
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "@config/*": ["config/*"],
+      "@utils/*": ["utils/*"],
+      "@fixtures/*": ["fixtures/*"],
+      "@data/*": ["data/*"],
+      "@core/*": ["core/*"],
+      "@modules/*": ["modules/*"]
+    }
+  },
+  "include": [
+    "config/**/*",
+    "fixtures/**/*",
+    "utils/**/*",
+    "tests/**/*",
+    "modules/**/*",
+    "core/**/*",
+    "example/**/*",
+    "global-setup.ts",
+    "playwright.config.ts",
+    "Playwright.example.config.ts"
+  ]
+}
