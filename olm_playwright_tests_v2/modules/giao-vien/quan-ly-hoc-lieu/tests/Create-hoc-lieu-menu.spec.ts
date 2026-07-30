@@ -10,12 +10,15 @@ import { CreateHocLieuMenu, HOC_LIEU_TYPE } from '../pages/Createhoclieumenu';
  *
  * File này CHỈ test đúng phần dropdown (danh sách mục, nhãn hiển thị, mô tả
  * phụ, mở đúng modal khi chọn "Đề kiểm tra"). Chi tiết đầy đủ của modal "Tạo
- * Đề kiểm tra" (field bắt buộc, validate, SEO, Hủy/Tạo...) nằm ở
- * De-kiem-tra-modal.spec.ts — các loại học liệu khác (Lý thuyết tương tác,
- * Video, Đề thi Tự luận, Liên kết, PDF/Word, Tài liệu, Mô phỏng, Game hóa,
- * NHCH, Đề thi ma trận, Luyện tập ma trận, Đề thi trộn Offline) CHƯA có DOM
- * thật của modal/màn soạn tương ứng trong hội thoại này nên CHƯA viết test mở
- * modal cho các loại đó — chỉ xác nhận mục đó có mặt & đúng nhãn trong dropdown.
+ * Đề kiểm tra" nằm ở De-kiem-tra-modal.spec.ts — các loại học liệu khác CHƯA
+ * có DOM thật của modal/màn soạn tương ứng nên chỉ xác nhận mục đó có mặt &
+ * đúng nhãn trong dropdown.
+ *
+ * GỘP 1 TRANG = 1 TEST (2026-07-30): thay vì 5 test riêng (TC-MENU-01..05),
+ * gộp thành 1 test duy nhất mở dropdown 1 lần, chạy hết các kiểm tra bố cục/
+ * nội dung liên quan trên cùng dropdown đó bằng test.step(), chỉ mở dropdown
+ * lại (hoặc goto lại danh sách) ở bước nào bản thân bước đó làm thay đổi
+ * trạng thái (chọn mục -> mở modal, hoặc đóng dropdown).
  */
 
 // Nhãn hiển thị đúng theo DOM thật, khớp value trong HOC_LIEU_TYPE (page/Createhoclieumenu.ts).
@@ -36,76 +39,45 @@ const LABEL_BY_TYPE: Record<string, string> = {
 };
 
 test.describe('TC-MENU: Dropdown "Tạo mới học liệu"', () => {
-  test('TC-MENU-01: Mở dropdown hiển thị đủ 13 loại học liệu (theo đúng data-value)', async ({
-    getPageAsRole,
-  }) => {
+  test('TC-MENU: Toàn bộ nội dung & hành vi dropdown "Tạo mới học liệu"', async ({ getPageAsRole }) => {
     const page = await getPageAsRole('editableTeacher');
     const listPage = new HocLieuCuaToiV2Page(page);
     await listPage.goto();
 
     const menu = new CreateHocLieuMenu(page);
-    await menu.open();
 
-    const values = Object.values(HOC_LIEU_TYPE);
-    expect(values).toHaveLength(13);
-    for (const value of values) {
-      await expect(menu.itemByValue(value)).toBeVisible();
-    }
-  });
+    await test.step('TC-MENU-01: Mở dropdown hiển thị đủ 13 loại học liệu (theo đúng data-value)', async () => {
+      await menu.open();
+      const values = Object.values(HOC_LIEU_TYPE);
+      expect(values).toHaveLength(13);
+      for (const value of values) {
+        await expect(menu.itemByValue(value)).toBeVisible();
+      }
+    });
 
-  test('TC-MENU-02: Mỗi mục hiển thị đúng nhãn tương ứng với loại học liệu', async ({ getPageAsRole }) => {
-    const page = await getPageAsRole('editableTeacher');
-    const listPage = new HocLieuCuaToiV2Page(page);
-    await listPage.goto();
+    await test.step('TC-MENU-02: Mỗi mục hiển thị đúng nhãn tương ứng với loại học liệu', async () => {
+      for (const [value, label] of Object.entries(LABEL_BY_TYPE)) {
+        await expect(menu.itemByValue(value)).toContainText(label);
+      }
+    });
 
-    const menu = new CreateHocLieuMenu(page);
-    await menu.open();
+    await test.step('TC-MENU-03: Mục "Đề kiểm tra" có dòng mô tả phụ đúng nghiệp vụ soạn đề / tạo từ ma trận', async () => {
+      await expect(menu.itemByValue(HOC_LIEU_TYPE.EXAM_MIXTURE_V2)).toContainText(
+        /Soạn đề hoặc tạo từ ma trận\. Tùy chọn hiển thị dạng Đề thi hoặc Luyện tập\./i,
+      );
+    });
 
-    for (const [value, label] of Object.entries(LABEL_BY_TYPE)) {
-      await expect(menu.itemByValue(value)).toContainText(label);
-    }
-  });
+    await test.step('TC-MENU-05: Đóng dropdown (bấm ra ngoài) không tạo học liệu nào, vẫn ở trang danh sách', async () => {
+      // Chạy TRƯỚC bước 04 vì bước 04 chọn mục và mở modal (đổi trạng thái dropdown).
+      await expect(menu.menu).toBeVisible();
+      await page.keyboard.press('Escape');
+      await expect(menu.menu).toBeHidden();
+      await expect(page).toHaveURL(/\/hoc-lieu-cua-toi/);
+    });
 
-  test('TC-MENU-03: Mục "Đề kiểm tra" có dòng mô tả phụ đúng nghiệp vụ soạn đề / tạo từ ma trận', async ({
-    getPageAsRole,
-  }) => {
-    const page = await getPageAsRole('editableTeacher');
-    const listPage = new HocLieuCuaToiV2Page(page);
-    await listPage.goto();
-
-    const menu = new CreateHocLieuMenu(page);
-    await menu.open();
-
-    await expect(menu.itemByValue(HOC_LIEU_TYPE.EXAM_MIXTURE_V2)).toContainText(
-      /Soạn đề hoặc tạo từ ma trận\. Tùy chọn hiển thị dạng Đề thi hoặc Luyện tập\./i,
-    );
-  });
-
-  test('TC-MENU-04: Chọn "Đề kiểm tra" mở đúng modal "Tạo Đề kiểm tra"', async ({ getPageAsRole }) => {
-    const page = await getPageAsRole('editableTeacher');
-    const listPage = new HocLieuCuaToiV2Page(page);
-    await listPage.goto();
-
-    const menu = new CreateHocLieuMenu(page);
-    const modal = await menu.createNewAndOpenModal(HOC_LIEU_TYPE.EXAM_MIXTURE_V2);
-
-    await modal.expectTitle('Tạo Đề kiểm tra');
-  });
-
-  test('TC-MENU-05: Đóng dropdown (bấm ra ngoài) không tạo học liệu nào, vẫn ở trang danh sách', async ({
-    getPageAsRole,
-  }) => {
-    const page = await getPageAsRole('editableTeacher');
-    const listPage = new HocLieuCuaToiV2Page(page);
-    await listPage.goto();
-
-    const menu = new CreateHocLieuMenu(page);
-    await menu.open();
-    await expect(menu.menu).toBeVisible();
-
-    await page.keyboard.press('Escape');
-
-    await expect(menu.menu).toBeHidden();
-    await expect(page).toHaveURL(/\/hoc-lieu-cua-toi/);
+    await test.step('TC-MENU-04: Chọn "Đề kiểm tra" mở đúng modal "Tạo Đề kiểm tra"', async () => {
+      const modal = await menu.createNewAndOpenModal(HOC_LIEU_TYPE.EXAM_MIXTURE_V2);
+      await modal.expectTitle('Tạo Đề kiểm tra');
+    });
   });
 });

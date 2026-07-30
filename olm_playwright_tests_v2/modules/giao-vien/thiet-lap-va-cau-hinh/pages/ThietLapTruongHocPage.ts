@@ -1,30 +1,6 @@
 import { BasePage } from '@core/shared-pages/BasePage';
 import { THIET_LAP_TRUONG_HOC_URL } from '@config/config';
 
-/**
- * Page Object — Thiết lập trường học (5.1.1).
- * URL: {BASE_URL}/truong-hoc/{slug}#menu-thiet-lap-truong-hoc
- *
- * Đây chính là trang "Giới thiệu" của trường (tab đầu tiên trên #pills-tab),
- * KHÔNG có URL/sub-path riêng — section "Thiết lập trường học" chỉ là 1
- * card nằm ngay dưới card "Thông tin VIP" trên cùng trang giới thiệu.
- * Card gồm:
- *   1. 3 checkbox thiết lập (auto-save khi click — không có nút "Lưu" riêng,
- *      xem `.more-opts` trong HTML gốc).
- *   2. 1 select "Thiết lập năm học giao bài".
- *
- * Card "Thông tin VIP" (Hạn vip / Gói vip) nằm phía trên, được coi là 1
- * phần dữ liệu phụ trợ của cùng trang nên cũng expose luôn ở đây
- * (getVipInfo()) thay vì tách Page Object riêng.
- *
- * Dùng kết hợp:
- *   const page = new ThietLapTruongHocPage(p);
- *   await page.open();
- *   expect(page.isPageLoaded()).toBeTruthy();
- *   await page.setCheckbox('choPhepGvcn', false);
- *   await page.selectNamHocGiaoBai('2025');
- */
-
 /** 3 checkbox thiết lập trường học — key ngắn gọn dùng trong test, tránh phải nhớ id số 1/2/3 */
 export type ThietLapCheckboxKey = 'choPhepGvcn' | 'congKhaiHoSo' | 'duyetGiaoAn';
 
@@ -47,9 +23,9 @@ export class ThietLapTruongHocPage extends BasePage {
 
   // ── 3 checkbox thiết lập (auto-save, không có nút Lưu) ──────────────────
   private static readonly CHECKBOX_SELECTOR: Record<ThietLapCheckboxKey, string> = {
-    choPhepGvcn: '.more-options input.more-opts#1',
-    congKhaiHoSo: '.more-options input.more-opts#2',
-    duyetGiaoAn: '.more-options input.more-opts#3',
+    choPhepGvcn: '.more-options input.more-opts[id="1"]',
+    congKhaiHoSo: '.more-options input.more-opts[id="2"]',
+    duyetGiaoAn: '.more-options input.more-opts[id="3"]',
   };
   private static readonly CHECKBOX_LABEL: Record<ThietLapCheckboxKey, string> = {
     choPhepGvcn: "label:has-text('Cho phép giáo viên chủ nhiệm Thêm/Sửa/Xóa học sinh trong lớp')",

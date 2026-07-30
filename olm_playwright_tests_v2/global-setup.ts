@@ -278,6 +278,40 @@ async function globalSetup(_config: FullConfig): Promise<void> {
     fs.copyFileSync(worker0Path, legacyPath);
     console.log(`[globalSetup] ✓ auth/user.json cập nhật từ worker-0`);
   }
+
+  // ── storageState/*.json cho V2authoringrole.fixture.ts ─────────────────
+  // Fixture "Soạn học liệu V2" (editableTeacher / nonEditableTeacher /
+  // olmSourceTeacher / nonOlmSourceTeacher / olmStaff) cần 5 file riêng mà
+  // trước đây KHÔNG có bước nào sinh ra → mọi test dùng getPageAsRole() báo
+  // ENOENT ngay khi mở context.
+  //
+  // Ở môi trường debug chỉ có 1 tài khoản seed sẵn nên KHÔNG THỂ tách 5 role
+  // thực sự khác nhau (khác quyền sửa / khác nguồn học liệu OLM). Tạm thời
+  // copy cùng 1 storageState cho cả 5 role để các test không còn bị chặn ở
+  // bước mở context — nhưng test nào so sánh HÀNH VI KHÁC NHAU giữa các role
+  // (VD: nonEditableTeacher phải bị chặn sửa — TC-COM-02) sẽ KHÔNG có giá trị
+  // thật cho tới khi có tài khoản debug riêng cho từng role.
+  if (/debug\.olm\.vn/.test(BASE_URL)) {
+    const stateDir = path.resolve(__dirname, 'storageState');
+    if (!fs.existsSync(stateDir)) fs.mkdirSync(stateDir, { recursive: true });
+
+    const roleFiles = [
+      'teacher-editable.json',
+      'teacher-non-editable.json',
+      'teacher-olm-source.json',
+      'teacher-non-olm-source.json',
+      'olm-staff.json',
+    ];
+
+    for (const file of roleFiles) {
+      fs.copyFileSync(worker0Path, path.join(stateDir, file));
+    }
+    console.warn(
+      `[globalSetup] ⚠ Debug env: đã tạo ${roleFiles.length} file trong storageState/ từ cùng 1 tài khoản debug ` +
+      `(${acc.label}). Đây KHÔNG phải 5 role thực sự khác nhau — chỉ đủ để test không còn báo ENOENT. ` +
+      `Cần tài khoản debug riêng cho từng role để test phân quyền (TC-COM-02, TC-QS-03/04, TC-HIER-04/05...) có giá trị.`
+    );
+  }
 }
 
 export default globalSetup;

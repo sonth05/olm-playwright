@@ -1,5 +1,5 @@
 import { Page, Locator, expect } from '@playwright/test';
-import { HocLieuCuaToiPage } from '../../hoc-lieu-v1/pages/HocLieuCuaToiPage';
+import { HocLieuCuaToiPage } from './HocLieuCuaToiPageV1';
 import { dismissPopups, safeClick } from '../../../../core/shared-pages/dismissPopups';
 
 /**
