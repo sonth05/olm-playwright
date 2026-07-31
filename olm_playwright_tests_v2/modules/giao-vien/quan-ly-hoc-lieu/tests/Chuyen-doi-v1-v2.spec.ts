@@ -2,30 +2,6 @@ import { test, expect } from '../../../../core/fixtures/V2authoringrole.fixture'
 import { HocLieuCuaToiPage } from '../pages/HocLieuCuaToiPageV1';
 import { HocLieuCuaToiV2Page } from '../pages/Hoclieucuatoiv2page';
 
-/**
- * TC-SWITCH: Luồng chuyển đổi giao diện "Học liệu của tôi" từ V1 sang V2.
- *
- * Đây là ĐIỂM VÀO của toàn bộ bộ test V2 trong thư mục này — mọi file spec khác
- * (Hoc-lieu-cua-toi.spec.ts, Create-hoc-lieu-menu.spec.ts, De-kiem-tra-modal.spec.ts)
- * đều dựa trên HocLieuCuaToiV2Page.goto(), mà bản thân goto() lại thực hiện đúng 3
- * bước dưới đây. Test này đi tường minh từng bước của luồng đó.
- *
- * GỘP 1 TRANG = 1 TEST (2026-07-30): thay vì 4 test riêng (TC-SWITCH-01..04),
- * gộp thành 1 test.describe -> 1 test duy nhất chạy hết luồng chuyển đổi theo
- * đúng trình tự người dùng thật (V1 -> bấm chuyển -> V2 -> bấm quay lại), mỗi
- * bước cũ giờ là 1 test.step() để vẫn tách rõ log khi debug/report, đồng thời
- * giảm số lần đăng nhập/điều hướng lặp lại so với 4 test độc lập trước đây.
- *
- * Luồng chuẩn (đối chiếu ảnh chụp DOM thật debug.olm.vn, ghi nhận 2026-07-28):
- *   1. Vào "Trang giáo viên" -> mở sidebar "Học liệu" -> bấm "Học liệu của tôi"
- *      -> vào ĐÚNG giao diện V1: bảng cột STT/Tên học liệu/Ngày tạo/Thể loại,
- *      có nút "+ Thử phiên bản mới" màu xanh lá ở góc trên bảng.
- *   2. Bấm "Thử phiên bản mới" -> giao diện chuyển CLIENT-SIDE (KHÔNG có điều
- *      hướng trang mới, URL /hoc-lieu-cua-toi giữ nguyên) sang giao diện V2.
- *   3. Giao diện V2 hiển thị đầy đủ thành phần đặc trưng.
- *   4. Bấm "Quay lại giao diện cũ" từ V2 trở về đúng giao diện V1.
- */
-
 test.describe('TC-SWITCH: Chuyển đổi giao diện Học liệu của tôi (V1 -> V2)', () => {
   test('TC-SWITCH: Toàn bộ luồng chuyển đổi V1 -> V2 -> quay lại V1', async ({ getPageAsRole }) => {
     const page = await getPageAsRole('editableTeacher');

@@ -316,6 +316,18 @@ export class HocLieuCuaToiPage extends BasePage {
       // Gọi tường minh ở đây để không phụ thuộc trạng thái page trước đó.
       await this.dismissPopups();
 
+      // FIX (2026-07-31): popup "Xác thực" (xác thực Email/SĐT) ghi nhận
+      // xuất hiện CÓ ĐỘ TRỄ sau khi trang đã load xong — dismissPopups() gọi
+      // ngay phía trên chạy quá sớm, popup lúc đó chưa kịp render nên không
+      // đóng được gì; popup bật lên đúng lúc code bên dưới đang thao tác
+      // sidebar, chặn pointer events -> parentToggle.getAttribute() timeout
+      // (không phải do getAttribute() cần tương tác được, mà do trang bị
+      // popup che khiến các bước ensurePageLoaded/dismiss trước đó "settle"
+      // sai thời điểm). Đợi ngắn rồi dismiss lại lần 2 ngay trước khi chạm
+      // vào sidebar để bắt đúng popup xuất hiện trễ này.
+      await this.page.waitForTimeout(2_000);
+      await this.dismissPopups();
+
       // Nhóm cha "Học liệu cá nhân" là toggle (aria-expanded) — chỉ bấm mở
       // nếu đang đóng, tránh bấm nhầm làm nó ĐÓNG lại (cùng bug đã sửa ở
       // HocLieuDuocChiaSeCaNhanPage / BoSuuTapHocLieuPage).
@@ -333,28 +345,6 @@ export class HocLieuCuaToiPage extends BasePage {
 
       await this.page.waitForLoadState('domcontentloaded');
       await this.page.waitForURL(/hoc-lieu-cua-toi/, { timeout: 10000 }).catch(() => {});
-
-      // FIX (2026-07-28): chỉ waitForURL() xong là coi như "đã tới nơi" từng
-      // gây lỗi trong thực tế — trang "Học liệu của tôi" có 1 popup thông
-      // báo RIÊNG chỉ xuất hiện ở đây (không có ở /home), nên dismissPopups()
-      // gọi trước đó bên trong ensurePageLoaded()/navigateTo() (chạy lúc còn
-      // ở /home) không thấy popup này để tắt. Các bước sau đó (mở dropdown
-      // "Tạo mới học liệu", đọc bảng...) bị popup MỚI này che, đứng lặng
-      // không tiến triển rồi timeout.
-      //
-      // Thay vì throw ngay khi PAGE_TITLE chưa visible, dùng
-      // waitForWithPopupWatchdog(): cứ mỗi ~2s tiêu đề trang chưa hiện HOẶC
-      // vẫn đang bị popup che thì tự kiểm tra & tắt popup rồi thử lại, thay
-      // vì phải biết trước popup sẽ xuất hiện ở đúng bước nào.
-      await waitForWithPopupWatchdog(
-        this.page,
-        async () => {
-          const stillBlocked = await hasBlockingPopup(this.page, 300);
-          if (stillBlocked) return false;
-          return this.page.locator(HocLieuCuaToiPage.PAGE_TITLE).isVisible().catch(() => false);
-        },
-        { label: 'trang "Học liệu của tôi" hiển thị xong, không còn popup che' }
-      );
 
       // FIX (2026-07-28): ĐÃ BỎ việc tự set lại zoom 75% ở đây — zoom mặc
       // định giờ là 100% (xem BasePage.navigateTo()), nên không cần re-apply

@@ -282,6 +282,9 @@ export class BasePage {
 
       if (await changePassModal.isVisible({ timeout: 3_000 })) {
         const closeSelectors = [
+          // FIX (2026-07-31): ưu tiên nút đóng vĩnh viễn — chắc chắn tồn tại
+          // theo DOM thật ghi nhận ở popup "Xác thực" cùng họ modal này.
+          'button:has-text("Không hiện lại nữa")',
           'button.close', 'button[aria-label="Close"]',
           '.modal-header .close', '[data-dismiss="modal"]',
           'button.btn-close', 'button:has-text("×")', 'button:has-text("✕")',
@@ -313,6 +316,11 @@ export class BasePage {
 
       if (await xacThucModal.isVisible({ timeout: 3_000 })) {
         const closeSelectors = [
+          // FIX (2026-07-31): nút "X" thật là <button> chỉ chứa <svg>, không
+          // text/aria-label -> không selector icon-close nào bên dưới khớp
+          // được (ảnh chụp DOM thật 2026-07-31). "Không hiện lại nữa" là nút
+          // chắc chắn có mặt và đóng vĩnh viễn -> thử trước tiên.
+          'button:has-text("Không hiện lại nữa")',
           'button.close', 'button[aria-label="Close"]',
           '.modal-header .close', '[data-dismiss="modal"]',
           'button.btn-close', 'button:has-text("×")', 'button:has-text("✕")',
@@ -344,6 +352,7 @@ export class BasePage {
       const activeMailModal = this.page.locator('#modal-form-active-mail').first();
       if (await activeMailModal.isVisible({ timeout: 2_000 })) {
         const closeSelectors = [
+          'button:has-text("Không hiện lại nữa")',
           'button.close', 'button[aria-label="Close"]',
           '.modal-header .close', '[data-dismiss="modal"]',
           'button.btn-close', 'button:has-text("×")', 'button:has-text("✕")',
@@ -408,9 +417,10 @@ export class BasePage {
         await this.page.keyboard.press('Escape');
         await this.page.waitForTimeout(300);
       }
-    } catch { /* không có backdrop */ }
+    } catch {
+      // không có backdrop
+    }
   }
-
   // ── Page-readiness / sidebar helpers ──────────────────────────────────────
   // (Bổ sung — được gọi ở BoSuuTapHocLieuPage, HocLieuCuaToiPage,
   // HocLieuDaXoaPage, HocLieuDuocChiaSeCaNhanPage nhưng trước đây chưa từng

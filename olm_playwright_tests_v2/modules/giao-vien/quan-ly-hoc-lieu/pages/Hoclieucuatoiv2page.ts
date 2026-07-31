@@ -2,24 +2,6 @@ import { Page, Locator, expect } from '@playwright/test';
 import { HocLieuCuaToiPage } from './HocLieuCuaToiPageV1';
 import { dismissPopups, safeClick } from '../../../../core/shared-pages/dismissPopups';
 
-/**
- * Page Object cho màn "Học liệu của tôi" bản V2 (debug.olm.vn), khác với
- * modules/giao-vien/hoc-lieu-v1/pages/HocLieuCuaToiPage.ts (bản V1 olm.vn).
- * Đối chiếu trực tiếp từ DOM thật (2026-07-27): #view-my-categories-list.
- *
- * Khác biệt lớn so với bản V1:
- * - Có 3 tab lọc theo trạng thái (Tất cả/Đã xuất bản/Chưa xuất bản), mỗi tab
- *   có badge đếm số lượng (chỉ tab "Tất cả" thấy có badge trong DOM mẫu).
- * - 3 dropdown lọc (loại học liệu / môn học / khối lớp) là nút mở popover
- *   Radix (aria-haspopup="dialog"), KHÔNG phải <select> HTML như V1.
- * - Mỗi dòng có 2 badge trạng thái: xuất bản (Bản nháp/Đã xuất bản) và quyền
- *   riêng tư (Riêng tư/Công khai) — V1 không có khái niệm này ở dạng badge.
- * - Cột "Hành động" chỉ có 2 link trực tiếp (Xem - icon mắt, Sửa) + 1 nút
- *   "..." (title="Tùy chọn") mở dropdown thêm — DOM mẫu chưa capture được
- *   nội dung dropdown "Tùy chọn" này (TODO bên dưới openRowMoreOptions()).
- * - Có phân trang (pagination) dạng nút số trang, không phải load-more/scroll.
- */
-
 export type MaterialStatusTab = 'all' | 'published' | 'unpublished';
 
 export interface HocLieuV2Row {
@@ -37,12 +19,6 @@ export interface HocLieuV2Row {
 
 export class HocLieuCuaToiV2Page {
   readonly page: Page;
-
-  // ---- Sidebar navigation: đã CHUYỂN SANG dùng lại nguyên xi
-  // HocLieuCuaToiPage (V1, modules/giao-vien/hoc-lieu-v1/pages/) trong
-  // goto() bên dưới — không cần khai báo selector sidebar riêng ở đây nữa,
-  // xem lý do đầy đủ trong docblock của goto().
-
   // ---- Header ----
   readonly heading: Locator; // "Học liệu của tôi"
   readonly guideLink: Locator; // "Hướng dẫn tạo học liệu"
@@ -101,36 +77,7 @@ export class HocLieuCuaToiV2Page {
     this.btnNextPage = this.pagination.getByRole('button', { name: /next page/i });
   }
 
-  /**
-   * Điều hướng tới "Học liệu của tôi" ĐÚNG LUỒNG NGƯỜI DÙNG THẬT — đã xác
-   * nhận bằng ảnh chụp màn hình thật (2026-07-28), THAY THẾ hoàn toàn cách
-   * cũ (page.goto() thẳng kèm query param ?v=v2 qua appendV2Param() — suy
-   * đoán SAI, chưa từng được xác nhận, xem ghi chú cũ đã xoá trong
-   * config.ts):
-   *
-   *   1) Vào "Trang giáo viên" (TEACHER_HOME_URL) — nơi sidebar render.
-   *   2) Mở nhóm sidebar "Học liệu" (nếu đang đóng) → bấm "Học liệu của tôi"
-   *      → vào ĐÚNG giao diện V1 (bảng cũ, không có tabs trạng thái).
-   *   3) Bấm nút "⚡ Thử phiên bản mới" trên trang V1 đó → giao diện chuyển
-   *      client-side sang V2 (CÙNG URL /hoc-lieu-cua-toi, không có
-   *      navigation mới) — đây là bước BẮT BUỘC PHẢI CÓ, thiếu bước này
-   *      thì mọi Page Object/selector của V2 (tabs, badge trạng thái/quyền
-   *      riêng tư, dropdown lọc kiểu Radix...) sẽ không khớp vì trang vẫn
-   *      đang hiển thị giao diện V1. KHÔNG được kiểm tra/assert bất kỳ
-   *      phần tử nào của V2 trước khi bước 3 này chạy xong.
-   *
-   * 2 bước đầu tái sử dụng nguyên xi HocLieuCuaToiPage.navigateToHocLieuCuaToi()
-   * (V1) thay vì code lại — cùng sidebar, cùng selector, đã test kỹ ở v1.
-   * Bước 3 dùng HocLieuCuaToiPage.switchToNewVersion() (cũng ở V1 page
-   * object, vì nút này CHỈ xuất hiện trên trang V1) — đây là cơ chế DUY
-   * NHẤT đã xác nhận; cách đoán cũ dùng query param ?v=v2 (từng có hàm
-   * appendV2Param() trong config.ts) đã bị xoá hẳn khỏi codebase.
-   *
-   * Nếu page hiện tại đã ở /hoc-lieu-cua-toi VÀ đã ở giao diện V2 rồi
-   * (nhận diện qua tab "Tất cả" đã visible) thì bỏ qua toàn bộ, không lặp
-   * lại — tránh bấm nhầm "Thử phiên bản mới" lần 2 (có thể toggle ngược
-   * lại về V1 nếu nút này là dạng bật/tắt).
-   */
+  
   async goto(_url = '/hoc-lieu-cua-toi') {
     const alreadyOnV2 = await this.tabAll.isVisible({ timeout: 1_000 }).catch(() => false);
     if (!alreadyOnV2) {
@@ -139,13 +86,7 @@ export class HocLieuCuaToiV2Page {
       await v1Page.switchToNewVersion();
     }
     await this.table.waitFor({ state: 'visible' });
-    // FIX (2026-07-28): thêm lớp bảo vệ popup RIÊNG cho view V2 — dismissPopups()
-    // đã chạy trong navigateToHocLieuCuaToi()/switchToNewVersion() ở trên (thuộc
-    // giao diện V1), nhưng bảng V2 có thể tự bắn thêm 1 popup/toast của riêng
-    // nó SAU khi client-side render xong (VD: thông báo cập nhật tính năng),
-    // nên kiểm tra + tắt lại 1 lần nữa tại đây trước khi trả quyền điều khiển
-    // cho caller, tránh việc thao tác kế tiếp (search/filter/click dòng) bị
-    // popup mới này chặn ngang.
+   
     await dismissPopups(this.page);
   }
 
@@ -285,12 +226,6 @@ export class HocLieuCuaToiV2Page {
     await dismissPopups(this.page);
   }
 
-  /**
-   * Mở dropdown "Tùy chọn" (nút "...") của 1 dòng. TODO: DOM nội dung dropdown
-   * (VD: Xóa/Nhân bản/Chuyển vào khóa học/Chia sẻ giống bản V1) chưa được
-   * capture — hàm chỉ dừng ở bước mở, CẦN bổ sung selector item cụ thể khi có
-   * DOM thật lúc dropdown mở.
-   */
   async openRowMoreOptions(row: Locator): Promise<void> {
     await safeClick(this.page, row.getByRole('button', { name: /Tùy chọn/i }));
   }
