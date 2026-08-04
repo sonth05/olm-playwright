@@ -142,10 +142,13 @@ export class HocLieuCuaToiPage extends BasePage {
   // màn hình thật 2026-07-28: nút xanh lá "⚡ Thử phiên bản mới" nằm cạnh
   // tiêu đề trang, CÙNG URL /hoc-lieu-cua-toi — bấm xong giao diện đổi
   // client-side sang bảng/tabs kiểu V2, KHÔNG có full page navigation.
-  // Đây là ĐIỂM VÀO DUY NHẤT đã xác nhận để vào V2 — xem
-  // HocLieuCuaToiV2Page.goto() ở module hoc-lieu-v2, PHẢI đi qua trang V1
-  // này rồi bấm nút này TRƯỚC. Cách đoán cũ dùng query param ?v=v2 đã bị
-  // xoá hoàn toàn khỏi codebase (không còn hàm nào tạo URL kiểu đó).
+  // CẬP NHẬT (2026-08-04): KHÔNG còn là điểm vào V2 dùng cho test nữa —
+  // HocLieuCuaToiV2Page.goto()/BaseHocLieuV2Page.gotoDirectly() đã quay lại
+  // dùng query param ?v=v2 (page.goto() thẳng URL kèm param) để vào V2, đơn
+  // giản và ổn định hơn đi qua trang V1 rồi bấm nút này. Selector/hàm
+  // switchToNewVersion() bên dưới VẪN giữ lại (còn dùng được nếu có test
+  // riêng verify hành vi bấm nút này ở V1), chỉ không còn là bước bắt buộc
+  // trong luồng vào V2 của các test khác nữa.
   // FIX (2026-07-28): DOM thật (từ log lỗi thực tế) cho thấy đây là thẻ
   // <a class="btn btn-success">, KHÔNG PHẢI <button> như suy đoán cũ —
   // `button:has-text(...)` không bao giờ khớp nên switchToNewVersion() luôn
@@ -357,10 +360,15 @@ export class HocLieuCuaToiPage extends BasePage {
 
   /**
    * Bấm nút "⚡ Thử phiên bản mới" để chuyển giao diện "Học liệu của tôi"
-   * hiện tại (V1) sang V2 — ĐIỂM VÀO DUY NHẤT đã xác nhận bằng ảnh chụp màn
-   * hình thật (2026-07-28) để vào được V2, KHÔNG phải query param ?v=v2 như
-   * suy đoán cũ (hàm appendV2Param() từng có trong config.ts — đã xoá hẳn
-   * vì suy đoán đó SAI/lỗi thời, không còn nơi nào gọi tới nữa).
+   * hiện tại (V1) sang V2.
+   *
+   * CẬP NHẬT (2026-08-04): KHÔNG còn là điểm vào V2 dùng cho các test khác
+   * nữa. HocLieuCuaToiV2Page.goto()/BaseHocLieuV2Page.gotoDirectly() đã quay
+   * lại dùng query param ?v=v2 (page.goto() thẳng URL kèm param) thay vì gọi
+   * hàm này — đơn giản, ổn định và không phụ thuộc trạng thái client-side.
+   * Hàm này giữ lại để dùng khi CHÍNH nút "Thử phiên bản mới" là đối tượng
+   * cần test (VD verify hành vi bấm nút trên giao diện V1), không dùng làm
+   * bước setup chung nữa.
    *
    * PHẢI gọi navigateToHocLieuCuaToi() trước (đảm bảo đang đứng đúng trang
    * V1 "Học liệu của tôi" — nút này chỉ xuất hiện ở đây, không phải trang
@@ -372,15 +380,6 @@ export class HocLieuCuaToiPage extends BasePage {
    * đặc trưng CHỈ CÓ ở giao diện V2 (tab "Tất cả" dạng role=tab, V1 không
    * có khái niệm tab trạng thái) để xác nhận đã chuyển xong trước khi trả
    * quyền điều khiển lại cho caller.
-   *
-   * CHƯA XÁC NHẬN: lựa chọn V2 có được lưu lại (cookie/localStorage) để giữ
-   * nguyên qua các lần page.goto() TRỰC TIẾP tới URL khác (VD:
-   * gotoDirectly() ở BaseHocLieuV2Page) hay chỉ tồn tại trong state client
-   * hiện tại (mất khi có full navigation mới). Nếu chạy thực tế thấy
-   * gotoDirectly() bị rớt về giao diện V1 dù đã switchToNewVersion() trước
-   * đó, cần bổ sung cơ chế khác (đọc cookie đã set sau khi bấm nút rồi tái
-   * sử dụng, hoặc chấp nhận gotoDirectly() luôn phải bấm lại nút này ở
-   * đúng URL đích nếu nút cũng xuất hiện tại đó).
    */
   async switchToNewVersion(): Promise<void> {
     await this.dismissPopups();

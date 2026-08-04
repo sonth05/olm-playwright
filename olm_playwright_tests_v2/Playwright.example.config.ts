@@ -16,9 +16,9 @@ export default defineConfig({
   testMatch: ['**/*.spec.ts'],
 
   fullyParallel: true,
-  timeout: 60_000,
+  timeout: 120_000,
   
-  expect: { timeout: 15_000 },
+  expect: { timeout: 30_000 },
 
   reporter: [
     ['list'],

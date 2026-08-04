@@ -38,7 +38,7 @@
     "test:dev:login": "cross-env ENV_FILE=.env.dev playwright test tests/smoke/login.smoke.spec.ts tests/regression/login.regression.spec.ts"
   },
   "devDependencies": {
-    "@playwright/test": "^1.61.0",
+    "@playwright/test": "^1.62.1",
     "@types/node": "^22.19.21",
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",

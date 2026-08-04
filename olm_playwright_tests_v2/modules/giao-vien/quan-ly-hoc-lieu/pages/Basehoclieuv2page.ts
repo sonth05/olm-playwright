@@ -1,6 +1,5 @@
 import { Page, Locator, expect } from '@playwright/test';
 import { HocLieuCuaToiV2Page } from './Hoclieucuatoiv2page';
-import { HocLieuCuaToiPage } from './HocLieuCuaToiPageV1';
 import { dismissPopups, safeClick } from '../../../../core/shared-pages/dismissPopups';
 
 /**
@@ -42,40 +41,6 @@ export abstract class BaseHocLieuV2Page {
     this.accessDeniedMessage = page.getByText(/không có quyền|không được phép truy cập/i);
   }
 
-  /**
-   * Mở màn soạn học liệu ĐÚNG LUỒNG THẬT: từ "Học liệu của tôi" (đã đi qua
-   * Trang giáo viên -> sidebar, xem HocLieuCuaToiV2Page.goto()) rồi bấm
-   * "Sửa" (hoặc "Xem" nếu link không phải /quan-ly) trên dòng tương ứng —
-   * KHÔNG page.goto() thẳng vào URL soạn thảo nữa.
-   *
-   * hocLieuManageUrl chỉ cần là path/slug đủ để nhận diện dòng cần bấm
-   * trong bảng (match theo href chứa chuỗi này), VD: '/chu-de/hoc-lieu-ly-thuyet-demo/quan-ly'.
-   *
-   * FALLBACK: nếu không tìm thấy dòng nào khớp trong bảng (VD: học liệu
-   * không thuộc sở hữu của role đang đăng nhập — dùng cho các test kiểm
-   * tra CHẶN truy cập/không có quyền, như TC-COM-02), sẽ rơi về
-   * gotoDirectly() để vẫn test được nhánh đó, đồng thời log rõ lý do.
-   */
-  /**
-   * Mở màn soạn học liệu ĐÚNG LUỒNG THẬT: từ "Học liệu của tôi" (đã đi qua
-   * Trang giáo viên -> sidebar, xem HocLieuCuaToiV2Page.goto()) rồi bấm
-   * "Sửa" (hoặc "Xem" nếu link không phải /quan-ly) trên dòng tương ứng —
-   * KHÔNG page.goto() thẳng vào URL soạn thảo nữa.
-   *
-   * hocLieuManageUrl chỉ cần là path/slug đủ để nhận diện dòng cần bấm
-   * trong bảng (match theo href chứa chuỗi này), VD: '/chu-de/hoc-lieu-ly-thuyet-demo/quan-ly'.
-   *
-   * KHÔNG fallback ngầm sang page.goto() nữa (đã BỎ hành vi cũ) — nếu
-   * không tìm thấy dòng khớp trong bảng, ném lỗi rõ ràng để test FAIL loud,
-   * thay vì âm thầm né qua URL cố định (từng gây hiểu nhầm là luồng UI đã
-   * chạy đúng trong khi thực ra đã rớt xuống nhánh dự phòng, dẫn tới việc
-   * dính thẳng vào 1 URL chưa qua bước "Học liệu của tôi" và bị popup "Xác
-   * thực" chặn ngang mà không rõ nguyên nhân).
-   *
-   * Nếu có lý do CHÍNH ĐÁNG cần bỏ qua danh sách (VD: test cố ý kiểm tra
-   * truy cập trực tiếp / học liệu không thuộc sở hữu role hiện tại như
-   * TC-COM-02), gọi thẳng gotoDirectly() — KHÔNG dùng goto().
-   */
   async goto(hocLieuManageUrl: string) {
     const listPage = new HocLieuCuaToiV2Page(this.page);
     await listPage.goto();
@@ -103,39 +68,16 @@ export abstract class BaseHocLieuV2Page {
     await dismissPopups(this.page);
   }
 
+
   /**
-   * Điều hướng THẲNG vào URL soạn thảo (page.goto() trần), KHÔNG qua danh
-   * sách "Học liệu của tôi". CHỈ gọi tường minh — KHÔNG còn là fallback tự
-   * động của goto() nữa. Dùng cho các test CỐ TÌNH mô phỏng truy cập trực
-   * tiếp không qua luồng UI bình thường — ví dụ TC-COM-02 (chặn truy cập
-   * khi không có quyền sửa): học liệu đó không nằm trong danh sách "Học
-   * liệu của tôi" của nonEditableTeacher nên không thể bấm Sửa/Xem từ danh
-   * sách được.
-   *
-   * QUAN TRỌNG (2026-07-28): trước đây hàm này chỉ page.goto() kèm query
-   * param ?v=v2 (hàm appendV2Param() từng có trong config.ts, đã xoá hẳn —
-   * suy đoán SAI, đã xác nhận bằng ảnh chụp màn hình thật là KHÔNG đúng cơ
-   * chế). Cơ chế thật là bấm nút "⚡ Thử
-   * phiên bản mới" trên trang V1 "Học liệu của tôi". Vì gotoDirectly() cố
-   * tình KHÔNG đi qua danh sách học liệu (học liệu đích không thuộc sở hữu
-   * role hiện tại nên không có dòng nào để bấm), hàm này vẫn phải ghé qua
-   * "Học liệu của tôi" (V1) CỦA CHÍNH role đang đăng nhập trước — dùng học
-   * liệu NÀO trong danh sách của họ không quan trọng, mục đích chỉ là bấm
-   * nút chuyển version — rồi mới page.goto() thẳng vào URL đích.
-   *
-   * CHƯA XÁC NHẬN: lựa chọn V2 có được lưu qua cookie (giữ nguyên khi
-   * page.goto() sang URL khác) hay chỉ là state client tạm thời (mất khi
-   * có full navigation) — xem ghi chú trong
-   * HocLieuCuaToiPage.switchToNewVersion(). Nếu chạy thực tế thấy URL đích
-   * vẫn hiện giao diện V1 dù đã bấm nút trước đó, cần điều tra lại cơ chế
-   * lưu trạng thái (đọc cookie response sau khi bấm nút để xác nhận).
+   * Điều hướng thẳng tới 1 URL màn soạn học liệu V2 cụ thể, tự gắn thêm
+   * query param ?v=v2 (hoặc &v=v2 nếu URL truyền vào đã có sẵn query khác)
+   * để hệ thống trả về đúng giao diện V2 ngay từ lần điều hướng đầu tiên —
+   * không còn cần đi qua màn V1 rồi bấm "Thử phiên bản mới" trước.
    */
   async gotoDirectly(hocLieuManageUrl: string) {
-    const v1Page = new HocLieuCuaToiPage(this.page);
-    await v1Page.navigateToHocLieuCuaToi();
-    await v1Page.switchToNewVersion();
-
-    await this.page.goto(hocLieuManageUrl);
+    const separator = hocLieuManageUrl.includes('?') ? '&' : '?';
+    await this.page.goto(`${hocLieuManageUrl}${separator}v=v2`);
     await dismissPopups(this.page);
   }
 

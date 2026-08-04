@@ -37,19 +37,35 @@ export const test = base.extend<Fixtures>({
     const contextCache = new Map<V2Role, BrowserContext>();
 
     const getPageAsRole = async (role: V2Role): Promise<Page> => {
-      let context = contextCache.get(role);
-      if (!context) {
-        context = await browser.newContext({ storageState: STORAGE_STATE_BY_ROLE[role] });
-        contextCache.set(role, context);
-      }
-      return context.newPage();
-    };
+  let context = contextCache.get(role);
+
+  if (!context) {
+    context = await browser.newContext({
+      storageState: STORAGE_STATE_BY_ROLE[role],
+
+      // Thêm để kiểm tra
+      recordVideo: {
+        dir: 'reports/debug-video',
+      },
+    });
+
+    contextCache.set(role, context);
+  }
+
+  return context.newPage();
+};
 
     await use(getPageAsRole);
 
     for (const context of contextCache.values()) {
-      await context.close();
+    const pages = context.pages();
+
+    for (const page of pages) {
+        console.log('Video path:', await page.video()?.path());
     }
+
+    await context.close();
+}
   },
 });
 

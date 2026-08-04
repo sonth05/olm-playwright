@@ -2,50 +2,50 @@
   "cookies": [
     {
       "name": "XSRF-TOKEN",
-      "value": "ZnUxVlLOnNeYzabFG65vepJLZsk90Prx5nCeVhiD",
+      "value": "qwvNNMuYAw6rP02qDZTXKfutEmr7vbGJAc3RZqcB",
       "domain": "olm.vn",
       "path": "/",
-      "expires": 1785477410.750345,
+      "expires": 1785755382.198536,
       "httpOnly": false,
       "secure": true,
       "sameSite": "Lax"
     },
     {
       "name": "__cflb",
-      "value": "02DiuEw7pxKAZNcwuU91HVkt1oi9zcehW2oA7sYpRyrfe",
+      "value": "02DiuEw7pxKAZNcwuU91HVkt1oi9zcehVYjNAyGjYnnb6",
       "domain": "olm.vn",
       "path": "/",
-      "expires": 1785553003.482744,
+      "expires": 1785830972.075736,
       "httpOnly": true,
       "secure": true,
       "sameSite": "None"
     },
     {
       "name": "_gcl_au",
-      "value": "1.1.1082514428.1785470205",
+      "value": "1.1.1806436676.1785748176",
       "domain": ".olm.vn",
       "path": "/",
-      "expires": 1793246205,
+      "expires": 1793524176,
       "httpOnly": false,
       "secure": false,
       "sameSite": "Lax"
     },
     {
       "name": "IDE",
-      "value": "AHWqTUny_ClH20M2xqW5PxlxsE5g5RuA6WZ7UK10u7qwTvHBzkJJhhkVF-bkyg6n",
+      "value": "AHWqTUn_F1GLqocCoLjns3N_IkRn96ZAWGY8d2Oo9uxC_wRz8rX2HhsHwf2ryVb4",
       "domain": ".doubleclick.net",
       "path": "/",
-      "expires": 1820030205.604393,
+      "expires": 1820308176.289363,
       "httpOnly": true,
       "secure": true,
       "sameSite": "None"
     },
     {
       "name": "_gid",
-      "value": "GA1.2.117481144.1785470206",
+      "value": "GA1.2.1214034942.1785748177",
       "domain": ".olm.vn",
       "path": "/",
-      "expires": 1785556609,
+      "expires": 1785834580,
       "httpOnly": false,
       "secure": false,
       "sameSite": "Lax"
@@ -55,67 +55,67 @@
       "value": "1",
       "domain": ".olm.vn",
       "path": "/",
-      "expires": 1785470266,
+      "expires": 1785748236,
       "httpOnly": false,
       "secure": false,
       "sameSite": "Lax"
     },
     {
       "name": "onlinemath_session",
-      "value": "ywiZe3tsTAHOgYlKDb2SC19sdswQYfbjsI6rpMBK",
+      "value": "mkt6xRzV83grwxSLk6mgIKufJlp2rL4joeCiEVXs",
       "domain": "olm.vn",
       "path": "/",
-      "expires": 1785477410.750591,
+      "expires": 1785755382.198772,
       "httpOnly": true,
       "secure": false,
       "sameSite": "Lax"
     },
     {
       "name": "remember_web_59ba36addc2b2f9401580f014c7f58ea4e30989d",
-      "value": "17305435660809%7CkcR7PqSv1uZcwXvSGP4W6nLjZZcEMCIP6WtRknhvnKwqLs8Uh0b06rx1MK9z%7C%242y%2410%24Z8Ymg7uyUPVFrv2JXrMGJucW049frSgSN8Da6LRZeFqnZcbHuaB.K",
+      "value": "17305435660809%7CKvAgBPUVAHQpC4pqiHIeHlaA6JHuAO8bVD2uMpCIt5UobPSq9nmQxznjjUKQ%7C%242y%2410%24Z8Ymg7uyUPVFrv2JXrMGJucW049frSgSN8Da6LRZeFqnZcbHuaB.K",
       "domain": "olm.vn",
       "path": "/",
-      "expires": 1820030206.904994,
+      "expires": 1820308177.591371,
       "httpOnly": true,
       "secure": true,
       "sameSite": "Lax"
     },
     {
       "name": "access_token",
-      "value": "4f1bcf358548ed3b027b9db0863c5ef6d693a7bd",
+      "value": "ba3b7946b1bf398d7e2bc5e46b920e3b5ee07efd",
       "domain": ".olm.vn",
       "path": "/",
-      "expires": 1785556605.628204,
+      "expires": 1785834578.079473,
       "httpOnly": false,
       "secure": true,
       "sameSite": "None"
     },
     {
       "name": "refresh_token",
-      "value": "a45c382b79b93bb07d899d0bdf0bd84321ab559f",
+      "value": "08f370a45a0d316ce1633459a01468bcca2dc118",
       "domain": ".olm.vn",
       "path": "/",
-      "expires": 1788062208.628378,
+      "expires": 1788340181.079592,
       "httpOnly": false,
       "secure": true,
       "sameSite": "None"
     },
     {
       "name": "_ga_H8ZLXJK1D6",
-      "value": "GS2.1.s1785470206$o1$g1$t1785470208$j58$l0$h0",
+      "value": "GS2.1.s1785748176$o1$g1$t1785748180$j56$l0$h0",
       "domain": ".olm.vn",
       "path": "/",
-      "expires": 1820030208.984342,
+      "expires": 1820308180.300538,
       "httpOnly": false,
       "secure": false,
       "sameSite": "Lax"
     },
     {
       "name": "_ga",
-      "value": "GA1.2.1591276682.1785470206",
+      "value": "GA1.2.959880763.1785748177",
       "domain": ".olm.vn",
       "path": "/",
-      "expires": 1820030209.028065,
+      "expires": 1820308180.343726,
       "httpOnly": false,
       "secure": false,
       "sameSite": "Lax"
@@ -125,7 +125,7 @@
       "value": "enabled",
       "domain": ".olm.vn",
       "path": "/",
-      "expires": 1807792243.627836,
+      "expires": 1807792234.079241,
       "httpOnly": false,
       "secure": true,
       "sameSite": "None"
@@ -135,20 +135,110 @@
       "value": "%7B%22_id%22%3A%2217305435660809%22%2C%22name%22%3A%22Nguyen%20Thanh%20Son%22%2C%22username%22%3A%22hsptolm_sonthanh%22%2C%22email%22%3A%22%22%7D",
       "domain": ".olm.vn",
       "path": "/",
-      "expires": 1788062208.628042,
+      "expires": 1788340181.079386,
       "httpOnly": false,
       "secure": true,
       "sameSite": "Strict"
     },
     {
-      "name": "ywiZe3tsTAHOgYlKDb2SC19sdswQYfbjsI6rpMBK",
-      "value": "%7B%22data%22%3A%22a%3A4%3A%7Bs%3A6%3A%5C%22_token%5C%22%3Bs%3A40%3A%5C%22ZnUxVlLOnNeYzabFG65vepJLZsk90Prx5nCeVhiD%5C%22%3Bs%3A7%3A%5C%22auth_id%5C%22%3Bs%3A32%3A%5C%223290a5aae5a230ee6b5265440fcdab54%5C%22%3Bs%3A50%3A%5C%22login_web_59ba36addc2b2f9401580f014c7f58ea4e30989d%5C%22%3Bs%3A14%3A%5C%2217305435660809%5C%22%3Bs%3A6%3A%5C%22_flash%5C%22%3Ba%3A2%3A%7Bs%3A3%3A%5C%22old%5C%22%3Ba%3A0%3A%7B%7Ds%3A3%3A%5C%22new%5C%22%3Ba%3A0%3A%7B%7D%7D%7D%22%2C%22expires%22%3A1785477413%7D",
+      "name": "__gads",
+      "value": "ID=1720dba3d0f2c95e:T=1785748191:RT=1785748191:S=ALNI_MagwGd5Vi459GKOsrRM5PsN0gZwcQ",
+      "domain": ".olm.vn",
+      "path": "/",
+      "expires": 1819444191,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "__gpi",
+      "value": "UID=0000145d5a536fa4:T=1785748191:RT=1785748191:S=ALNI_MZDUe_i8OyAmGK1DrcgAB1Kj0CNFg",
+      "domain": ".olm.vn",
+      "path": "/",
+      "expires": 1819444191,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "__eoi",
+      "value": "ID=9b67962ed819cc8f:T=1785748191:RT=1785748191:S=AA-AfjaD13IS7kth0_EtkOeioVW_",
+      "domain": ".olm.vn",
+      "path": "/",
+      "expires": 1801300191,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "uid",
+      "value": "1N9zhRNk0Iy",
+      "domain": ".ad-m.asia",
+      "path": "/",
+      "expires": 1820308182.076326,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "mkt6xRzV83grwxSLk6mgIKufJlp2rL4joeCiEVXs",
+      "value": "%7B%22data%22%3A%22a%3A4%3A%7Bs%3A6%3A%5C%22_token%5C%22%3Bs%3A40%3A%5C%22qwvNNMuYAw6rP02qDZTXKfutEmr7vbGJAc3RZqcB%5C%22%3Bs%3A7%3A%5C%22auth_id%5C%22%3Bs%3A32%3A%5C%22ee0419aa1baf2a0da90f05f8f11a60c4%5C%22%3Bs%3A50%3A%5C%22login_web_59ba36addc2b2f9401580f014c7f58ea4e30989d%5C%22%3Bs%3A14%3A%5C%2217305435660809%5C%22%3Bs%3A6%3A%5C%22_flash%5C%22%3Ba%3A2%3A%7Bs%3A3%3A%5C%22old%5C%22%3Ba%3A0%3A%7B%7Ds%3A3%3A%5C%22new%5C%22%3Ba%3A0%3A%7B%7D%7D%7D%22%2C%22expires%22%3A1785755393%7D",
       "domain": "olm.vn",
       "path": "/",
-      "expires": 1785477410.750684,
+      "expires": 1785755382.198864,
       "httpOnly": true,
       "secure": true,
       "sameSite": "Lax"
+    },
+    {
+      "name": "mlcwc",
+      "value": "eyJ2ZXJzaW9uIjoxLCJwYXlsb2FkIjoiOHpDb3ZGNzV6cEdMRXdOYStTcTdQVnVERVpXaFcxQkMrZEo1alFaeVgxSXRlN2V6NXJjcitJeldpUWdRcUpWa1VYTEJ1MSs0emZ2dTZzeG1nQjd2NUR0aUhYNnc4UC9FR0ZScDBseWFFRThjMTNKUjhwMXlpNGY4SjVxaStJSkZHT3lCS3ZSaDBNaWlHZlQ1MkFSN3VTWklWN2dlTTVLOTJVaGxNTEQ0SUJqeVBYdWhOeEVETmZ3TGxKOEtVekh2NDVra1c5K3ZGQnN5RXhyQ21wM29RRXp0WXg0MlRUd29OVDBoR29paFkyZTBHcEkvSmhzMHNrV20vaXVFRGUwPSIsIm5vbmNlIjoid21BdUkrQUxoMDRjTzJ0TyJ9",
+      "domain": ".moloco.com",
+      "path": "/",
+      "expires": 1817284182.211189,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "everest_g_v2",
+      "value": "g_surferid~anBa4QAKYhKmCwAB",
+      "domain": ".everesttech.net",
+      "path": "/",
+      "expires": 1817284182.251728,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "__cf_bm",
+      "value": "5RR6CBVy8t2gQ53QG1taqWHCCykODtF_hmghFf2Ewok-1785748193.3555336-1.0.1.1-TW_6QDZaYNBwSfQz46gcfbWtbp7OPyNCfBT88UDRm4jBV_eQe8f5mX.6l7vF5KAcg2sFr6YPxhMIHRZ3luQBNP.cdwtijNnkvyTGxRfp4S4z6lZh8Mun9eAqzuZ_eMFV",
+      "domain": ".temu.com",
+      "path": "/",
+      "expires": 1785749982.266882,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "OAU",
+      "value": "OPUc0184098c6b44993a86f713a03f791f3",
+      "domain": ".opera.com",
+      "path": "/",
+      "expires": 1817284182.462543,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_pangle",
+      "value": "3HOnt2o0fBDcpV8zVcWsNMWsiB9",
+      "domain": ".pangle-ads.com",
+      "path": "/",
+      "expires": 1819444182.671824,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
     }
   ],
   "origins": [
@@ -157,11 +247,15 @@
       "localStorage": [
         {
           "name": "last:change-password",
-          "value": "1785470209"
+          "value": "1785748189"
+        },
+        {
+          "name": "google_adsense_settings",
+          "value": "{\"ca-pub-7325137874728698\":[\"ca-pub-7325137874728698\"]}"
         },
         {
           "name": "accessTokenChecked",
-          "value": "4f1bcf358548ed3b027b9db0863c5ef6d693a7bd"
+          "value": "ba3b7946b1bf398d7e2bc5e46b920e3b5ee07efd"
         },
         {
           "name": "show-modal-form-active-mail-17305435660809",
@@ -173,23 +267,23 @@
         },
         {
           "name": "google_ama_settings",
-          "value": "[1785556609759,1]"
+          "value": "[1785834580814,1]"
         },
         {
           "name": "show-modal-form-active-mail-17305435660809_expiresIn",
-          "value": "1785506210581"
+          "value": "1785784182016"
         },
         {
           "name": "_gcl_ls",
-          "value": "{\"schema\":\"gcl\",\"version\":1,\"gsid_dc\":{\"value\":{\"joinId\":\"X86K8UcNuna5whHPmqKJ6_UIA6I3HnZFcw\",\"lastJoinedTimeMs\":1785470204757},\"expires\":1785470504757},\"gcl_ctr\":{\"value\":{\"value\":0,\"timeouts\":0,\"errors\":0,\"eopCount\":0,\"creationTimeMs\":1785470204765},\"expires\":1793246204765}}"
+          "value": "{\"schema\":\"gcl\",\"version\":1,\"gsid_dc\":{\"value\":{\"joinId\":\"bCQUBU503L8vkRFo4IfTnVXZBaDU0nDHzw\",\"lastJoinedTimeMs\":1785748175580},\"expires\":1785748475580},\"gcl_ctr\":{\"value\":{\"value\":0,\"timeouts\":0,\"errors\":0,\"eopCount\":0,\"creationTimeMs\":1785748175588},\"expires\":1793524175588}}"
         },
         {
           "name": "google_ama_config",
-          "value": "[[[[null,7,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,5,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"DIV.main-wrap>DIV.header-wrapper.shadow-none.d-none.d-lg-block\"],4,[\"16px\",\"10px\",1],[2],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV#carousel-homepage\"],4,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV.inner-content>DIV.row\"],4,[\"10px\",\"10px\",1],[5],null,[],[],1,[],[]],[[null,5,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,6,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-relative.tw-overflow-hidden.tw-bg-cover.tw-bg-center\"],4,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,1,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-bg-white>DIV.tw-olm-container\"],4,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION>DIV.tw-olm-container>DIV.tw-flex.tw-flex-col.tw-items-center\"],4,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>DIV.tw-bg-background-default.tw-olm-container.tw-block\"],1,[\"10px\",\"10px\",1],[2],null,[],[],1,[],[]],[[null,2,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"DIV.main-wrap>DIV.header-wrapper.shadow-none.d-none.d-lg-block>DIV.container>DIV.row>DIV.text-right.text-white\"],1,[\"10px\",\"10px\",1],[4],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV.main-wrap-body>DIV.container-fluid>DIV.vertical-wrapper>DIV.container>DIV.row.justify-content-center\"],4,[\"24px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,1,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-olm-container\"],4,[\"10px\",\"80px\",1],[1],null,[],[],1,[],[]],[[null,7,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,3,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION>DIV.tw-olm-container\"],1,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",0],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post.bg-post-single>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",0],[0],null,[],[],1,[],[6]],[[null,1,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION>DIV.tw-olm-container>.tw-font-semibold.tw-leading-tight.tw-text-center\"],1,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,3,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,5,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION\"],4,[\"24px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,8,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"BODY\"],3,[\"10px\",\"10px\",1],[5],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-bg-white\"],4,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,3,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION>DIV.tw-olm-container\"],4,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,5,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION>DIV.tw-olm-container\"],4,[\"24px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV#carousel-homepage>DIV.owl-stage-outer>DIV.owl-stage\"],4,[\"10px\",\"10px\",0],[1],null,[],[],1,[],[]],[[null,2,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"DIV.main-wrap>FOOTER.footer-olm\"],1,[\"24px\",\"10px\",1],[0],null,[],[],1,[],[2,4]],[[null,0,null,[],null,null,\"DIV.main-wrap>DIV.header-wrapper.shadow-sm.align-items-center.bg-white\"],4,[\"10px\",\"10px\",1],[4],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV.main-wrap>DIV.header-wrapper.shadow-sm.align-items-center.bg-white\"],3,[\"10px\",\"10px\",1],[4],null,[],[],1,[],[]],[[null,1,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"DIV.footer-top\"],1,[\"10px\",\"10px\",1],[3],null,[],[],1,[],[]],[[null,8,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,4,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-bg-white\"],1,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,9,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-bg-white>DIV.tw-olm-container>.tw-font-semibold.tw-leading-tight.tw-text-center\"],1,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV#ecosystem-products>DIV.owl-stage-outer>DIV.owl-stage\"],4,[\"10px\",\"10px\",0],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-olm-container\"],4,[\"10px\",\"80px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV>DIV.card.card-post.bg-post-single>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",0],[0],null,[],[],1,[],[6]]],[],[1785556609664],\"20260728_091520\",[],[[[[null,null,null,[],null,null,\"DIV.see-more>DIV.full-see-more.d-none\"],[null,null,null,[],null,null,\"P\"],null,[null,null,null,[],null,null,\"P\"]],[[null,3,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content>DIV.see-more>DIV.full-see-more.d-none>P\"],[null,null,null,[]]],[[null,6,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content\"],[null,null,null,[],null,null,\"P\"],null,[null,null,null,[],null,null,\"P\"]],[[null,null,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-relative.tw-overflow-hidden.tw-bg-cover.tw-bg-center>DIV.tw-olm-container.tw-relative.tw-flex.tw-flex-col>DIV.tw-text-center\"],[null,null,null,[],null,null,\"P.tw-mx-auto.tw-text-content-secondary\"],null,[null,null,null,[],null,null,\"H2.tw-font-semibold.tw-text-content-primary,P.tw-mx-auto.tw-text-content-secondary\"]],[[null,7,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV>DIV.card.card-post.bg-post-single>DIV.wide-block.wide-comment-block>DIV.comment-block>DIV.card-comment>DIV.font-xss.text.text-dark.card-comment-content>P\"],[null,null,null,[]]],[[null,4,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content>P\"],[null,null,null,[]]],[[null,2,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV>DIV.card.card-post.bg-post-single>DIV.wide-block.wide-comment-block>DIV.comment-block>DIV.card-comment>DIV.font-xss.text.text-dark.card-comment-content\"],[null,null,null,[],null,null,\"P\"],null,[null,null,null,[],null,null,\"LI,P\"]],[[null,1,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV>DIV.card.card-post.bg-post-single>DIV.wide-block.wide-comment-block>DIV.comment-block>DIV.card-comment>DIV.font-xss.text.text-dark.card-comment-content>UL\"],[null,null,null,[],null,null,\"LI\"],null,[null,null,null,[],null,null,\"LI\"]],[[null,3,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV>DIV.card.card-post.bg-post-single>DIV.wide-block.wide-comment-block>DIV.comment-block>DIV.card-comment>DIV.font-xss.text.text-dark.card-comment-content>P\"],[null,null,null,[]]],[[null,1,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content>DIV.see-more>DIV.full-see-more.d-none\"],[null,null,null,[],null,null,\"P\"],null,[null,null,null,[],null,null,\"P\"]],[[null,1,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content>P\"],[null,null,null,[]]],[[null,1,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV>DIV.card.card-post.bg-post-single>DIV.wide-block.wide-comment-block>DIV.comment-block>DIV.card-comment>DIV.font-xss.text.text-dark.card-comment-content\"],[null,null,null,[],null,null,\"P\"],null,[null,null,null,[],null,null,\"H3,P\"]],[[null,1,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content>DIV.see-more>DIV.full-see-more.d-none>P\"],[null,null,null,[]]],[[null,13,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV>DIV.card.card-post.bg-post-single>DIV.wide-block.wide-comment-block>DIV.comment-block>DIV.card-comment>DIV.font-xss.text.text-dark.card-comment-content>P\"],[null,null,null,[]]]]],[[null,[],null,\"9593528999\",[],[],[3667223351,2],null,null,null,[]],[null,[],null,\"9593528999\",[],[],[1256762199,2],null,null,null,[]],[null,[],null,\"9593528999\",[],[],[2113254418,2],null,null,null,[]],[null,[],null,\"9593528999\",[],[],[3932518507,2],null,null,null,[]],[null,[1,3,2],null,\"9593528999\",[],[],[0,2],null,null,[0.88999999,null,2,8,530,1],[]]],[null,[[1,\"1vp\",[[4,\"2vp\",\"2vp\"],[6,\"3vp\",\"3vp\"]],8,\"1vp\",0.30000001,[\"0.2vp\",\"0vp\",2]],[2,\"300px\",[[4,\"600px\",\"600px\"],[6,\"900px\",\"900px\"]],8,\"300px\",0.30000001,[\"60px\",\"0px\",2]]]],null,null,null,null,null,null,[null,null,null,null,null,null,null,null,null,null,null,0],null,null,null,null,[600127537],null,null,[1785382537505],null,null,null,null,null,null,null,null,null,[[\"Bật/tắt tính năng mở rộng thanh công cụ\",\"Bật/tắt chế độ hiển thị phần cài đặt về quyền riêng tư và pháp lý\",\"Đóng chế độ hiển thị phần cài đặt về quyền riêng tư và pháp lý\"]]]"
+          "value": "[[[[null,13,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.wide-block.wide-comment-block>DIV.comment-block>DIV.card-comment\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,1,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION>DIV.tw-olm-container>.tw-font-semibold.tw-leading-tight.tw-text-center\"],1,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,1,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-bg-white>DIV.tw-olm-container\"],4,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV.main-wrap>DIV.header-wrapper.shadow-none.d-none.d-lg-block\"],4,[\"16px\",\"10px\",1],[2],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-bg-white\"],4,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-olm-container\"],4,[\"10px\",\"80px\",1],[1],null,[],[],1,[],[]],[[null,5,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION>DIV.tw-olm-container\"],4,[\"24px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV.inner-content>DIV.row\"],4,[\"10px\",\"10px\",1],[5],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV#ecosystem-products>DIV.owl-stage-outer>DIV.owl-stage\"],4,[\"10px\",\"10px\",0],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-bg-white\"],1,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,7,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,3,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION>DIV.tw-olm-container\"],4,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,3,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,4,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,8,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post.bg-post-single>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",0],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"DIV.footer-top\"],1,[\"10px\",\"10px\",1],[3],null,[],[],1,[],[]],[[null,4,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,5,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"BODY\"],3,[\"10px\",\"10px\",1],[5],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV.main-wrap-body>DIV.container-fluid>DIV.vertical-wrapper>DIV.container>DIV.row.justify-content-center\"],4,[\"24px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,3,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION>DIV.tw-olm-container\"],1,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,2,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,5,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION\"],4,[\"24px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-bg-white>DIV.tw-olm-container>.tw-font-semibold.tw-leading-tight.tw-text-center\"],1,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV.main-wrap>FOOTER.footer-olm\"],1,[\"24px\",\"10px\",1],[0],null,[],[],1,[],[2,4]],[[null,6,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"DIV#carousel-homepage>DIV.owl-stage-outer>DIV.owl-stage\"],4,[\"10px\",\"10px\",0],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>DIV.tw-bg-background-default.tw-olm-container.tw-block\"],1,[\"10px\",\"10px\",1],[2],null,[],[],1,[],[]],[[null,1,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"DIV.main-wrap>DIV.header-wrapper.shadow-sm.align-items-center.bg-white\"],4,[\"10px\",\"10px\",1],[4],null,[],[],1,[],[]],[[null,5,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV>DIV.card.card-post.bg-post-single>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",0],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION>DIV.tw-olm-container>DIV.tw-flex.tw-flex-col.tw-items-center\"],4,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,7,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-relative.tw-overflow-hidden.tw-bg-cover.tw-bg-center\"],4,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV.main-wrap>DIV.header-wrapper.shadow-sm.align-items-center.bg-white\"],3,[\"10px\",\"10px\",1],[4],null,[],[],1,[],[]],[[null,9,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,1,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-olm-container\"],4,[\"10px\",\"80px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV#carousel-homepage\"],4,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV.main-wrap>DIV.header-wrapper.shadow-none.d-none.d-lg-block>DIV.container>DIV.row>DIV.text-right.text-white\"],1,[\"10px\",\"10px\",1],[4],null,[],[],1,[],[]],[[null,8,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]]],[],[1785834580691],\"20260729_110006\",[],[[[[null,0,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.wide-block.wide-comment-block>DIV.comment-block>DIV.card-comment>DIV.font-xss.text.text-dark.card-comment-content>P\"],[null,null,null,[]]],[[null,4,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content>P\"],[null,null,null,[]]],[[null,1,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content>DIV.see-more>DIV.full-see-more.d-none>P\"],[null,null,null,[]]],[[null,10,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content>P\"],[null,null,null,[]]],[[null,5,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content>DIV.see-more>DIV.full-see-more.d-none>P\"],[null,null,null,[]]],[[null,2,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content>DIV.see-more>DIV.full-see-more.d-none\"],[null,null,null,[],null,null,\"P\"],null,[null,null,null,[],null,null,\"P\"]],[[null,6,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content\"],[null,null,null,[],null,null,\"P\"],null,[null,null,null,[],null,null,\"P\"]],[[null,1,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content>DIV.see-more>DIV.full-see-more.d-none\"],[null,null,null,[],null,null,\"P\"],null,[null,null,null,[],null,null,\"P\"]],[[null,1,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.wide-block.wide-comment-block>DIV.comment-block>DIV.card-comment>DIV.font-xss.text.text-dark.card-comment-content>UL\"],[null,null,null,[],null,null,\"LI\"]],[[null,3,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content>DIV.see-more>DIV.full-see-more.d-none>P\"],[null,null,null,[]]],[[null,2,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.wide-block.wide-comment-block>DIV.comment-block>DIV.card-comment>DIV.font-xss.text.text-dark.card-comment-content>UL\"],[null,null,null,[],null,null,\"LI\"],null,[null,null,null,[],null,null,\"LI\"]],[[null,0,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content>DIV.see-more>DIV.full-see-more.d-none\"],[null,null,null,[],null,null,\"P\"],null,[null,null,null,[],null,null,\"H5,P\"]],[[null,null,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-relative.tw-overflow-hidden.tw-bg-cover.tw-bg-center>DIV.tw-olm-container.tw-relative.tw-flex.tw-flex-col>DIV.tw-text-center\"],[null,null,null,[],null,null,\"P.tw-mx-auto.tw-text-content-secondary\"],null,[null,null,null,[],null,null,\"H2.tw-font-semibold.tw-text-content-primary,P.tw-mx-auto.tw-text-content-secondary\"]]]],[[null,[],null,\"9593528999\",[],[],[3667223351,2],null,null,null,[]],[null,[],null,\"9593528999\",[],[],[1256762199,2],null,null,null,[]],[null,[],null,\"9593528999\",[],[],[2113254418,2],null,null,null,[]],[null,[],null,\"9593528999\",[],[],[3932518507,2],null,null,null,[]],[null,[1,3,2],null,\"9593528999\",[],[],[0,2],null,null,[0.88999999,null,2,8,530,1],[]]],[null,[[1,\"1vp\",[[4,\"2vp\",\"2vp\"],[6,\"3vp\",\"3vp\"]],8,\"1vp\",0.30000001,[\"0.2vp\",\"0vp\",2]],[2,\"300px\",[[4,\"600px\",\"600px\"],[6,\"900px\",\"900px\"]],8,\"300px\",0.30000001,[\"60px\",\"0px\",2]]]],null,null,null,null,null,null,[null,null,null,null,null,null,null,null,null,null,null,0],null,null,null,null,[657806517],null,null,[1785641894772],null,null,null,null,null,null,null,null,null,[[\"Bật/tắt tính năng mở rộng thanh công cụ\",\"Bật/tắt chế độ hiển thị phần cài đặt về quyền riêng tư và pháp lý\",\"Đóng chế độ hiển thị phần cài đặt về quyền riêng tư và pháp lý\"]]]"
         },
         {
           "name": "pusherTransportTLS",
-          "value": "{\"timestamp\":1785470208034,\"transport\":\"ws\",\"latency\":265}"
+          "value": "{\"timestamp\":1785748179497,\"transport\":\"ws\",\"latency\":583}"
         },
         {
           "name": "auth.grades",
@@ -202,7 +296,7 @@
       "localStorage": [
         {
           "name": "rc::h",
-          "value": "1785470213582"
+          "value": "1785748194009"
         }
       ]
     }

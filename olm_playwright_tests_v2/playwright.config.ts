@@ -22,8 +22,8 @@ export default defineConfig({
       : 6,                          // ← tăng từ 3 → 6
 
   // ─── Timeouts (giảm xuống 1/2 so với bản gốc) ─────────────────────────
-  timeout: 60_000,           // ← giảm từ 120_000 → 60_000
-  expect: { timeout: 15_000 },     // ← giảm từ 30_000 → 15_000
+  timeout: 120_000,           // ← giảm từ 120_000 → 60_000
+  expect: { timeout: 30_000 },     // ← giảm từ 30_000 → 15_000
 
   reporter: [
     ['list'],

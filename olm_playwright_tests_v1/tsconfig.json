@@ -8,7 +8,6 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "ignoreDeprecations": "6.0",
     "outDir": "dist",
     "rootDir": ".",
     "types": ["node"],
@@ -29,9 +28,8 @@
     "tests/**/*",
     "modules/**/*",
     "core/**/*",
-    "example/**/*",
     "global-setup.ts",
     "playwright.config.ts",
-    "Playwright.example.config.ts"
+    "playwright.example.config.ts"
   ]
 }

@@ -2,50 +2,50 @@
   "cookies": [
     {
       "name": "XSRF-TOKEN",
-      "value": "P14yic3RAdvyqTdGdPspVdfyInMhQ7a9X7DMdWTm",
+      "value": "II3oYopytdKUlvdj8AxswZr3c48mwRwww7JlL7Fj",
       "domain": "olm.vn",
       "path": "/",
-      "expires": 1785477408.124654,
+      "expires": 1785755382.058334,
       "httpOnly": false,
       "secure": true,
       "sameSite": "Lax"
     },
     {
       "name": "__cflb",
-      "value": "02DiuEw7pxKAZNcwuU91HVkt1oi9zcehW2oA7sYpRyrfe",
+      "value": "02DiuEw7pxKAZNcwuU91HVkt1oi9zcehVYjNAyGjYnnb6",
       "domain": "olm.vn",
       "path": "/",
-      "expires": 1785553003.089285,
+      "expires": 1785830972.206591,
       "httpOnly": true,
       "secure": true,
       "sameSite": "None"
     },
     {
       "name": "_gcl_au",
-      "value": "1.1.1737594488.1785470205",
+      "value": "1.1.23552422.1785748174",
       "domain": ".olm.vn",
       "path": "/",
-      "expires": 1793246205,
+      "expires": 1793524174,
       "httpOnly": false,
       "secure": false,
       "sameSite": "Lax"
     },
     {
       "name": "IDE",
-      "value": "AHWqTUliKJO8S9yLvQG2sI70Teg1xNq_xccjT2N8TPb8vPPoAEBKiNBLhMI38yiM",
+      "value": "AHWqTUlmadJy_NI6Z6TbrMcwaPAax6HqjSKGGPmBGcdbtYbg8j4RzpYjk9DF0HmY",
       "domain": ".doubleclick.net",
       "path": "/",
-      "expires": 1820030205.183542,
+      "expires": 1820308175.427255,
       "httpOnly": true,
       "secure": true,
       "sameSite": "None"
     },
     {
       "name": "_gid",
-      "value": "GA1.2.1912267109.1785470206",
+      "value": "GA1.2.276424442.1785748176",
       "domain": ".olm.vn",
       "path": "/",
-      "expires": 1785556610,
+      "expires": 1785834579,
       "httpOnly": false,
       "secure": false,
       "sameSite": "Lax"
@@ -55,87 +55,107 @@
       "value": "1",
       "domain": ".olm.vn",
       "path": "/",
-      "expires": 1785470265,
+      "expires": 1785748235,
       "httpOnly": false,
       "secure": false,
       "sameSite": "Lax"
     },
     {
       "name": "onlinemath_session",
-      "value": "MKFR0TDXpJNB17aLlvIYbfRMqNnUjEZvAJ05pxvy",
+      "value": "9FmulOQBSG5gt11L7ZiqeHkwOAJLcaCcbpVAICgM",
       "domain": "olm.vn",
       "path": "/",
-      "expires": 1785477409.650676,
+      "expires": 1785755382.058599,
       "httpOnly": true,
       "secure": false,
       "sameSite": "Lax"
     },
     {
       "name": "remember_web_59ba36addc2b2f9401580f014c7f58ea4e30989d",
-      "value": "17184408580045%7CPxFY8oLfPU2jFwwoLP8TlyiDm0FbQrOI6pEbMAEIrUCQnSHyCTbVZc9uZi3L%7C%242y%2410%24nHwXCgKRWEnUdaieOD6Y3uhrKhbqYZlKh.fMBRIgIs7UGNg9g645a",
+      "value": "17184408580045%7Csmm9zcIFkObS2be5cjzZ5qW9LmhMaLU365LK4twpvRj1K1qHLLuDqK3ymT66%7C%242y%2410%24nHwXCgKRWEnUdaieOD6Y3uhrKhbqYZlKh.fMBRIgIs7UGNg9g645a",
       "domain": "olm.vn",
       "path": "/",
-      "expires": 1820030206.997602,
+      "expires": 1820308175.69119,
       "httpOnly": true,
       "secure": true,
       "sameSite": "Lax"
     },
     {
       "name": "access_token",
-      "value": "cc43160076d1c6c70233ff733fd73f45c5f8a63e",
+      "value": "1f3f3a8e7f9803f313a5768e31bcaa70aab6afd0",
       "domain": ".olm.vn",
       "path": "/",
-      "expires": 1785556608.101789,
+      "expires": 1785834575.911722,
       "httpOnly": false,
       "secure": true,
       "sameSite": "None"
     },
     {
       "name": "refresh_token",
-      "value": "a6cc2ba9b701b07bb87ede19d8d7883f7a788cab",
+      "value": "4498fe18e8150e09508cdaf4cbeeca5b176e053f",
       "domain": ".olm.vn",
       "path": "/",
-      "expires": 1788062211.101942,
+      "expires": 1788340180.911865,
       "httpOnly": false,
       "secure": true,
       "sameSite": "None"
     },
     {
-      "name": "MKFR0TDXpJNB17aLlvIYbfRMqNnUjEZvAJ05pxvy",
-      "value": "%7B%22data%22%3A%22a%3A4%3A%7Bs%3A6%3A%5C%22_token%5C%22%3Bs%3A40%3A%5C%22P14yic3RAdvyqTdGdPspVdfyInMhQ7a9X7DMdWTm%5C%22%3Bs%3A7%3A%5C%22auth_id%5C%22%3Bs%3A32%3A%5C%22681059bc8ece2ab409d4c3ac418878a4%5C%22%3Bs%3A50%3A%5C%22login_web_59ba36addc2b2f9401580f014c7f58ea4e30989d%5C%22%3Bs%3A14%3A%5C%2217184408580045%5C%22%3Bs%3A6%3A%5C%22_flash%5C%22%3Ba%3A2%3A%7Bs%3A3%3A%5C%22new%5C%22%3Ba%3A0%3A%7B%7Ds%3A3%3A%5C%22old%5C%22%3Ba%3A0%3A%7B%7D%7D%7D%22%2C%22expires%22%3A1785477412%7D",
-      "domain": "olm.vn",
-      "path": "/",
-      "expires": 1785477409.650863,
-      "httpOnly": true,
-      "secure": true,
-      "sameSite": "Lax"
-    },
-    {
       "name": "_ga_H8ZLXJK1D6",
-      "value": "GS2.1.s1785470205$o1$g1$t1785470210$j55$l0$h0",
+      "value": "GS2.1.s1785748175$o1$g1$t1785748179$j56$l0$h0",
       "domain": ".olm.vn",
       "path": "/",
-      "expires": 1820030210.726719,
+      "expires": 1820308179.94448,
       "httpOnly": false,
       "secure": false,
       "sameSite": "Lax"
     },
     {
       "name": "_ga",
-      "value": "GA1.2.1399754956.1785470206",
+      "value": "GA1.2.1157718518.1785748176",
       "domain": ".olm.vn",
       "path": "/",
-      "expires": 1820030210.937904,
+      "expires": 1820308179.985062,
       "httpOnly": false,
       "secure": false,
       "sameSite": "Lax"
+    },
+    {
+      "name": "__gads",
+      "value": "ID=3810c6ad57e60fff:T=1785748189:RT=1785748189:S=ALNI_MYIvsWCxtxTnchH8AQg7C67QkZzMQ",
+      "domain": ".olm.vn",
+      "path": "/",
+      "expires": 1819444189,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "__gpi",
+      "value": "UID=0000145d57ca1e22:T=1785748189:RT=1785748189:S=ALNI_MYOJOJ1VQzkOihc6kn597GpukEH_w",
+      "domain": ".olm.vn",
+      "path": "/",
+      "expires": 1819444189,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "__eoi",
+      "value": "ID=762578bca3a0d66f:T=1785748189:RT=1785748189:S=AA-AfjYGOFX8TVpRpX61o6ExQkOn",
+      "domain": ".olm.vn",
+      "path": "/",
+      "expires": 1801300189,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
     },
     {
       "name": "third_party",
       "value": "enabled",
       "domain": ".olm.vn",
       "path": "/",
-      "expires": 1807792244.101383,
+      "expires": 1807792233.911479,
       "httpOnly": false,
       "secure": true,
       "sameSite": "None"
@@ -145,10 +165,80 @@
       "value": "%7B%22_id%22%3A%2217184408580045%22%2C%22name%22%3A%22Tr%E1%BA%A7n%20%C4%90%E1%BB%A9c%20Anh%22%2C%22username%22%3A%22hsptolm_tranducanh%22%2C%22email%22%3A%22%22%7D",
       "domain": ".olm.vn",
       "path": "/",
-      "expires": 1788062211.101644,
+      "expires": 1788340180.911644,
       "httpOnly": false,
       "secure": true,
       "sameSite": "Strict"
+    },
+    {
+      "name": "b",
+      "value": "6A705AE072BD2EE149760CB8_",
+      "domain": ".blismedia.com",
+      "path": "/",
+      "expires": 1817288181.073065,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "adxppthrd",
+      "value": "9e27d9ce-0b5d-4689-9e0a-5de4a5a3dedc",
+      "domain": ".docomo.ne.jp",
+      "path": "/",
+      "expires": 1820308181.228691,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "uid",
+      "value": "1JHziFglDr0",
+      "domain": ".ad-m.asia",
+      "path": "/",
+      "expires": 1820308181.229216,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "OAU",
+      "value": "OPU5ac5e9557dda4bbb9ccc17de8445fb64",
+      "domain": ".opera.com",
+      "path": "/",
+      "expires": 1817284181.57059,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_pangle",
+      "value": "3HOnsuQ86aJzR06QiTEC8sK5eyD",
+      "domain": ".pangle-ads.com",
+      "path": "/",
+      "expires": 1819444181.707676,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "9FmulOQBSG5gt11L7ZiqeHkwOAJLcaCcbpVAICgM",
+      "value": "%7B%22data%22%3A%22a%3A4%3A%7Bs%3A6%3A%5C%22_token%5C%22%3Bs%3A40%3A%5C%22II3oYopytdKUlvdj8AxswZr3c48mwRwww7JlL7Fj%5C%22%3Bs%3A7%3A%5C%22auth_id%5C%22%3Bs%3A32%3A%5C%22e58855395c0408ce62f16093ee3dd1a9%5C%22%3Bs%3A50%3A%5C%22login_web_59ba36addc2b2f9401580f014c7f58ea4e30989d%5C%22%3Bs%3A14%3A%5C%2217184408580045%5C%22%3Bs%3A6%3A%5C%22_flash%5C%22%3Ba%3A2%3A%7Bs%3A3%3A%5C%22old%5C%22%3Ba%3A0%3A%7B%7Ds%3A3%3A%5C%22new%5C%22%3Ba%3A0%3A%7B%7D%7D%7D%22%2C%22expires%22%3A1785755393%7D",
+      "domain": "olm.vn",
+      "path": "/",
+      "expires": 1785755382.058698,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "ADKUID",
+      "value": "A4623057072166734190",
+      "domain": ".adkernel.com",
+      "path": "/",
+      "expires": 1788340182.514324,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
     }
   ],
   "origins": [
@@ -157,35 +247,47 @@
       "localStorage": [
         {
           "name": "last:change-password",
-          "value": "1785470210"
+          "value": "1785748187"
+        },
+        {
+          "name": "google_adsense_settings",
+          "value": "{\"ca-pub-7325137874728698\":[\"ca-pub-7325137874728698\"]}"
         },
         {
           "name": "accessTokenChecked",
-          "value": "cc43160076d1c6c70233ff733fd73f45c5f8a63e"
+          "value": "1f3f3a8e7f9803f313a5768e31bcaa70aab6afd0"
+        },
+        {
+          "name": "google_ama_settings",
+          "value": "[1785834578637,1]"
         },
         {
           "name": "chatbot_widget_open",
           "value": "false"
         },
         {
-          "name": "google_ama_settings",
-          "value": "[1785556610873,1]"
-        },
-        {
           "name": "_gcl_ls",
-          "value": "{\"schema\":\"gcl\",\"version\":1,\"gsid_dc\":{\"value\":{\"joinId\":\"JYIGfjcwzCGXE_bzRRtkkvoEmIvVFREgXA\",\"lastJoinedTimeMs\":1785470204578},\"expires\":1785470504578},\"gcl_ctr\":{\"value\":{\"value\":0,\"timeouts\":0,\"errors\":0,\"eopCount\":0,\"creationTimeMs\":1785470204590},\"expires\":1793246204590}}"
+          "value": "{\"schema\":\"gcl\",\"version\":1,\"gsid_dc\":{\"value\":{\"joinId\":\"HUmDwGPnJ0j5_0_0Obgr7KC0UiiHvDA_qQ\",\"lastJoinedTimeMs\":1785748173979},\"expires\":1785748473979},\"gcl_ctr\":{\"value\":{\"value\":0,\"timeouts\":0,\"errors\":0,\"eopCount\":0,\"creationTimeMs\":1785748173988},\"expires\":1793524173988}}"
         },
         {
           "name": "google_ama_config",
-          "value": "[[[[null,7,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,5,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"DIV.main-wrap>DIV.header-wrapper.shadow-none.d-none.d-lg-block\"],4,[\"16px\",\"10px\",1],[2],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV#carousel-homepage\"],4,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV.inner-content>DIV.row\"],4,[\"10px\",\"10px\",1],[5],null,[],[],1,[],[]],[[null,5,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,6,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-relative.tw-overflow-hidden.tw-bg-cover.tw-bg-center\"],4,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,1,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-bg-white>DIV.tw-olm-container\"],4,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION>DIV.tw-olm-container>DIV.tw-flex.tw-flex-col.tw-items-center\"],4,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>DIV.tw-bg-background-default.tw-olm-container.tw-block\"],1,[\"10px\",\"10px\",1],[2],null,[],[],1,[],[]],[[null,2,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"DIV.main-wrap>DIV.header-wrapper.shadow-none.d-none.d-lg-block>DIV.container>DIV.row>DIV.text-right.text-white\"],1,[\"10px\",\"10px\",1],[4],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV.main-wrap-body>DIV.container-fluid>DIV.vertical-wrapper>DIV.container>DIV.row.justify-content-center\"],4,[\"24px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,1,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-olm-container\"],4,[\"10px\",\"80px\",1],[1],null,[],[],1,[],[]],[[null,7,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,3,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION>DIV.tw-olm-container\"],1,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",0],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post.bg-post-single>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",0],[0],null,[],[],1,[],[6]],[[null,1,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION>DIV.tw-olm-container>.tw-font-semibold.tw-leading-tight.tw-text-center\"],1,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,3,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,5,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION\"],4,[\"24px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,8,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"BODY\"],3,[\"10px\",\"10px\",1],[5],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-bg-white\"],4,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,3,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION>DIV.tw-olm-container\"],4,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,5,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION>DIV.tw-olm-container\"],4,[\"24px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV#carousel-homepage>DIV.owl-stage-outer>DIV.owl-stage\"],4,[\"10px\",\"10px\",0],[1],null,[],[],1,[],[]],[[null,2,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"DIV.main-wrap>FOOTER.footer-olm\"],1,[\"24px\",\"10px\",1],[0],null,[],[],1,[],[2,4]],[[null,0,null,[],null,null,\"DIV.main-wrap>DIV.header-wrapper.shadow-sm.align-items-center.bg-white\"],4,[\"10px\",\"10px\",1],[4],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV.main-wrap>DIV.header-wrapper.shadow-sm.align-items-center.bg-white\"],3,[\"10px\",\"10px\",1],[4],null,[],[],1,[],[]],[[null,1,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"DIV.footer-top\"],1,[\"10px\",\"10px\",1],[3],null,[],[],1,[],[]],[[null,8,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,4,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-bg-white\"],1,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,9,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-bg-white>DIV.tw-olm-container>.tw-font-semibold.tw-leading-tight.tw-text-center\"],1,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV#ecosystem-products>DIV.owl-stage-outer>DIV.owl-stage\"],4,[\"10px\",\"10px\",0],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-olm-container\"],4,[\"10px\",\"80px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV>DIV.card.card-post.bg-post-single>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",0],[0],null,[],[],1,[],[6]]],[],[1785556610786],\"20260728_091520\",[],[[[[null,null,null,[],null,null,\"DIV.see-more>DIV.full-see-more.d-none\"],[null,null,null,[],null,null,\"P\"],null,[null,null,null,[],null,null,\"P\"]],[[null,3,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content>DIV.see-more>DIV.full-see-more.d-none>P\"],[null,null,null,[]]],[[null,6,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content\"],[null,null,null,[],null,null,\"P\"],null,[null,null,null,[],null,null,\"P\"]],[[null,null,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-relative.tw-overflow-hidden.tw-bg-cover.tw-bg-center>DIV.tw-olm-container.tw-relative.tw-flex.tw-flex-col>DIV.tw-text-center\"],[null,null,null,[],null,null,\"P.tw-mx-auto.tw-text-content-secondary\"],null,[null,null,null,[],null,null,\"H2.tw-font-semibold.tw-text-content-primary,P.tw-mx-auto.tw-text-content-secondary\"]],[[null,7,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV>DIV.card.card-post.bg-post-single>DIV.wide-block.wide-comment-block>DIV.comment-block>DIV.card-comment>DIV.font-xss.text.text-dark.card-comment-content>P\"],[null,null,null,[]]],[[null,4,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content>P\"],[null,null,null,[]]],[[null,2,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV>DIV.card.card-post.bg-post-single>DIV.wide-block.wide-comment-block>DIV.comment-block>DIV.card-comment>DIV.font-xss.text.text-dark.card-comment-content\"],[null,null,null,[],null,null,\"P\"],null,[null,null,null,[],null,null,\"LI,P\"]],[[null,1,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV>DIV.card.card-post.bg-post-single>DIV.wide-block.wide-comment-block>DIV.comment-block>DIV.card-comment>DIV.font-xss.text.text-dark.card-comment-content>UL\"],[null,null,null,[],null,null,\"LI\"],null,[null,null,null,[],null,null,\"LI\"]],[[null,3,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV>DIV.card.card-post.bg-post-single>DIV.wide-block.wide-comment-block>DIV.comment-block>DIV.card-comment>DIV.font-xss.text.text-dark.card-comment-content>P\"],[null,null,null,[]]],[[null,1,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content>DIV.see-more>DIV.full-see-more.d-none\"],[null,null,null,[],null,null,\"P\"],null,[null,null,null,[],null,null,\"P\"]],[[null,1,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content>P\"],[null,null,null,[]]],[[null,1,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV>DIV.card.card-post.bg-post-single>DIV.wide-block.wide-comment-block>DIV.comment-block>DIV.card-comment>DIV.font-xss.text.text-dark.card-comment-content\"],[null,null,null,[],null,null,\"P\"],null,[null,null,null,[],null,null,\"H3,P\"]],[[null,1,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content>DIV.see-more>DIV.full-see-more.d-none>P\"],[null,null,null,[]]],[[null,13,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV>DIV.card.card-post.bg-post-single>DIV.wide-block.wide-comment-block>DIV.comment-block>DIV.card-comment>DIV.font-xss.text.text-dark.card-comment-content>P\"],[null,null,null,[]]]]],[[null,[],null,\"9593528999\",[],[],[3667223351,2],null,null,null,[]],[null,[],null,\"9593528999\",[],[],[1256762199,2],null,null,null,[]],[null,[],null,\"9593528999\",[],[],[2113254418,2],null,null,null,[]],[null,[],null,\"9593528999\",[],[],[3932518507,2],null,null,null,[]],[null,[1,3,2],null,\"9593528999\",[],[],[0,2],null,null,[0.88999999,null,2,8,530,1],[]]],[null,[[1,\"1vp\",[[4,\"2vp\",\"2vp\"],[6,\"3vp\",\"3vp\"]],8,\"1vp\",0.30000001,[\"0.2vp\",\"0vp\",2]],[2,\"300px\",[[4,\"600px\",\"600px\"],[6,\"900px\",\"900px\"]],8,\"300px\",0.30000001,[\"60px\",\"0px\",2]]]],null,null,null,null,null,null,[null,null,null,null,null,null,null,null,null,null,null,0],null,null,null,null,[600127537],null,null,[1785382537505],[[\"trr\",\"trrp\"],[[[\"t.ma~as.7083510339\",0],[\"t.aa~a.403173374~rp.4\",1],[\"t.aa~a.2816240710~rp.1\",2],[\"t.aa~a.4155987691~rp.4\",3],[\"t.ma~as.5094807098\",4],[\"t.ma\",5],[\"t.aa~a.1109846382~rp.1\",6],[\"t.aa~a.2419316198~rp.4\",7],[\"t.ma~as.9761644563\",8],[\"t.aa~a.1691689042~rp.4\",9],[\"t.aa~a.4059224411~rp.1\",10],[\"t.aa~a.3164369394~rp.4\",11],[\"t.aa~a.1691707808~rp.4\",12],[\"t.aa~a.4187229773~rp.1\",13],[\"t.aa~a.4187252531~rp.1\",14],[\"t.aa~a.3732239011~rp.4\",15],[\"t.aa~a.1125600184~rp.3\",16],[\"t.aa~a.3674154380~rp.4\",17],[\"t.aa~a.4187228740~rp.1\",18],[\"t.aa~a.2468084441~rp.1\",19],[\"t.aa~a.2229905011~rp.4\",20],[\"t.aa~a.76420184~rp.4\",21],[\"t.aa~a.1602221750~rp.4\",22],[\"t.aa~a.3732228149~rp.4\",23],[\"t.aa~a.239381186~rp.4\",24],[\"t.aa~a.1125608668~rp.4\",25],[\"t.aa~a.4059223393~rp.1\",26],[\"t.aa~a.3379685489~rp.1\",27],[\"t.aa~a.76315347~rp.4\",28],[\"t.aa~a.3379663522~rp.1\",29],[\"t.aa~a.506881591~rp.4\",30],[\"t.aa~a.2468000939~rp.1\",31],[\"t.aa~a.1013006328~rp.1\",32],[\"t.aa~a.2541721115~rp.3\",33],[\"t.aa~a.3874165165~rp.4\",34],[\"t.aa~a.1423918361~rp.4\",35],[\"t.aa~a.1182920990~rp.3\",36],[\"t.aa~a.4187249544~rp.1\",37],[\"t.aa~a.2892373781~rp.1\",38],[\"t.aa~a.2486596312~rp.4\",39],[\"t.aa~a.2468071056~rp.4\",40],[\"t.aa~a.2468084441~rp.4\",41],[\"t.aa~a.1125600184~rp.1\",42],[\"t.aa~a.2468000939~rp.4\",43],[\"t.aa~a.729354162~rp.4\",44],[\"t.aa~a.4187463856~rp.1\",45],[\"t.aa~a.3055018963~rp.4\",46],[\"t.aa~a.239394523~rp.4\",47],[\"t.aa~a.729438681~rp.4\",48],[\"t.aa~a.2994575856~rp.2\",49],[\"t.aa~a.3379665584~rp.1\",50],[\"t.aa~a.2966023543~rp.4\",51],[\"t.aa~a.2966023543~rp.1\",52],[\"t.aa~a.3379670795~rp.1\",53],[\"t.aa~a.3923693642~rp.4\",54],[\"t.aa~a.239383088~rp.4\",55],[\"t.aa~a.4059225424~rp.1\",56],[\"t.aa~a.1125604260~rp.1\",57],[\"t.aa~a.4187251514~rp.1\",58],[\"t.aa~a.82072509~rp.4\",59],[\"t.aa~a.2541721115~rp.2\",60],[\"t.aa~a.4187250625~rp.1\",61],[\"t.aa~a.3129114976~rp.1\",62],[\"t.aa~a.2336861268~rp.4\",63],[\"t.aa~a.403127974~rp.1\",64],[\"t.aa~a.1691683871~rp.4\",65],[\"t.aa~a.3873990974~rp.4\",66],[\"t.aa~a.3379690762~rp.1\",67],[\"t.aa~a.1125608668~rp.1\",68],[\"t.aa~a.1125601103~rp.1\",69],[\"t.aa~a.729358071~rp.4\",70],[\"t.aa~a.4187464825~rp.1\",71],[\"t.aa~a.729360802~rp.3\",72],[\"t.aa~a.506006218~rp.4\",73],[\"t.aa~a.1125609237~rp.4\",74],[\"t.aa~a.3231455314~rp.1\",75],[\"t.aa~a.3732236244~rp.1\",76],[\"t.aa~a.2336864467~rp.4\",77],[\"t.aa~a.2336283275~rp.4\",78],[\"t.aa~a.729361835~rp.4\",79],[\"t.aa~a.403118933~rp.1\",80],[\"t.aa~a.1384545550~rp.4\",81],[\"t.aa~a.3732315934~rp.4\",82],[\"t.aa~a.403171084~rp.1\",83],[\"t.aa~a.3873994151~rp.4\",84],[\"t.aa~a.495745342~rp.4\",85],[\"t.aa~a.403174095~rp.1\",86],[\"t.aa~a.1125601103~rp.4\",87],[\"t.aa~a.403172189~rp.1\",88],[\"t.aa~a.3732228149~rp.1\",89],[\"t.aa~a.2336870104~rp.4\",90],[\"t.aa~a.2261234662~rp.1\",91],[\"t.aa~a.1125610702~rp.1\",92],[\"t.aa~a.495744311~rp.4\",93],[\"t.aa\",94],[\"t.aa~a.2546630184~rp.4\",95],[\"t.aa~a.3379684824~rp.1\",96],[\"t.aa~a.653203954~rp.1\",97],[\"t.aa~a.506009285~rp.4\",98],[\"t.aa~a.3732235183~rp.4\",99],[\"t.aa~a.2336867041~rp.4\",100],[\"t.aa~a.653204923~rp.1\",101],[\"t.aa~a.729369145~rp.4\",102],[\"t.aa~a.1012990801~rp.1\",103],[\"t.aa~a.3874175829~rp.4\",104],[\"t.aa~a.2261150861~rp.1\",105],[\"t.aa~a.1821022411~rp.4\",106],[\"t.aa~a.3873993004~rp.4\",107],[\"t.aa~a.2546629363~rp.4\",108],[\"t.aa~a.76518492~rp.4\",109],[\"t.aa~a.2336863562~rp.4\",110],[\"t.aa~a.3732236244~rp.4\",111],[\"t.aa~a.3732315069~rp.1\",112],[\"t.aa~a.2888622227~rp.1\",113],[\"t.aa~a.653203954~rp.4\",114],[\"t.aa~a.2994572553~rp.3\",115],[\"t.aa~a.653204923~rp.4\",116],[\"t.aa~a.1013003346~rp.1\",117],[\"t.aa~a.2261235711~rp.1\",118],[\"t.aa~a.3873989012~rp.4\",119],[\"t.aa~a.1013048875~rp.1\",120],[\"t.aa~a.1125558269~rp.1\",121],[\"t.aa~a.1125558269~rp.4\",122],[\"t.aa~a.3734746078~rp.1\",123],[\"t.aa~a.3732238150~rp.4\",124],[\"t.aa~a.3732238150~rp.1\",125],[\"t.aa~a.1013005251~rp.1\",126],[\"t.aa~a.2261222834~rp.1\",127],[\"t.aa~a.3873991325~rp.4\",128],[\"t.aa~a.1125604260~rp.4\",129],[\"t.aa~a.2546598625~rp.4\",130],[\"t.aa~a.3873989231~rp.4\",131],[\"t.aa~a.772705171~rp.4\",132],[\"t.aa~a.1125557174~rp.4\",133],[\"t.aa~a.1013004138~rp.1\",134],[\"t.aa~a.239385889~rp.4\",135],[\"t.aa~a.239383304~rp.4\",136],[\"t.aa~a.2261236345~rp.1\",137],[\"t.aa~a.2261232628~rp.1\",138],[\"t.aa~a.729363968~rp.4\",139],[\"t.aa~a.1125557174~rp.1\",140],[\"t.aa~a.729354814~rp.3\",141],[\"t.aa~a.1765558081~rp.4\",142],[\"t.aa~a.729351877~rp.3\",143],[\"t.aa~a.3873990182~rp.4\",144],[\"t.aa~a.729354814~rp.4\",145],[\"t.aa~a.3732235183~rp.1\",146],[\"t.aa~a.239384403~rp.4\",147],[\"t.aa~a.2486657880~rp.4\",148],[\"t.aa~a.2486586963~rp.4\",149],[\"t.aa~a.729363968~rp.3\",150],[\"t.aa~a.729357004~rp.3\",151],[\"t.aa~a.2261221867~rp.1\",152],[\"t.aa~a.3732315069~rp.4\",153],[\"t.aa~a.1125610702~rp.4\",154],[\"t.aa~a.3732231212~rp.4\",155],[\"t.aa~a.653197408~rp.4\",156],[\"t.aa~a.403171084~rp.4\",157],[\"t.aa~a.403174095~rp.4\",158],[\"t.aa~a.76421219~rp.4\",159],[\"t.aa~a.2486660865~rp.4\",160],[\"t.aa~a.239381498~rp.4\",161],[\"t.aa~a.653198761~rp.4\",162],[\"t.aa~a.337950186~rp.1\",163],[\"t.aa~a.3732231212~rp.1\",164],[\"t.aa~a.76310999~rp.4\",165],[\"t.aa~a.1125609607~rp.4\",166],[\"t.aa~a.653210793~rp.4\",167],[\"t.aa~a.653177651~rp.4\",168],[\"t.aa~a.3732305988~rp.1\",169],[\"t.aa~a.2486590058~rp.4\",170],[\"t.aa~a.729357004~rp.4\",171],[\"t.aa~a.3732315934~rp.1\",172],[\"t.aa~a.653199410~rp.4\",173],[\"t.aa~a.653200443~rp.4\",174],[\"t.aa~a.2994575856~rp.3\",175],[\"t.aa~a.1125600130~rp.4\",176],[\"t.aa~a.3732230311~rp.1\",177],[\"t.aa~a.76066719~rp.4\",178],[\"t.aa~a.653178746~rp.4\",179],[\"t.aa~a.729351877~rp.4\",180],[\"t.aa~a.2486585025~rp.4\",181],[\"t.aa~a.729361835~rp.3\",182],[\"t.aa~a.76311950~rp.4\",183],[\"t.aa~a.76517477~rp.4\",184],[\"t.aa~a.3732305988~rp.4\",185],[\"t.aa~a.76418186~rp.4\",186],[\"t.aa~a.878281530~rp.1\",187],[\"t.aa~a.653209760~rp.4\",188],[\"t.aa~a.76415217~rp.4\",189]]],null,[1785454722986,1785454722986]],null,[[null,\"300px\",[],null,\"0px\"],1],null,null,null,null,null,null,[[\"Bật/tắt tính năng mở rộng thanh công cụ\",\"Bật/tắt chế độ hiển thị phần cài đặt về quyền riêng tư và pháp lý\",\"Đóng chế độ hiển thị phần cài đặt về quyền riêng tư và pháp lý\"]]]"
+          "value": "[[[[null,13,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.wide-block.wide-comment-block>DIV.comment-block>DIV.card-comment\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,1,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION>DIV.tw-olm-container>.tw-font-semibold.tw-leading-tight.tw-text-center\"],1,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,1,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-bg-white>DIV.tw-olm-container\"],4,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV.main-wrap>DIV.header-wrapper.shadow-none.d-none.d-lg-block\"],4,[\"16px\",\"10px\",1],[2],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-bg-white\"],4,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-olm-container\"],4,[\"10px\",\"80px\",1],[1],null,[],[],1,[],[]],[[null,5,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION>DIV.tw-olm-container\"],4,[\"24px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV.inner-content>DIV.row\"],4,[\"10px\",\"10px\",1],[5],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV#ecosystem-products>DIV.owl-stage-outer>DIV.owl-stage\"],4,[\"10px\",\"10px\",0],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-bg-white\"],1,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,7,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,3,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION>DIV.tw-olm-container\"],4,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,3,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,4,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,8,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post.bg-post-single>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",0],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"DIV.footer-top\"],1,[\"10px\",\"10px\",1],[3],null,[],[],1,[],[]],[[null,4,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,5,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"BODY\"],3,[\"10px\",\"10px\",1],[5],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV.main-wrap-body>DIV.container-fluid>DIV.vertical-wrapper>DIV.container>DIV.row.justify-content-center\"],4,[\"24px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,3,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION>DIV.tw-olm-container\"],1,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,2,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,5,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION\"],4,[\"24px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-bg-white>DIV.tw-olm-container>.tw-font-semibold.tw-leading-tight.tw-text-center\"],1,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV.main-wrap>FOOTER.footer-olm\"],1,[\"24px\",\"10px\",1],[0],null,[],[],1,[],[2,4]],[[null,6,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"DIV#carousel-homepage>DIV.owl-stage-outer>DIV.owl-stage\"],4,[\"10px\",\"10px\",0],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>DIV.tw-bg-background-default.tw-olm-container.tw-block\"],1,[\"10px\",\"10px\",1],[2],null,[],[],1,[],[]],[[null,1,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"DIV.main-wrap>DIV.header-wrapper.shadow-sm.align-items-center.bg-white\"],4,[\"10px\",\"10px\",1],[4],null,[],[],1,[],[]],[[null,5,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV>DIV.card.card-post.bg-post-single>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",0],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION>DIV.tw-olm-container>DIV.tw-flex.tw-flex-col.tw-items-center\"],4,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,7,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,0,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-relative.tw-overflow-hidden.tw-bg-cover.tw-bg-center\"],4,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV.main-wrap>DIV.header-wrapper.shadow-sm.align-items-center.bg-white\"],3,[\"10px\",\"10px\",1],[4],null,[],[],1,[],[]],[[null,9,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]],[[null,1,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-olm-container\"],4,[\"10px\",\"80px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV#carousel-homepage\"],4,[\"10px\",\"10px\",1],[1],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV.main-wrap>DIV.header-wrapper.shadow-none.d-none.d-lg-block>DIV.container>DIV.row>DIV.text-right.text-white\"],1,[\"10px\",\"10px\",1],[4],null,[],[],1,[],[]],[[null,8,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post\"],4,[\"10px\",\"10px\",1],[0],null,[],[],1,[],[6]]],[],[1785834578550],\"20260729_110006\",[],[[[[null,0,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.wide-block.wide-comment-block>DIV.comment-block>DIV.card-comment>DIV.font-xss.text.text-dark.card-comment-content>P\"],[null,null,null,[]]],[[null,4,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content>P\"],[null,null,null,[]]],[[null,1,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content>DIV.see-more>DIV.full-see-more.d-none>P\"],[null,null,null,[]]],[[null,10,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content>P\"],[null,null,null,[]]],[[null,5,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content>DIV.see-more>DIV.full-see-more.d-none>P\"],[null,null,null,[]]],[[null,2,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content>DIV.see-more>DIV.full-see-more.d-none\"],[null,null,null,[],null,null,\"P\"],null,[null,null,null,[],null,null,\"P\"]],[[null,6,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content\"],[null,null,null,[],null,null,\"P\"],null,[null,null,null,[],null,null,\"P\"]],[[null,1,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content>DIV.see-more>DIV.full-see-more.d-none\"],[null,null,null,[],null,null,\"P\"],null,[null,null,null,[],null,null,\"P\"]],[[null,1,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.wide-block.wide-comment-block>DIV.comment-block>DIV.card-comment>DIV.font-xss.text.text-dark.card-comment-content>UL\"],[null,null,null,[],null,null,\"LI\"]],[[null,3,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content>DIV.see-more>DIV.full-see-more.d-none>P\"],[null,null,null,[]]],[[null,2,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.wide-block.wide-comment-block>DIV.comment-block>DIV.card-comment>DIV.font-xss.text.text-dark.card-comment-content>UL\"],[null,null,null,[],null,null,\"LI\"],null,[null,null,null,[],null,null,\"LI\"]],[[null,0,null,[],null,null,\"DIV.position-relative>DIV.d-inline-block>DIV.card.card-post>DIV.card-body>DIV.card-view-post>A.font-xs.card-text.text-dark>DIV.card-post-content>DIV.see-more>DIV.full-see-more.d-none\"],[null,null,null,[],null,null,\"P\"],null,[null,null,null,[],null,null,\"H5,P\"]],[[null,null,null,[],null,null,\"BODY>DIV.tw-font-be-vietnam-pro.tw-bg-background-default>SECTION.tw-relative.tw-overflow-hidden.tw-bg-cover.tw-bg-center>DIV.tw-olm-container.tw-relative.tw-flex.tw-flex-col>DIV.tw-text-center\"],[null,null,null,[],null,null,\"P.tw-mx-auto.tw-text-content-secondary\"],null,[null,null,null,[],null,null,\"H2.tw-font-semibold.tw-text-content-primary,P.tw-mx-auto.tw-text-content-secondary\"]]]],[[null,[],null,\"9593528999\",[],[],[3667223351,2],null,null,null,[]],[null,[],null,\"9593528999\",[],[],[1256762199,2],null,null,null,[]],[null,[],null,\"9593528999\",[],[],[2113254418,2],null,null,null,[]],[null,[],null,\"9593528999\",[],[],[3932518507,2],null,null,null,[]],[null,[1,3,2],null,\"9593528999\",[],[],[0,2],null,null,[0.88999999,null,2,8,530,1],[]]],[null,[[1,\"1vp\",[[4,\"2vp\",\"2vp\"],[6,\"3vp\",\"3vp\"]],8,\"1vp\",0.30000001,[\"0.2vp\",\"0vp\",2]],[2,\"300px\",[[4,\"600px\",\"600px\"],[6,\"900px\",\"900px\"]],8,\"300px\",0.30000001,[\"60px\",\"0px\",2]]]],null,null,null,null,null,null,[null,null,null,null,null,null,null,null,null,null,null,0],null,null,null,null,[657806517],null,null,[1785641894772],null,null,null,null,null,null,null,null,null,[[\"Bật/tắt tính năng mở rộng thanh công cụ\",\"Bật/tắt chế độ hiển thị phần cài đặt về quyền riêng tư và pháp lý\",\"Đóng chế độ hiển thị phần cài đặt về quyền riêng tư và pháp lý\"]]]"
+        },
+        {
+          "name": "show-modal-form-active-mail-17184408580045_expiresIn",
+          "value": "1785784181816"
         },
         {
           "name": "pusherTransportTLS",
-          "value": "{\"timestamp\":1785470209418,\"transport\":\"ws\",\"latency\":192}"
+          "value": "{\"timestamp\":1785748177771,\"transport\":\"ws\",\"latency\":416}"
         },
         {
           "name": "auth.grades",
           "value": ""
+        },
+        {
+          "name": "show-modal-form-active-mail-17184408580045",
+          "value": "true"
         }
       ]
     },
@@ -194,7 +296,7 @@
       "localStorage": [
         {
           "name": "rc::h",
-          "value": "1785470214346"
+          "value": "1785748193708"
         }
       ]
     }

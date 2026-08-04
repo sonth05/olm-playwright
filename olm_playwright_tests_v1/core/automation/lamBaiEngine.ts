@@ -6,11 +6,40 @@
  *   - Luyện tập (data-type="3")
  *   - Thi thử   (dạng phần / câu tiếp)
  *
- * THÊM MỚI trong version này:
+ * ─── TỐI ƯU THỜI GIAN (bản này) ─────────────────────────────────────────────
+ * Bản gốc rải rất nhiều sleep() nhỏ (0.15–0.4s) ở TỪNG bước con bên trong mỗi
+ * hàm xử lý câu hỏi (VD: xuLyDropdown có 6 sleep riêng cho 1 câu 2 dropdown),
+ * khiến thời gian cộng dồn/câu lớn hơn cần thiết dù các bước đó không thực sự
+ * cần chờ riêng lẻ.
+ *
+ * Gộp lại còn 2 hằng số duy nhất:
+ *   - READ_WAIT (2s)   → dùng đúng 1 lần MỖI KHI trang có nội dung MỚI thật sự
+ *                        (sau page.goto(), sau khi bấm "Làm lại bài"/"Luyện tập
+ *                        lại"/"Bắt đầu làm bài" — các thao tác này render lại
+ *                        gần như toàn bộ giao diện làm bài).
+ *   - ANSWER_WAIT (1s) → dùng đúng 1 lần SAU KHI đã chọn xong toàn bộ đáp án
+ *                        của 1 câu, trước khi bấm nộp/chuyển câu. KHÔNG còn
+ *                        sleep xen giữa các thao tác click con bên trong 1 câu
+ *                        (click chọn dropdown thứ 1, thứ 2... không cần nghỉ
+ *                        giữa từng cái — JS xử lý các click này gần như tức
+ *                        thời, chỉ cần đợi state ổn định 1 lần trước khi nộp).
+ *
+ * Với câu có nhiều ô cần điền (dropdown/kéo-thả), ANSWER_WAIT được nhân nhẹ
+ * theo số ô (tối đa x3) để tránh JS chưa kịp cập nhật xong toàn bộ trước khi
+ * bấm nộp — xem SCALE_WAIT() bên dưới.
+ *
+ * Các chỗ chờ phần tử xuất hiện (waitFor/isVisible với timeout) GIỮ NGUYÊN
+ * là chờ theo SỰ KIỆN thật (không phải sleep cứng) — nếu phần tử đã có sẵn,
+ * hàm trả về gần như ngay lập tức, không cộng dồn thời gian chờ.
+ *
+ * THÊM MỚI trong version này (giữ nguyên từ bản trước):
  *   7. xuLyDropdown: xử lý câu hỏi dạng chọn dropdown (select-advance-btn)
  *      - Đếm đúng số dropdown trong câu → click từng cái → chọn option đầu tiên
  *   8. xuLyKeoTha: xử lý câu hỏi dạng kéo thả (drag-select → dragtext)
  *      - Đếm ô trống (span.dragtext.selectpoint) → click từng đáp án tương ứng
+ *   9. xuLyNoi: xử lý câu hỏi dạng NỐI cặp (div.boxlink[data-pos="left"/"right"])
+ *      - Đếm số ô trái/phải đang hiển thị → nối lần lượt trái 1-phải 1,
+ *        trái 2-phải 2,... đến hết rồi bấm "Kiểm tra"
  * ─────────────────────────────────────────────────────────────────────────────
  */
 import { type Locator, type Page } from 'playwright';
@@ -20,6 +49,23 @@ const MAX_CAU       = 120;  // giới hạn vòng lặp an toàn
 const MAX_VONG_RONG = 8;    // số vòng không nhận diện được → dừng
 const DS_INDEX_MAP  = [0, 1, 0, 1]; // Đúng/Sai cho ý a,b,c,d: 0=Đúng, 1=Sai
 
+// ─── Thời gian chờ (gộp) ──────────────────────────────────────────────────────
+// READ_WAIT: đọc/nhận diện DOM sau khi trang có nội dung MỚI (goto / render lại
+//            màn hình làm bài). Có thể override qua env READ_WAIT (giây).
+const READ_WAIT   = Number(process.env.READ_WAIT   ?? 2);
+// ANSWER_WAIT: sau khi đã chọn xong đáp án của 1 câu, trước khi nộp/chuyển câu.
+//              Có thể override qua env ANSWER_WAIT (giây).
+const ANSWER_WAIT = Number(process.env.ANSWER_WAIT ?? 1);
+
+/**
+ * Nhân nhẹ ANSWER_WAIT theo số ô cần điền trong 1 câu (dropdown/kéo-thả có
+ * nhiều ô) — tối đa x3 lần, để JS có đủ thời gian cập nhật xong toàn bộ các ô
+ * trước khi bấm nộp. Với câu 1 ô vẫn là đúng ANSWER_WAIT (1s).
+ */
+function scaleWait(soO: number): number {
+  return ANSWER_WAIT * Math.min(Math.max(soO, 1), 3);
+}
+
 // ─── Utilities ───────────────────────────────────────────────────────────────
 export async function sleep(sec: number): Promise<void> {
   await new Promise((r) => setTimeout(r, sec * 1000));
@@ -27,7 +73,6 @@ export async function sleep(sec: number): Promise<void> {
 
 export async function jsClick(page: Page, locator: Locator): Promise<void> {
   await locator.scrollIntoViewIfNeeded();
-  await sleep(0.2);
   await locator.click({ force: true });
 }
 
@@ -53,7 +98,6 @@ async function humanMouseMove(page: Page): Promise<void> {
     const x = Math.floor(Math.random() * 800) + 100;
     const y = Math.floor(Math.random() * 600) + 100;
     await page.mouse.move(x, y);
-    await sleep(Math.random() * 0.2 + 0.1);
   } catch { /* ignore */ }
 }
 
@@ -148,6 +192,9 @@ async function xuLyDungSai(page: Page, cauSo: number): Promise<boolean> {
     if (visible.length === 0) return false;
 
     console.log(`  Câu ${cauSo}: [ĐÚNG/SAI] ${visible.length} ý`);
+    await humanMouseMove(page);
+
+    // Click hết các ý liên tiếp — KHÔNG sleep giữa từng ý nữa.
     for (let gi = 0; gi < visible.length; gi++) {
       const box      = tfBoxes.nth(visible[gi]);
       const wantDung = (DS_INDEX_MAP[gi] ?? DS_INDEX_MAP[DS_INDEX_MAP.length - 1]) === 0;
@@ -155,12 +202,13 @@ async function xuLyDungSai(page: Page, cauSo: number): Promise<boolean> {
       const label    = wantDung ? 'Đúng' : 'Sai';
       const target   = box.locator(`span[data-tf-value="${val}"]`);
       if (await target.isVisible({ timeout: 800 }).catch(() => false)) {
-        await humanMouseMove(page);
         await target.click({ force: true });
         console.log(`     ý ${String.fromCharCode(97 + gi)}: [${label}]`);
       }
-      await sleep(0.4 + Math.random() * 0.4);
     }
+
+    // 1 lần chờ duy nhất, nhân theo số ý, trước khi coi như xong câu.
+    await sleep(scaleWait(visible.length));
     return true;
   } catch { return false; }
 }
@@ -189,9 +237,10 @@ async function xuLyTracNghiem(page: Page, cauSo: number): Promise<boolean> {
       const choice = visible[Math.floor(Math.random() * visible.length)];
       await humanMouseMove(page);
       await jsClick(page, choice);
-      await sleep(0.3);
       console.log(`  Câu ${cauSo}: [TRẮC NGHIỆM] đã chọn (${sel})`);
 
+      // 1 lần chờ duy nhất sau khi chọn, trước khi tìm nút nộp.
+      await sleep(ANSWER_WAIT);
       const btnDone = await timElement(page, [
         'button.btn-done',
         "xpath=//button[@title='Làm xong và nộp bài']",
@@ -199,7 +248,6 @@ async function xuLyTracNghiem(page: Page, cauSo: number): Promise<boolean> {
       ], 2000);
       if (btnDone) {
         await jsClick(page, btnDone);
-        await sleep(0.8);
         console.log(`  Câu ${cauSo}: ✓ Đã nộp trắc nghiệm`);
       }
       return true;
@@ -228,18 +276,18 @@ async function xuLyTuLuan(page: Page, cauSo: number): Promise<boolean> {
   if (active.length === 0) return false;
 
   console.log(`  Câu ${cauSo}: [TỰ LUẬN] ${active.length} ô nhập`);
+
+  // Điền hết các ô liên tiếp — KHÔNG sleep giữa từng ô nữa.
   for (const inp of active) {
     try {
-      await inp.scrollIntoViewIfNeeded();
-      await sleep(0.1);
       await inp.click({ clickCount: 3 });
-      await sleep(0.1);
-      await inp.type('1', { delay: 60 });
+      await inp.type('1', { delay: 30 });
       await inp.blur();
-      await sleep(0.2);
     } catch { /* ignore */ }
   }
 
+  // 1 lần chờ duy nhất, nhân theo số ô, trước khi bấm nộp.
+  await sleep(scaleWait(active.length));
   const btnDone = await timElement(page, [
     'button.btn-done',
     "xpath=//button[@title='Làm xong và nộp bài']",
@@ -247,13 +295,12 @@ async function xuLyTuLuan(page: Page, cauSo: number): Promise<boolean> {
   ], 4000);
   if (btnDone) {
     await jsClick(page, btnDone);
-    await sleep(0.8);
     console.log(`  Câu ${cauSo}: ✓ Đã nộp tự luận`);
   }
   return true;
 }
 
-// ─── MỚI: Câu chọn Dropdown (select-advance-btn) ─────────────────────────────
+// ─── Câu chọn Dropdown (select-advance-btn) ─────────────────────────────────
 /**
  * Xử lý câu hỏi dạng dropdown OLM (select-advance-btn).
  *
@@ -266,8 +313,9 @@ async function xuLyTuLuan(page: Page, cauSo: number): Promise<boolean> {
  *
  * Logic:
  *   1. Đếm tất cả nút dropdown visible trong câu hiện tại
- *   2. Với mỗi dropdown: click toggle → đợi menu → click option đầu tiên
- *   3. Trả về true nếu xử lý được ít nhất 1 dropdown
+ *   2. Với mỗi dropdown: click toggle → đợi menu (waitFor theo sự kiện, không
+ *      sleep cứng) → click option đầu tiên — KHÔNG sleep xen giữa các dropdown
+ *   3. Sau khi xử lý hết → 1 lần chờ duy nhất (nhân theo số dropdown) rồi nộp
  */
 async function xuLyDropdown(page: Page, cauSo: number): Promise<boolean> {
   try {
@@ -275,7 +323,6 @@ async function xuLyDropdown(page: Page, cauSo: number): Promise<boolean> {
     const total   = await toggles.count();
     if (total === 0) return false;
 
-    // Lọc dropdown nào còn chưa chọn (data-selected-value="-1") hoặc tất cả visible
     const active: Locator[] = [];
     for (let i = 0; i < total; i++) {
       const btn = toggles.nth(i);
@@ -290,31 +337,25 @@ async function xuLyDropdown(page: Page, cauSo: number): Promise<boolean> {
     for (let i = 0; i < active.length; i++) {
       const toggle = active[i];
       try {
-        // Click mở dropdown
         await toggle.scrollIntoViewIfNeeded();
-        await sleep(0.2);
         await toggle.click({ force: true });
-        await sleep(0.4);
 
-        // Đợi menu item xuất hiện
+        // Chờ menu mở — chờ SỰ KIỆN thật, không phải sleep cứng.
         const menuItem = page.locator(
           'button.select-advance-dropdown-item.dropdown-item:visible, ' +
           '.select-advance-dropdown-item.dropdown-item:visible'
         ).first();
 
-        const appeared = await menuItem.waitFor({ state: 'visible', timeout: 3000 })
+        const appeared = await menuItem.waitFor({ state: 'visible', timeout: 2000 })
           .then(() => true).catch(() => false);
 
         if (!appeared) {
           console.log(`     dropdown ${i + 1}: ⚠ Menu không mở được`);
-          // Thử đóng bằng Escape rồi bỏ qua
           await page.keyboard.press('Escape');
-          await sleep(0.2);
           continue;
         }
 
-        // Lấy tất cả options hiện visible
-        const allItems = page.locator(
+        const allItems  = page.locator(
           'button.select-advance-dropdown-item.dropdown-item:visible, ' +
           '.select-advance-dropdown-item.dropdown-item:visible'
         );
@@ -323,24 +364,21 @@ async function xuLyDropdown(page: Page, cauSo: number): Promise<boolean> {
         if (itemCount === 0) {
           console.log(`     dropdown ${i + 1}: ⚠ Không có option`);
           await page.keyboard.press('Escape');
-          await sleep(0.2);
           continue;
         }
 
-        // Chọn option đầu tiên
         const firstItem = allItems.first();
         const itemText  = (await firstItem.innerText().catch(() => '?')).trim();
         await firstItem.click({ force: true });
-        await sleep(0.3);
 
         console.log(`     dropdown ${i + 1}/${active.length}: chọn "${itemText}"`);
       } catch (e) {
         console.log(`     dropdown ${i + 1}: ⚠ Lỗi (${e})`);
       }
-      await sleep(0.3 + Math.random() * 0.2);
     }
 
-    // Nộp nếu có btn-done
+    // 1 lần chờ duy nhất, nhân theo số dropdown, trước khi nộp.
+    await sleep(scaleWait(active.length));
     const btnDone = await timElement(page, [
       'button.btn-done',
       "xpath=//button[@title='Làm xong và nộp bài']",
@@ -348,7 +386,6 @@ async function xuLyDropdown(page: Page, cauSo: number): Promise<boolean> {
     ], 2000);
     if (btnDone) {
       await jsClick(page, btnDone);
-      await sleep(0.8);
       console.log(`  Câu ${cauSo}: ✓ Đã nộp dropdown`);
     }
 
@@ -356,7 +393,7 @@ async function xuLyDropdown(page: Page, cauSo: number): Promise<boolean> {
   } catch { return false; }
 }
 
-// ─── MỚI: Câu kéo thả (drag-select → dragtext) ───────────────────────────────
+// ─── Câu kéo thả (drag-select → dragtext) ────────────────────────────────────
 /**
  * Xử lý câu hỏi dạng kéo thả OLM.
  *
@@ -375,11 +412,10 @@ async function xuLyDropdown(page: Page, cauSo: number): Promise<boolean> {
  *   2. Đếm số đáp án (span.drag-select) còn trong vùng đáp án
  *   3. Với mỗi ô trống: click vào đáp án tương ứng (OLM hỗ trợ "click để điền")
  *      → dùng click thay vì drag-drop thực sự (đơn giản, ổn định hơn)
- *   4. Trả về true nếu xử lý được ít nhất 1 ô
+ *   4. Không sleep xen giữa các ô — chỉ 1 lần chờ duy nhất sau khi điền hết
  */
 async function xuLyKeoTha(page: Page, cauSo: number): Promise<boolean> {
   try {
-    // Kiểm tra có ô kéo thả không
     const oTrong = page.locator(
       'span.dragtext.selectpoint, ' +
       'span.dragtext.trigger-curriculum-cate.selectpoint'
@@ -387,12 +423,10 @@ async function xuLyKeoTha(page: Page, cauSo: number): Promise<boolean> {
     const totalO = await oTrong.count();
     if (totalO === 0) return false;
 
-    // Kiểm tra có đáp án kéo thả không
     const dapAn = page.locator('span.drag-select[draggable="true"]');
     const totalDA = await dapAn.count();
     if (totalDA === 0) return false;
 
-    // Lọc ô trống còn chưa điền (innerText rỗng hoặc chỉ có whitespace)
     const oTrongRong: Locator[] = [];
     for (let i = 0; i < totalO; i++) {
       const o = oTrong.nth(i);
@@ -403,7 +437,6 @@ async function xuLyKeoTha(page: Page, cauSo: number): Promise<boolean> {
       }
     }
 
-    // Lọc đáp án còn visible trong vùng chọn
     const dapAnCoThe: Locator[] = [];
     for (let i = 0; i < totalDA; i++) {
       const da = dapAn.nth(i);
@@ -416,7 +449,6 @@ async function xuLyKeoTha(page: Page, cauSo: number): Promise<boolean> {
 
     console.log(`  Câu ${cauSo}: [KÉO THẢ] ${oTrongRong.length} ô trống, ${dapAnCoThe.length} đáp án`);
 
-    // Số ô cần điền = min(ô trống, đáp án có sẵn)
     const soOCanDien = Math.min(oTrongRong.length, dapAnCoThe.length);
 
     for (let i = 0; i < soOCanDien; i++) {
@@ -424,17 +456,14 @@ async function xuLyKeoTha(page: Page, cauSo: number): Promise<boolean> {
       const o  = oTrongRong[i];
 
       try {
-        // Lấy text đáp án để log
         const daText = (await da.innerText().catch(() => '?')).trim();
 
-        // OLM hỗ trợ "click để điền" — click đáp án trước, rồi click ô trống
-        // Hoặc chỉ click đáp án (nếu ô trống đang active)
         await da.scrollIntoViewIfNeeded();
-        await sleep(0.2);
         await da.click({ force: true });
-        await sleep(0.3);
 
-        // Kiểm tra xem ô đã được điền chưa (đôi khi click đáp án tự điền vào ô đang focus)
+        // Kiểm tra xem ô đã được điền chưa (đôi khi click đáp án tự điền vào
+        // ô đang focus). Chờ ngắn theo sự kiện thay vì sleep cứng.
+        await page.waitForTimeout(150);
         const oText = (await o.innerText().catch(() => '')).trim();
         if (oText !== '' && oText !== '?') {
           console.log(`     ô ${i + 1}: ✓ đã điền "${daText}" (click đáp án)`);
@@ -443,20 +472,17 @@ async function xuLyKeoTha(page: Page, cauSo: number): Promise<boolean> {
 
         // Nếu chưa điền → click ô trống để focus, rồi click đáp án lại
         await o.scrollIntoViewIfNeeded();
-        await sleep(0.2);
         await o.click({ force: true });
-        await sleep(0.2);
         await da.click({ force: true });
-        await sleep(0.3);
 
         console.log(`     ô ${i + 1}: "${daText}" → ô trống`);
       } catch (e) {
         console.log(`     ô ${i + 1}: ⚠ Lỗi kéo thả (${e})`);
       }
-      await sleep(0.3 + Math.random() * 0.2);
     }
 
-    // Nộp nếu có btn-done
+    // 1 lần chờ duy nhất, nhân theo số ô, trước khi nộp.
+    await sleep(scaleWait(soOCanDien));
     const btnDone = await timElement(page, [
       'button.btn-done',
       "xpath=//button[@title='Làm xong và nộp bài']",
@@ -464,8 +490,91 @@ async function xuLyKeoTha(page: Page, cauSo: number): Promise<boolean> {
     ], 2000);
     if (btnDone) {
       await jsClick(page, btnDone);
-      await sleep(0.8);
       console.log(`  Câu ${cauSo}: ✓ Đã nộp kéo thả`);
+    }
+
+    return true;
+  } catch { return false; }
+}
+
+// ─── Câu NỐI cặp (div.boxlink[data-pos="left"/"right"]) ──────────────────────
+/**
+ * Xử lý câu hỏi dạng NỐI OLM — kiểu "Nối đồ vật/khái niệm tương ứng".
+ *
+ * Cấu trúc HTML (theo ảnh mẫu):
+ *   <div class="boxlink left"  data-pos="left"  data-id="0">...</div>
+ *   <div class="boxlink right" data-pos="right" data-id="0">...</div>
+ *   (mỗi bên có đúng N ô, click 1 ô trái rồi click 1 ô phải để nối thành 1 cặp
+ *   — nối xong OLM tự vẽ đường nối, không cần xác định cặp đã nối qua class)
+ *
+ * Logic (đơn giản theo thứ tự, không cần biết cặp nào đúng/đã nối):
+ *   1. Đếm số ô trái và số ô phải đang hiển thị trong câu (N ô mỗi bên)
+ *   2. Nối lần lượt theo thứ tự: trái 1 ↔ phải 1, trái 2 ↔ phải 2, ... đến hết
+ *      (click ô trái thứ i rồi click ngay ô phải thứ i, không sleep xen giữa)
+ *   3. Nối xong hết N cặp → 1 lần chờ duy nhất (nhân theo số cặp) → bấm "Kiểm tra"
+ */
+async function xuLyNoi(page: Page, cauSo: number): Promise<boolean> {
+  try {
+    const leftSel  = '.boxlink[data-pos="left"], .boxlink.left';
+    const rightSel = '.boxlink[data-pos="right"], .boxlink.right';
+
+    const leftBoxes  = page.locator(leftSel);
+    const rightBoxes = page.locator(rightSel);
+
+    const totalLeft  = await leftBoxes.count();
+    const totalRight = await rightBoxes.count();
+    if (totalLeft === 0 || totalRight === 0) return false;
+
+    const leftHienThi: Locator[] = [];
+    for (let i = 0; i < totalLeft; i++) {
+      const b = leftBoxes.nth(i);
+      if (await b.isVisible({ timeout: 300 }).catch(() => false)) leftHienThi.push(b);
+    }
+
+    const rightHienThi: Locator[] = [];
+    for (let i = 0; i < totalRight; i++) {
+      const b = rightBoxes.nth(i);
+      if (await b.isVisible({ timeout: 300 }).catch(() => false)) rightHienThi.push(b);
+    }
+
+    if (leftHienThi.length === 0 || rightHienThi.length === 0) return false;
+
+    const soCap = Math.min(leftHienThi.length, rightHienThi.length);
+    console.log(`  Câu ${cauSo}: [NỐI] ${soCap} cặp (trái ${leftHienThi.length} / phải ${rightHienThi.length})`);
+    await humanMouseMove(page);
+
+    // Nối theo thứ tự: trái 1-phải 1, trái 2-phải 2,... đến hết — không sleep
+    // xen giữa từng cặp, chỉ 1 lần chờ duy nhất ở cuối trước khi bấm Kiểm tra.
+    for (let i = 0; i < soCap; i++) {
+      try {
+        await leftHienThi[i].scrollIntoViewIfNeeded();
+        await leftHienThi[i].click({ force: true });
+
+        await rightHienThi[i].scrollIntoViewIfNeeded();
+        await rightHienThi[i].click({ force: true });
+
+        console.log(`     nối cặp ${i + 1}/${soCap}: trái ${i + 1} ↔ phải ${i + 1}`);
+      } catch (e) {
+        console.log(`     cặp ${i + 1}: ⚠ Lỗi nối (${e})`);
+      }
+    }
+
+    // 1 lần chờ duy nhất, nhân theo số cặp, trước khi bấm Kiểm tra.
+    await sleep(scaleWait(soCap));
+
+    const btnKiemTra = await timElement(page, [
+      "button:has-text('Kiểm tra')",
+      'button.btn-check',
+      "xpath=//button[contains(normalize-space(text()),'Kiểm tra')]",
+      'button.btn-done',
+      "xpath=//button[@title='Làm xong và nộp bài']",
+    ], 3000);
+
+    if (btnKiemTra) {
+      await jsClick(page, btnKiemTra);
+      console.log(`  Câu ${cauSo}: ✓ Đã nối hết và bấm Kiểm tra`);
+    } else {
+      console.log(`  Câu ${cauSo}: ⚠ Đã nối nhưng không thấy nút Kiểm tra`);
     }
 
     return true;
@@ -489,7 +598,6 @@ async function getCurrentCauIndex(page: Page): Promise<string | null> {
 async function chuyenCauThiThu(page: Page, cauSo: number): Promise<'tiep' | 'phan' | 'xong'> {
   try {
     await page.keyboard.press('Escape');
-    await sleep(0.15);
 
     const nextCauBtn  = page.locator("button.btn-next-question, button:has-text('Câu tiếp')");
     const nextPhanBtn = page.locator(
@@ -504,14 +612,16 @@ async function chuyenCauThiThu(page: Page, cauSo: number): Promise<'tiep' | 'pha
     if (coNutCau) {
       const idxTruoc = await getCurrentCauIndex(page);
       await nextCauBtn.click();
-      await sleep(0.4);
+      // 1 lần chờ duy nhất sau khi chuyển câu.
+      await sleep(ANSWER_WAIT);
       if (await isHoanThanh(page)) return 'xong';
       const idxSau = await getCurrentCauIndex(page);
       console.log(`   → Câu ${idxTruoc} → ${idxSau}`);
       if (idxTruoc !== null && idxSau !== null && idxTruoc === idxSau) {
         if (await nextPhanBtn.isVisible({ timeout: 600 }).catch(() => false)) {
           await nextPhanBtn.click();
-          await sleep(1);
+          // Chuyển PHẦN render lại nhiều nội dung hơn → coi như trang mới.
+          await sleep(READ_WAIT);
           return 'phan';
         }
         return 'xong';
@@ -522,7 +632,7 @@ async function chuyenCauThiThu(page: Page, cauSo: number): Promise<'tiep' | 'pha
     if (coNutPhan) {
       console.log('   → Hết câu phần này → Phần tiếp...');
       await nextPhanBtn.click();
-      await sleep(1);
+      await sleep(READ_WAIT);
       return 'phan';
     }
 
@@ -536,7 +646,7 @@ async function chuyenCauThiThu(page: Page, cauSo: number): Promise<'tiep' | 'pha
 
 async function nopBaiLuyenTap(page: Page): Promise<void> {
   console.log('\n[KẾT THÚC] Làm hết một lượt → Nộp bài...');
-  await sleep(1);
+  await sleep(ANSWER_WAIT);
 
   const btn = await timElement(page, [
     'button.btn-save:not([disabled])',
@@ -549,7 +659,7 @@ async function nopBaiLuyenTap(page: Page): Promise<void> {
 
   if (btn) {
     await jsClick(page, btn);
-    await sleep(2);
+    await sleep(ANSWER_WAIT);
 
     const popup = page.locator(
       '#btn-confirm-dialog-confirm, .popup-primary-button, ' +
@@ -557,7 +667,6 @@ async function nopBaiLuyenTap(page: Page): Promise<void> {
     );
     if (await popup.isVisible({ timeout: 3000 }).catch(() => false)) {
       await popup.first().click();
-      await sleep(1);
     }
 
     console.log('✅ ĐÃ NỘP BÀI LUYỆN TẬP!');
@@ -569,50 +678,41 @@ async function nopBaiLuyenTap(page: Page): Promise<void> {
 async function nopBaiThiThu(page: Page): Promise<void> {
   console.log('\n[6] Nộp bài...');
   try {
-    // Đợi trang ổn định sau khi làm hết câu cuối
-    await sleep(1.5);
+    // Đợi trang ổn định sau khi làm hết câu cuối.
+    await sleep(ANSWER_WAIT);
 
     const nopSelectors = [
-      // Selector cụ thể OLM kiểm tra
       'button.btn-submit-cate',
       'button.btn-submit',
-      // Text-based — bao phủ nhiều biến thể
       "button:has-text('Nộp bài')",
       "button:has-text('Nộp')",
       "button:has-text('Kết thúc')",
       "button:has-text('Hoàn thành')",
       "a:has-text('Nộp bài')",
-      // Tailwind button OLM hay dùng
       "button.tw-olm-btn-primary-48:has-text('Nộp')",
       "button[class*='btn']:has-text('Nộp')",
-      // XPath fallback
       "xpath=//button[contains(normalize-space(text()),'Nộp bài')]",
       "xpath=//button[contains(normalize-space(text()),'Nộp')]",
       "xpath=//button[contains(normalize-space(text()),'Kết thúc')]",
     ];
 
-    const btnNop = await timElement(page, nopSelectors, 8000);
+    let btnNop = await timElement(page, nopSelectors, 8000);
 
-    if (btnNop) {
-      await btnNop.scrollIntoViewIfNeeded();
-      await sleep(0.3);
-      await btnNop.click({ force: true });
-      console.log('  → Đã click Nộp bài');
-      await sleep(1.5);
-    } else {
-      // Thử scroll xuống rồi tìm lại
+    if (!btnNop) {
+      // Thử scroll xuống rồi tìm lại — vẫn chờ theo sự kiện, không sleep cứng thêm.
       await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-      await sleep(1);
-      const btnNop2 = await timElement(page, nopSelectors, 5000);
-      if (btnNop2) {
-        await btnNop2.click({ force: true });
-        console.log('  → Đã click Nộp bài (sau scroll)');
-        await sleep(1.5);
-      } else {
-        console.log('  ⚠ Không tìm thấy nút Nộp bài');
-        return;
-      }
+      btnNop = await timElement(page, nopSelectors, 5000);
     }
+
+    if (!btnNop) {
+      console.log('  ⚠ Không tìm thấy nút Nộp bài');
+      return;
+    }
+
+    await btnNop.scrollIntoViewIfNeeded();
+    await btnNop.click({ force: true });
+    console.log('  → Đã click Nộp bài');
+    await sleep(ANSWER_WAIT);
 
     const popup = page.locator(
       '#btn-confirm-dialog-confirm, .popup-primary-button, ' +
@@ -620,7 +720,6 @@ async function nopBaiThiThu(page: Page): Promise<void> {
     );
     if (await popup.isVisible({ timeout: 6000 }).catch(() => false)) {
       await popup.first().click();
-      await sleep(1);
       console.log('✅ ĐÃ XÁC NHẬN NỘP BÀI!');
     } else {
       console.log('✅ ĐÃ NỘP BÀI!');
@@ -640,7 +739,7 @@ async function xuLyTiepTuc(page: Page): Promise<boolean> {
   if (btn) {
     console.log("   → Câu sai → 'Tiếp tục làm bài'");
     await jsClick(page, btn);
-    await sleep(0.8);
+    await sleep(ANSWER_WAIT);
     return true;
   }
   return false;
@@ -686,19 +785,17 @@ async function khoiDongThiThu(page: Page): Promise<void> {
   if (await btnLamLai.isVisible({ timeout: 4000 }).catch(() => false)) {
     console.log('  → Màn hình kết quả cũ → Làm lại bài...');
     await btnLamLai.click();
-    await sleep(1);
     const popup = page.locator(
       '#btn-confirm-dialog-confirm, .popup-primary-button, ' +
       "button:has-text('Xác nhận'), button:has-text('Đồng ý')"
     );
     if (await popup.isVisible({ timeout: 4000 }).catch(() => false)) {
       await popup.first().click();
-      await sleep(1);
     }
+    // "Làm lại bài" render lại toàn bộ giao diện làm bài → coi như trang mới.
+    await sleep(READ_WAIT);
   }
 
-  await page.waitForLoadState('domcontentloaded').catch(() => {});
-  await sleep(1);
   const btnBatDau = page.locator([
     "button:has-text('Bắt đầu làm bài')",
     ".btn-start-exam",
@@ -713,7 +810,8 @@ async function khoiDongThiThu(page: Page): Promise<void> {
       'td.tf-box, span.qiradio, span.qimage, div.qselect, .answer-option',
       { timeout: 12000 }
     ).catch(() => {});
-    await sleep(1);
+    // Màn hình câu hỏi đầu tiên vừa render → đọc full trang 1 lần.
+    await sleep(READ_WAIT);
   }
 }
 
@@ -726,7 +824,6 @@ export async function khoiDongLuyenTap(page: Page): Promise<void> {
   if (btnRetry) {
     console.log("  → Màn hình cũ → 'Luyện tập lại'...");
     await jsClick(page, btnRetry);
-    await sleep(1);
     const btnCo = await timElement(page, [
       "xpath=//button[normalize-space(text())='Có']",
       "xpath=//button[contains(normalize-space(text()),'Có')]",
@@ -734,10 +831,10 @@ export async function khoiDongLuyenTap(page: Page): Promise<void> {
     ], 4000);
     if (btnCo) {
       await jsClick(page, btnCo);
-      await sleep(1.5);
     }
+    // "Luyện tập lại" render lại toàn bộ giao diện → coi như trang mới.
+    await sleep(READ_WAIT);
   }
-  await sleep(0.8);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -750,7 +847,6 @@ async function loopThiThu(page: Page): Promise<void> {
 
   while (cauSo < MAX_CAU) {
     cauSo++;
-    await sleep(0.4 + Math.random() * 0.4);
     console.log(`\n--- Câu ${cauSo} ---`);
 
     if (await isHoanThanh(page)) {
@@ -760,8 +856,9 @@ async function loopThiThu(page: Page): Promise<void> {
 
     const clicked =
       (await xuLyDungSai(page, cauSo))   ||
-      (await xuLyDropdown(page, cauSo))  ||   // ← MỚI
-      (await xuLyKeoTha(page, cauSo))    ||   // ← MỚI
+      (await xuLyDropdown(page, cauSo))  ||
+      (await xuLyKeoTha(page, cauSo))    ||
+      (await xuLyNoi(page, cauSo))       ||
       (await xuLyTracNghiem(page, cauSo)) ||
       (await xuLyTuLuan(page, cauSo));
 
@@ -770,7 +867,7 @@ async function loopThiThu(page: Page): Promise<void> {
       vongRong++;
       if (vongRong >= MAX_VONG_RONG) { console.log('   ❌ Quá nhiều vòng rỗng → dừng'); break; }
       cauSo--;
-      await sleep(0.8);
+      await sleep(ANSWER_WAIT);
       continue;
     }
     vongRong = 0;
@@ -796,8 +893,6 @@ export async function loopLuyenTapPartial(page: Page, maxCau = 3): Promise<void>
   let vongRong = 0;
 
   while (cauSo < maxCau) {
-    await sleep(0.6);
-
     if (await isHetLuot(page)) break;
     if (await xuLyTiepTuc(page)) {
       vongRong = 0;
@@ -810,6 +905,7 @@ export async function loopLuyenTapPartial(page: Page, maxCau = 3): Promise<void>
       (await xuLyDungSai(page, cauSo)) ||
       (await xuLyDropdown(page, cauSo)) ||
       (await xuLyKeoTha(page, cauSo)) ||
+      (await xuLyNoi(page, cauSo)) ||
       (await xuLyTuLuan(page, cauSo)) ||
       (await xuLyTracNghiem(page, cauSo));
 
@@ -821,7 +917,7 @@ export async function loopLuyenTapPartial(page: Page, maxCau = 3): Promise<void>
     cauSo--;
     vongRong++;
     if (vongRong >= MAX_VONG_RONG) break;
-    await sleep(0.8);
+    await sleep(ANSWER_WAIT);
   }
 }
 
@@ -830,8 +926,6 @@ async function loopLuyenTap(page: Page): Promise<void> {
   let vongRong = 0;
 
   while (true) {
-    await sleep(0.6);
-
     if (await isHetLuot(page)) { await nopBaiLuyenTap(page); break; }
     if (await xuLyTiepTuc(page)) { vongRong = 0; continue; }
 
@@ -839,8 +933,9 @@ async function loopLuyenTap(page: Page): Promise<void> {
 
     const clicked =
       (await xuLyDungSai(page, cauSo))    ||
-      (await xuLyDropdown(page, cauSo))   ||   // ← MỚI
-      (await xuLyKeoTha(page, cauSo))     ||   // ← MỚI
+      (await xuLyDropdown(page, cauSo))   ||
+      (await xuLyKeoTha(page, cauSo))     ||
+      (await xuLyNoi(page, cauSo))        ||
       (await xuLyTuLuan(page, cauSo))     ||
       (await xuLyTracNghiem(page, cauSo));
 
@@ -850,7 +945,7 @@ async function loopLuyenTap(page: Page): Promise<void> {
     vongRong++;
     console.log(`   ⚠ Vòng rỗng ${vongRong}/${MAX_VONG_RONG}`);
     if (vongRong >= MAX_VONG_RONG) { console.log('   ❌ Dừng vì quá nhiều vòng rỗng'); break; }
-    await sleep(0.8);
+    await sleep(ANSWER_WAIT);
   }
 
   console.log(`\n✅ Hoàn thành ~${cauSo} câu`);
@@ -871,8 +966,8 @@ export async function lamBaiTaiBaiHoc(page: Page, url: string): Promise<void> {
     return;
   }
 
-  await page.waitForLoadState('networkidle', { timeout: 20_000 }).catch(() => {});
-  await sleep(1.5);
+  // Trang vừa load xong — đọc/nhận diện toàn bộ DOM 1 lần duy nhất.
+  await sleep(READ_WAIT);
   await dongModal(page);
 
   const loai = await phatHienLoaiBai(page);
