@@ -2,6 +2,7 @@ import { test as base, expect, type Page, type BrowserContext } from '@playwrigh
 import fs from 'fs';
 import { authPathForWorker, WORKER_ACCOUNTS } from '../global-setup';
 import { LoginPage } from '@modules/dung-chung/auth/pages/LoginPage';
+import { patchGotoWithV2 } from '../core/fixtures/patchGoto';
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 type AuthFixtures = {
@@ -31,7 +32,7 @@ function getWorkerAuthPath(): string {
 // ─── Fixtures ──────────────────────────────────────────────────────────────
 export const test = base.extend<AuthFixtures>({
   guestPage: async ({ page }, use) => {
-    await use(page);
+    await use(patchGotoWithV2(page));
   },
 
   authenticatedContext: async ({ browser }, use) => {
@@ -50,7 +51,7 @@ export const test = base.extend<AuthFixtures>({
 
   authenticatedPage: async ({ authenticatedContext }, use) => {
     const page = await authenticatedContext.newPage();
-    await use(page);
+    await use(patchGotoWithV2(page));
     // context đã được đóng bởi authenticatedContext fixture
   },
 });

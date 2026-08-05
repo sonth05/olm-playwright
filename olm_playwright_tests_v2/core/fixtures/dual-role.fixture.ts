@@ -1,5 +1,6 @@
 import { test as base, expect, type Page, type BrowserContext } from '@playwright/test';
 import { storageStateForRole } from './role.fixture';
+import { patchGotoWithV2 } from './patchGoto';
 
 type DualRoleFixtures = {
   /** Context + page giáo viên (worker-1 / ACCOUNTS.school) */
@@ -25,7 +26,7 @@ export const test = base.extend<DualRoleFixtures>({
 
   teacherPage: async ({ teacherContext }, use) => {
     const page = await teacherContext.newPage();
-    await use(page);
+    await use(patchGotoWithV2(page));
   },
 
   studentContext: async ({ browser }, use) => {
@@ -38,7 +39,7 @@ export const test = base.extend<DualRoleFixtures>({
 
   studentPage: async ({ studentContext }, use) => {
     const page = await studentContext.newPage();
-    await use(page);
+    await use(patchGotoWithV2(page));
   },
 });
 

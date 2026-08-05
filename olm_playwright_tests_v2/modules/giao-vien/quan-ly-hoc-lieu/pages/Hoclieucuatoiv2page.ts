@@ -374,7 +374,6 @@ export class HocLieuCuaToiV2Page {
   readonly table: Locator;
   readonly tableRows: Locator; // tbody > tr
   readonly tableHeader: Locator; // thead
-  readonly checkboxSelectAll: Locator; // checkbox "chọn tất cả" trong thead
 
   // ---- Phân trang ----
   readonly pagination: Locator;
@@ -421,11 +420,14 @@ export class HocLieuCuaToiV2Page {
 
     this.table = page.locator('table');
     this.tableRows = this.table.locator('tbody tr');
+    // DOM thật (2026-08-04, capture từ trang debug.olm.vn) xác nhận <thead>
+    // chỉ có đúng 6 cột: STT, Tên học liệu, Khối lớp, Môn học, Khóa học,
+    // Hành động — KHÔNG có cột/checkbox "chọn tất cả" nào cả. Class Tailwind
+    // "[&:has([role=checkbox])]:tw-pr-0" trên mỗi <th> chỉ là style hook có
+    // điều kiện của component bảng dùng chung (áp dụng NẾU có checkbox),
+    // không phải bằng chứng bảng này có checkbox thật. Đã bỏ hẳn field
+    // checkboxSelectAll (trước đó đoán nhầm theo ảnh chụp màn hình).
     this.tableHeader = this.table.locator('thead');
-    // TODO: chưa có DOM thật của <thead> (chỉ ảnh chụp) — checkbox "chọn tất
-    // cả" tạm tra theo input[type=checkbox] chuẩn, cần đối chiếu lại khi có
-    // HTML thật của khối header bảng.
-    this.checkboxSelectAll = this.tableHeader.locator('input[type="checkbox"]');
 
     this.pagination = page.getByRole('navigation', { name: /pagination/i });
     this.btnPrevPage = this.pagination.getByRole('button', { name: /previous page/i });
@@ -548,6 +550,37 @@ export class HocLieuCuaToiV2Page {
 
   async getRowCount(): Promise<number> {
     return this.tableRows.count();
+  }
+
+  /**
+   * Đếm tổng số dòng trên TOÀN BỘ các trang (không chỉ trang hiện tại).
+   * Dùng khi cần so sánh với 1 con số TỔNG (VD badge số lượng trên tab),
+   * khác với getRowCount() chỉ đếm dòng đang hiển thị trên trang hiện tại.
+   *
+   * Lưu ý: hàm này sẽ điều hướng qua các trang (goToPage/goToNextPage) —
+   * gọi xong nên tự quay lại trang 1 nếu bước sau của test cần trạng thái đó.
+   */
+  async getTotalRowCountAcrossPages(): Promise<number> {
+    const hasPagination = await this.pagination.isVisible({ timeout: 1_000 }).catch(() => false);
+    if (!hasPagination) {
+      return this.getRowCount();
+    }
+
+    // Đảm bảo đếm từ trang 1
+    const page1Btn = this.pageButton(1);
+    if (await page1Btn.isVisible({ timeout: 1_000 }).catch(() => false)) {
+      await this.goToPage(1);
+    }
+
+    let total = 0;
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      total += await this.getRowCount();
+      const nextDisabled = await this.btnNextPage.isDisabled().catch(() => true);
+      if (nextDisabled) break;
+      await this.goToNextPage();
+    }
+    return total;
   }
 
   async getRowData(row: Locator): Promise<HocLieuV2Row> {

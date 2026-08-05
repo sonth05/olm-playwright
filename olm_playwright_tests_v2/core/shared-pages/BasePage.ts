@@ -1,5 +1,5 @@
 import type { Page, Locator } from '@playwright/test';
-import { BASE_URL } from '../../config/config';
+import { BASE_URL, appendV2Param } from '../../config/config';
 
 /**
  * Lớp cơ sở cho tất cả Page Object.
@@ -37,11 +37,16 @@ export class BasePage {
    * timeout tăng lên 45_000 (từ 20_000) vì olm.vn production
    * thường load 20-40s trên các trang nặng (/thongtin, /gio-hang, /hoi-dap).
    * Có thể override qua env NAV_TIMEOUT (đơn vị ms).
+   *
+   * Mọi url truyền vào đều tự động được gắn thêm `?v=v2` (qua appendV2Param())
+   * trước khi goto() — xem docblock của appendV2Param() trong config/config.ts
+   * để biết lý do đặt tập trung ở đây thay vì từng page object.
    */
   async navigateTo(url: string): Promise<void> {
     const timeout = Number(process.env.NAV_TIMEOUT ?? 45_000);
+    const targetUrl = appendV2Param(url);
 
-    await this.page.goto(url, { waitUntil: 'commit', timeout });
+    await this.page.goto(targetUrl, { waitUntil: 'commit', timeout });
 
     // Best-effort: cho DOM một khoảng thời gian giới hạn để settle trước
     // khi chạy popup-dismiss, nhưng không để bước này làm navigateTo() fail.

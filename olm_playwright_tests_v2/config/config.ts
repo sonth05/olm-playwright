@@ -51,6 +51,34 @@ export const KIDS_COURSES = [
 // Chú ý: Get Grade Page dùng pattern "/lop-:grade" (không có dấu / giữa
 // "lop-" và số), khác với SKIP_HREFS trong constants.ts vốn chỉ dùng để
 // match prefix '/lop-' khi parse link trên trang.
+/**
+ * Gắn thêm query param `v=v2` vào MỌI url điều hướng — áp dụng cho TOÀN BỘ
+ * project (không riêng "Học liệu của tôi" nữa), vì olm_playwright_tests_v2
+ * chạy nhắm hẳn vào giao diện V2 trên debug.olm.vn (BASE_URL mặc định đọc
+ * .env.debug — xem đầu file). Đặt tập trung ở đây (thay vì rải rác từng page
+ * object) để:
+ *   1. Mọi page object HIỆN TẠI đi qua BasePage.navigateTo() tự động được
+ *      gắn param, không cần sửa tay từng file.
+ *   2. Mọi page object viết THÊM SAU NÀY cũng tự động có, miễn là gọi
+ *      this.navigateTo()/this.goHome() như quy ước chung của BasePage.
+ *
+ * - Bỏ qua nếu url đã có sẵn `v=v2` (tránh lặp — 1 số page object cũ tự gắn
+ *   param trước khi gọi vào navigateTo(), VD HocLieuCuaToiV2Page.goto()).
+ * - Chèn param TRƯỚC dấu `#` nếu url có fragment (VD: `.../truong-hoc#menu-x`
+ *   -> `.../truong-hoc?v=v2#menu-x`) — query param luôn phải đứng trước
+ *   fragment mới hợp lệ, nhiều URL trong file này dùng pattern `${...}#menu-...`.
+ */
+export function appendV2Param(url: string): string {
+  if (/[?&]v=v2(&|$)/.test(url)) return url;
+
+  const hashIndex = url.indexOf('#');
+  const base = hashIndex === -1 ? url : url.slice(0, hashIndex);
+  const hash = hashIndex === -1 ? '' : url.slice(hashIndex);
+
+  const separator = base.includes('?') ? '&' : '?';
+  return `${base}${separator}v=v2${hash}`;
+}
+
 export const lopUrl     = (grade: number | string): string => `${BASE_URL}/lop-${grade}`;
 export const khoaHocUrl = (courseSlug: string): string => `${BASE_URL}/khoa-hoc/${courseSlug}`;
 export const chuDeUrl   = (topicSlug: string): string => `${BASE_URL}/chu-de/${topicSlug}`;
@@ -120,9 +148,9 @@ export const tsdcPublicUrl = (level?: string): string =>
   `${BASE_URL}/tsdc/${SCHOOL_ID}${level ? `?level=${level}` : ''}`;
 
 // ─── Đối tác / danh sách nhóm (giáo viên chủ trường quản lý lớp) ──────────
-// Username gắn với tài khoản test cố định (nguyenthanhson2818) — cùng tài
-// khoản với ACCOUNTS.school trong testData.ts. Override qua OLM_SCHOOL_USERNAME
-// (đã dùng sẵn cho việc đăng nhập ở testData.ts) để 2 nơi luôn khớp nhau.
+// Username gắn với tài khoản test cố định (nguyenthanhson2818). Override
+// qua OLM_SCHOOL_USERNAME (đã dùng sẵn cho việc đăng nhập ở testData.ts) để
+// 2 nơi luôn khớp nhau.
 export const SCHOOL_USERNAME = env('OLM_SCHOOL_USERNAME', 'nguyenthanhson2818');
 /** VD: doiTacUrl('danh-sach-nhom') → BASE_URL/doi-tac/{username}/danh-sach-nhom */
 export const doiTacUrl = (subPath = ''): string =>

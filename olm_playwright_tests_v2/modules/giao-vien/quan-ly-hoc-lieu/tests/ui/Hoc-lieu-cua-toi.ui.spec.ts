@@ -20,10 +20,12 @@ import {
  * trong ../function/Hoc-lieu-cua-toi.function.spec.ts), và không điều hướng
  * sang trang khác (xem ../e2e/Hoc-lieu-cua-toi.e2e.spec.ts).
  *
- * LƯU Ý: `btnBackToOldUI` và `checkboxSelectAll`/tiêu đề cột `<thead>` hiện
- * chỉ đối chiếu theo ẢNH CHỤP MÀN HÌNH (chưa có DOM thật của các khối này) —
- * đánh dấu TODO trong Hoclieucuatoiv2page.ts, cần xác nhận lại selector khi
- * có HTML thật, đúng quy tắc "không đoán selector" của dự án.
+ * LƯU Ý: `btnBackToOldUI` hiện chỉ đối chiếu theo ẢNH CHỤP MÀN HÌNH (chưa có
+ * DOM thật của khối này) — đánh dấu TODO trong Hoclieucuatoiv2page.ts, cần
+ * xác nhận lại selector khi có HTML thật, đúng quy tắc "không đoán selector"
+ * của dự án. Tiêu đề cột `<thead>` đã đối chiếu DOM thật 2026-08-04: bảng
+ * KHÔNG có checkbox "chọn tất cả" (đã bỏ field checkboxSelectAll khỏi Page
+ * Object và bước test tương ứng).
  */
 test.describe('[UI] TC-LIST: Trang Học liệu của tôi (V2)', () => {
   test('TC-LIST-UI: Header, banner, tabs, nhãn bộ lọc, trạng thái phân trang', async ({ getPageAsRole }) => {
@@ -53,7 +55,7 @@ test.describe('[UI] TC-LIST: Trang Học liệu của tôi (V2)', () => {
       await expect(listPage.tabUnpublished).toBeVisible();
     });
 
-    await test.step('TC-LIST-03b: Badge số lượng trên tab "Chưa xuất bản" (nếu có) khớp đúng số dòng dữ liệu thật', async () => {
+    await test.step('TC-LIST-03b: Badge số lượng trên tab "Chưa xuất bản" (nếu có) khớp đúng TỔNG số dòng qua mọi trang', async () => {
       // FIX 2026-08-04: chạy thật báo lỗi "element(s) not found" — vì docblock
       // gốc của getAllTabCount() đã ghi rõ "chỉ tab Tất cả có badge trong DOM
       // mẫu" (chưa xác nhận tab "Chưa xuất bản" có badge). Đồng thời dữ liệu
@@ -63,15 +65,23 @@ test.describe('[UI] TC-LIST: Trang Học liệu của tôi (V2)', () => {
       // badge thật sự tồn tại thì số trên badge phải khớp đúng số dòng bảng
       // khi đang ở tab này; nếu badge không tồn tại thì bỏ qua bước này và
       // để lại TODO xác nhận lại cấu trúc DOM thật của tab "Chưa xuất bản".
+      //
+      // FIX 2026-08-04 (bug thứ 2): badge hiển thị TỔNG số bản ghi trên MỌI
+      // trang, không chỉ số dòng trên trang hiện tại (mỗi trang tối đa 10
+      // dòng, có phân trang <nav aria-label="pagination">). Trước đây dùng
+      // getRowCount() (chỉ đếm trang 1) nên khi có >10 bản ghi sẽ báo lệch
+      // giả (VD Expected "10" nhưng Received "11" dù badge đúng thật) →
+      // chuyển sang getTotalRowCountAcrossPages() để đếm đúng qua hết các
+      // trang trước khi so sánh.
       await listPage.selectStatusTab('unpublished');
       await listPage.table.waitFor({ state: 'visible' });
-      const actualRowCount = await listPage.getRowCount();
 
       const badgeVisible = await listPage.tabUnpublishedCountBadge
         .isVisible({ timeout: 3000 })
         .catch(() => false);
       if (badgeVisible) {
-        await expect(listPage.tabUnpublishedCountBadge).toHaveText(String(actualRowCount));
+        const totalCount = await listPage.getTotalRowCountAcrossPages();
+        await expect(listPage.tabUnpublishedCountBadge).toHaveText(String(totalCount));
       }
       // TODO: nếu badgeVisible luôn = false trên môi trường thật, xác nhận
       // lại là tab "Chưa xuất bản" KHÔNG có badge (khác thiết kế so với tab
@@ -85,7 +95,8 @@ test.describe('[UI] TC-LIST: Trang Học liệu của tôi (V2)', () => {
       await expect(listPage.searchInput).toBeVisible();
       await expect(listPage.searchInput).toHaveAttribute('placeholder', 'Tìm theo tên học liệu');
 
-      await expect(listPage.checkboxSelectAll).toBeVisible();
+      // Đã xác nhận DOM thật 2026-08-04: bảng KHÔNG có checkbox "chọn tất cả"
+      // trong <thead> (chỉ 6 cột dữ liệu), nên bỏ hẳn assertion checkbox.
       await expect(listPage.columnHeader('STT')).toBeVisible();
       await expect(listPage.columnHeader('Tên học liệu')).toBeVisible();
       await expect(listPage.columnHeader('Khối lớp')).toBeVisible();

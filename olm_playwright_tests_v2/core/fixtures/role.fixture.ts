@@ -2,6 +2,7 @@ import { test as base, expect, type Page, type BrowserContext } from '@playwrigh
 import fs from 'fs';
 import path from 'path';
 import { authPathForWorker } from '../../global-setup';
+import { patchGotoWithV2 } from '../patchGoto';
 
 // ─── Role → worker slot (khớp WORKER_ACCOUNTS trong global-setup.ts) ───────
 const ROLE_WORKER_SLOT: Record<string, number> = {
@@ -52,20 +53,20 @@ export const test = base.extend<RoleFixtures>({
 
   teacherPage: async ({ teacherContext }, use) => {
     const page = await teacherContext.newPage();
-    await use(page);
+    await use(patchGotoWithV2(page));
   },
 
   studentPage: async ({ browser }, use) => {
     const context = await createAuthenticatedContext(browser, 'student_vip');
     const page = await context.newPage();
-    await use(page);
+    await use(patchGotoWithV2(page));
     await context.close();
   },
 
   normalStudentPage: async ({ browser }, use) => {
     const context = await createAuthenticatedContext(browser, 'normal_student');
     const page = await context.newPage();
-    await use(page);
+    await use(patchGotoWithV2(page));
     await context.close();
   },
 });

@@ -1,4 +1,5 @@
 import { test as base, Page, BrowserContext } from '@playwright/test';
+import { patchGotoWithV2 } from './patchGoto';
 
 /**
  * 4 vai trò nghiệp vụ theo mục 4 của đặc tả "Soạn học liệu V2":
@@ -52,7 +53,8 @@ export const test = base.extend<Fixtures>({
     contextCache.set(role, context);
   }
 
-  return context.newPage();
+  const page = await context.newPage();
+  return patchGotoWithV2(page);
 };
 
     await use(getPageAsRole);
