@@ -2,7 +2,7 @@ import { test as base, expect, type Page, type BrowserContext } from '@playwrigh
 import fs from 'fs';
 import path from 'path';
 import { authPathForWorker } from '../../global-setup';
-import { patchGotoWithV2 } from '../patchGoto';
+import { patchGotoWithV2 } from './patchGoto';
 
 // ─── Role → worker slot (khớp WORKER_ACCOUNTS trong global-setup.ts) ───────
 const ROLE_WORKER_SLOT: Record<string, number> = {

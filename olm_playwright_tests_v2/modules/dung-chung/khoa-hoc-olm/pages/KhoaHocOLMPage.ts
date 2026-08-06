@@ -190,7 +190,11 @@ export class KhoaHocOLMPage extends BasePage {
    * Kiểm tra segment hiện tại đang được chọn
    */
   async getSelectedSegment(): Promise<CourseSegment> {
-    const selected = await this.segmentSelector.locator('.selected').getAttribute('data-value');
+    // FIX: '.selected' từng match cả <button> lẫn <span class="selected"> con bên trong
+    // (strict mode violation) — thu hẹp về button có data-value để lấy đúng 1 phần tử.
+    const selected = await this.segmentSelector
+      .locator('button.selected[data-value]')
+      .getAttribute('data-value');
     return selected as CourseSegment;
   }
 
@@ -317,8 +321,20 @@ export class KhoaHocOLMPage extends BasePage {
     const card = this.courseCards.nth(index);
 
     const title = await card.locator('.tw-text-xl.tw-font-semibold').innerText();
-    const lessonCountText = await card.locator('.tw-text-content-secondary').first().innerText();
-    const lessonCount = parseInt(lessonCountText.split(' ')[0], 10);
+    // FIX: '.tw-text-content-secondary'.first() trong card khớp nhiều phần tử
+    // (mô tả/subtitle lẫn số bài học) nên .first() có thể không phải phần tử
+    // chứa số bài học → parseInt ra NaN. Thu hẹp về đúng div nằm cạnh
+    // '.card-course-action' (giống cách KhoaHocPage.ts — trang V2 — đã làm),
+    // đồng thời dùng regex \d+ thay vì split(' ')[0] để không phụ thuộc thứ
+    // tự chữ/số trong chuỗi hiển thị.
+    const lessonCountText = await card
+      .locator('.card-course-action')
+      .locator('..')
+      .locator('div.tw-text-content-secondary')
+      .first()
+      .innerText();
+    const lessonCountMatch = lessonCountText.match(/\d+/);
+    const lessonCount = lessonCountMatch ? parseInt(lessonCountMatch[0], 10) : 0;
     const courseUrl = await card.locator('a').first().getAttribute('href');
     const imageUrl = await card.locator('img').first().getAttribute('src');
 
