@@ -1,16 +1,25 @@
 // hoclieudaxoa-e2e.spec.ts
-import { test, expect } from '@playwright/test';
-import { HocLieuDaXoaV2Page } from './Hoclieudaxoav2page';
+// FIX (2026-08-10): trước đây import test/expect thẳng từ '@playwright/test'
+// -> page KHÔNG có storageState (chưa đăng nhập), khiến goto() bị redirect
+// về /dangnhap. Đây là NGUYÊN NHÂN GỐC của các lỗi timeout "heading/table
+// không hiển thị" từng thấy trong log chạy thật, KHÔNG PHẢI chỉ do popup.
+// Đổi sang V2authoringrole.fixture + role 'editableTeacher' — cùng account
+// (teacher_vip) mà các file .ui.spec.ts cùng module đã dùng — để account
+// nhất quán giữa mọi file trong module, không còn "lẫn lộn" account giữa
+// các ca test trong 1 lần chạy.
+import { test, expect } from '../../../../../core/fixtures/V2authoringrole.fixture';
+import { HocLieuDaXoaV2Page } from '../../pages/Hoclieudaxoav2page';
 import {
   FilterCoursewareTypeV2,
   FilterGradeValue,
   FILTER_SUBJECT_VALUE,
-} from 'Hoclieucuatoiv2page';
+} from '../../pages/Hoclieucuatoiv2page';
 
 test.describe('Trang Học liệu đã xóa – E2E', () => {
   let page: HocLieuDaXoaV2Page;
 
-  test.beforeEach(async ({ page: p }) => {
+  test.beforeEach(async ({ getPageAsRole }) => {
+    const p = await getPageAsRole('editableTeacher');
     page = new HocLieuDaXoaV2Page(p);
     await page.goto();
   });

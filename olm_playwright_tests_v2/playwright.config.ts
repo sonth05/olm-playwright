@@ -1,8 +1,27 @@
 import { defineConfig, devices } from '@playwright/test';
 import path from 'path';
-import { REPORTS_DIR } from './config/config';
+import { REPORTS_DIR, BASE_URL } from './config/config';
+// Import CHỈ để lấy type — cho phép `project.use.authRole` bên dưới được
+// TypeScript kiểm tra đúng kiểu (thay vì phải ép kiểu `as any`). Đây là
+// import type (biến mất hoàn toàn sau khi compile) nên KHÔNG tạo phụ thuộc
+// runtime/circular với fixtures/auth.fixture.ts.
+import type { AuthFixtures } from './fixtures/auth.fixture';
 
-export default defineConfig({
+// ─── Video ───────────────────────────────────────────────────────────────
+// Khi chạy nhắm vào môi trường local/debug (localhost hoặc debug.olm.vn —
+// build chưa ổn định, hay là nơi cần debug nhất), LUÔN quay video cho mọi
+// test (kể cả pass) để có sẵn video đối chiếu ngay, không phải chạy lại mới
+// có. Khi chạy nhắm production (olm.vn thật) chỉ giữ video của test FAIL
+// (retain-on-failure) để đỡ tốn dung lượng cho hàng trăm test pass.
+//
+// LƯU Ý: cấu hình `video` này chỉ áp dụng cho context/page fixture MẶC ĐỊNH
+// của Playwright Test. Các context tạo thủ công bằng browser.newContext()
+// (VD core/fixtures/V2authoringrole.fixture.ts) KHÔNG tự động thừa hưởng —
+// những nơi đó tự khai báo recordVideo riêng làm phương án DỰ PHÒNG, chỉ
+// nên cần đến khi video chính ở đây vì lý do nào đó không xuất được.
+const ALWAYS_RECORD_VIDEO = /localhost|127\.0\.0\.1|debug\.olm\.vn/i.test(BASE_URL);
+
+export default defineConfig<AuthFixtures>({
   testDir: '.',
   testMatch: ['tests/**/*.spec.ts', 'modules/**/tests/**/*.spec.ts'],
   testIgnore: ['**/node_modules/**', '**/pages/**'],
@@ -44,7 +63,7 @@ export default defineConfig({
     navigationTimeout: 60_000,      // ← giảm từ 120_000 → 60_000
 
     screenshot: 'only-on-failure',
-    video:      'retain-on-failure',
+    video:      ALWAYS_RECORD_VIDEO ? 'on' : 'retain-on-failure',
     trace:      'retain-on-failure',
     locale:     'vi-VN',
     userAgent:
@@ -84,6 +103,37 @@ export default defineConfig({
       fullyParallel: false,
       workers: 1,
       timeout: 180_000, // luồng giao bài + làm bài dài hơn các test khác
+    },
+    {
+      // ── Project "olm-staff": chạy THỬ RIÊNG bằng 1 tài khoản nhân viên OLM ──
+      // Mục đích: trước khi chạy full ma trận 6 tài khoản (project 'chromium'),
+      // muốn thử nhanh 1 lượt bằng đúng tài khoản nhân viên OLM (label 'admin'
+      // trong WORKER_ACCOUNTS, global-setup.ts) — tài khoản này có nhiều quyền
+      // nên phần lớn tính năng không bị chặn quyền, phù hợp để "thử trước".
+      //
+      // Cách hoạt động: `authRole` là 1 fixture "option" (khai báo
+      // `{ option: true }` trong fixtures/auth.fixture.ts) nên có thể override
+      // ngay ở cấp project.use — MỌI test dùng authenticatedPage/
+      // authenticatedContext (từ fixtures/auth.fixture.ts) khi chạy trong
+      // project này sẽ tự động dùng tài khoản 'admin' (nhân viên OLM), KHÔNG
+      // cần sửa từng file test, không đụng tới project 'chromium'/'bai-tap'.
+      //
+      // workers: 1 vì tất cả test dùng CHUNG 1 session/tài khoản — chạy song
+      // song nhiều worker cùng 1 tài khoản dễ đụng race-condition (cùng sửa
+      // 1 dữ liệu, cùng 1 cookie...).
+      //
+      // Lưu ý: các test dùng core/fixtures/V2authoringrole.fixture.ts
+      // (getPageAsRole) KHÔNG bị ảnh hưởng bởi authRole — role 'olmStaff' của
+      // fixture đó đã tự trỏ sẵn tới storageState/olm-staff.json (cùng tài
+      // khoản, tạo trong global-setup.ts), không cần cấu hình gì thêm.
+      //
+      // Chạy: npx playwright test --project=olm-staff [đường-dẫn-file-hoặc-thư-mục]
+      // (thêm path để chỉ chạy 1 phần, ví dụ 1 module đang cần thử trước)
+      name: 'olm-staff',
+      use: { ...devices['Desktop Chrome'], authRole: 'admin' },
+      testIgnore: [/giao-bai-den-lam-bai\.e2e\.spec\.ts$/],
+      fullyParallel: false,
+      workers: 1,
     },
   ],
 });

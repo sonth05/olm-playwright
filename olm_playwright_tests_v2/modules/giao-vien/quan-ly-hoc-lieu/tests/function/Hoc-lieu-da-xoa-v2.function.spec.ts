@@ -1,11 +1,16 @@
 // hoclieudaxoa-function.spec.ts
-import { test, expect } from '@playwright/test';
-import { HocLieuDaXoaV2Page, HocLieuDaXoaRow } from '../Hoclieudaxoav2page';
+// FIX (2026-08-10): xem giải thích đầy đủ ở
+// tests/e2e/Hoc-lieu-da-xoa-v2.e2e.spec.ts — cùng lỗi thiếu storageState,
+// đổi sang V2authoringrole.fixture cho nhất quán account với các file khác
+// trong module.
+import { test, expect } from '../../../../../core/fixtures/V2authoringrole.fixture';
+import { HocLieuDaXoaV2Page, HocLieuDaXoaRow } from '../../pages/Hoclieudaxoav2page';
 
 test.describe('HocLieuDaXoaV2Page – Functional', () => {
   let page: HocLieuDaXoaV2Page;
 
-  test.beforeEach(async ({ page: p }) => {
+  test.beforeEach(async ({ getPageAsRole }) => {
+    const p = await getPageAsRole('editableTeacher');
     page = new HocLieuDaXoaV2Page(p);
     await page.goto();
   });

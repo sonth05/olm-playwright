@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import testUsers from '../data/test-users.json';
 import { DATA_DIR, BASE_URL } from './config.js';
+import { WORKER_ACCOUNTS } from '../global-setup.js';
 
 export interface AccountInfo {
   username: string;
@@ -31,23 +32,63 @@ interface TestUsersJson {
   existing_account: { username: string; email: string };
 }
 
+// ─── FIX: đồng bộ nguồn tài khoản với global-setup.ts ─────────────────────
+// Trước đây hàm này CHỈ đọc OLM_VIP_USERNAME / OLM_NORMAL_USERNAME (một bộ
+// biến RIÊNG, không liên quan tới OLM_ADMIN_*/OLM_STUDENT_VIP_*/... mà
+// global-setup.ts + WORKER_ACCOUNTS dùng). File .env.debug thực tế chỉ khai
+// báo bộ biến của global-setup.ts → 2 biến OLM_VIP_USERNAME/OLM_NORMAL_USERNAME
+// luôn undefined → ACCOUNTS/TEST_USERS/LOGIN_TEST_CASES ở dưới âm thầm rơi về
+// tài khoản HARD-CODE trong data/test-users.json (hoàn toàn khác tài khoản
+// bạn khai báo trong .env) — đây là nguyên nhân chính gây "lẫn tài khoản".
+//
+// Giờ ưu tiên theo thứ tự:
+//   1) Biến legacy OLM_VIP_USERNAME/OLM_NORMAL_USERNAME nếu bạn CHỦ ĐỘNG set
+//      (giữ tương thích ngược cho ai đang dùng bộ biến cũ).
+//   2) Tài khoản tương ứng trong WORKER_ACCOUNTS (global-setup.ts) — tức
+//      OLM_STUDENT_VIP_*/OLM_SCHOOL_*/OLM_STUDENT_NO_VIP_* trong .env hiện tại
+//      của bạn — MIỄN LÀ đã set thật (không phải giá trị fallback_* giả).
+//   3) Cuối cùng mới rơi về data/test-users.json (chỉ khi hoàn toàn không có
+//      gì được khai báo ở cả 2 nơi trên).
+function findWorkerAccount(label: string) {
+  return WORKER_ACCOUNTS.find((a) => a.label === label);
+}
+
+/** true nếu là tài khoản thật (đã set qua env), false nếu là chuỗi fallback_* giả của global-setup.ts */
+function isRealAccount(username: string): boolean {
+  return !username.startsWith('fallback_');
+}
+
 function loadAccounts(): Record<string, AccountInfo> {
   const raw = testUsers as TestUsersJson;
+
+  const studentVip = findWorkerAccount('student_vip');
+  const studentNoVip = findWorkerAccount('student_no_vip');
+
   return {
     vip_student: {
       ...raw.vip_student,
-      username: process.env.OLM_VIP_USERNAME ?? raw.vip_student.username,
-      password: process.env.OLM_VIP_PASSWORD ?? raw.vip_student.password,
+      username:
+        process.env.OLM_VIP_USERNAME ??
+        (studentVip && isRealAccount(studentVip.username) ? studentVip.username : raw.vip_student.username),
+      password:
+        process.env.OLM_VIP_PASSWORD ??
+        (studentVip && isRealAccount(studentVip.username) ? studentVip.password : raw.vip_student.password),
     },
     school: {
       ...raw.school,
+      // OLM_SCHOOL_USERNAME/PASSWORD dùng CHUNG tên biến với WORKER_ACCOUNTS
+      // (global-setup.ts) nên vốn đã khớp nhau, không cần đổi.
       username: process.env.OLM_SCHOOL_USERNAME ?? raw.school.username,
       password: process.env.OLM_SCHOOL_PASSWORD ?? raw.school.password,
     },
     normal_student: {
       ...raw.normal_student,
-      username: process.env.OLM_NORMAL_USERNAME ?? raw.normal_student.username,
-      password: process.env.OLM_NORMAL_PASSWORD ?? raw.normal_student.password,
+      username:
+        process.env.OLM_NORMAL_USERNAME ??
+        (studentNoVip && isRealAccount(studentNoVip.username) ? studentNoVip.username : raw.normal_student.username),
+      password:
+        process.env.OLM_NORMAL_PASSWORD ??
+        (studentNoVip && isRealAccount(studentNoVip.username) ? studentNoVip.password : raw.normal_student.password),
     },
   };
 }
@@ -58,7 +99,7 @@ export const USERNAME = ACCOUNTS.vip_student.username;
 export const PASSWORD = ACCOUNTS.vip_student.password;
 
 export const EXISTING_ACCOUNT = {
-  username: process.env.OLM_VIP_USERNAME ?? (testUsers as TestUsersJson).existing_account.username,
+  username: ACCOUNTS.vip_student.username || (testUsers as TestUsersJson).existing_account.username,
   email: (testUsers as TestUsersJson).existing_account.email,
 };
 

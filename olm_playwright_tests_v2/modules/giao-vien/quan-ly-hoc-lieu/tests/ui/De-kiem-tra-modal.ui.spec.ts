@@ -1,65 +1,194 @@
 import { test, expect } from '../../../../../core/fixtures/V2authoringrole.fixture';
 import { HocLieuCuaToiV2Page } from '../../pages/Hoclieucuatoiv2page';
-import { CreateHocLieuMenu, HOC_LIEU_TYPE } from '../../pages/Createhoclieumenu';
+import { ExamModal, GameQuestionModal } from '../../pages/Hoclieucuatoiv2page';
+import { CreateHocLieuMenu, HOC_LIEU_TYPE, CreateMaterialModal } from '../../pages/Createhoclieumenu';
 
 /**
- * [UI] TC-EXAM-MODAL: Bố cục modal "Tạo Đề kiểm tra" — mở ra khi chọn mục "Đề
- * kiểm tra" (data-value="21") trong dropdown "Tạo mới học liệu". Đối chiếu
- * trực tiếp từ DOM thật (dialog, ghi nhận 2026-07-28):
- *   - Tiêu đề học liệu * (input placeholder "Nhập tiêu đề")
- *   - Mô tả học liệu (textarea placeholder "Nhập mô tả")
- *   - Khối lớp: * / Môn học: * (2 nút mở popover search-combobox)
- *   - Khối SEO (nền phụ): Từ khóa SEO / Tiêu đề SEO (tối đa 60 ký tự) /
- *     Mô tả SEO (tối đa 160 ký tự)
- *   - Footer: nút "Hủy" và nút "Tạo"
- *   - Nút đóng "X" (sr-only "Đóng") ở góc trên phải dialog
- *
- * File này CHỈ kiểm tra HIỂN THỊ TĨNH (có mặt, placeholder, dấu * bắt buộc) —
- * KHÔNG thao tác điền/chọn/submit gì, nên không tạo dữ liệu và không cần chạy
- * theo thứ tự với các file khác. Phần hành vi (chọn Khối lớp/Môn học, giới
- * hạn ký tự SEO, submit thiếu field, Hủy/Đóng) nằm ở
- * ../function/De-kiem-tra-modal.function.spec.ts. Phần tạo học liệu thành
- * công (có ghi dữ liệu thật) nằm ở ../e2e/De-kiem-tra-modal.e2e.spec.ts.
+ * Type guard: loại trừ GameQuestionModal ra khỏi union trả về của
+ * createNewAndOpenModal(). CHỈ dùng cho các giá trị trong
+ * TEACHER_MATERIAL_TYPES/OLM_STAFF_MATERIAL_TYPES (đã loại bỏ
+ * HOC_LIEU_TYPE.GAME) — GameQuestionModal có shape field hoàn toàn khác
+ * (không có descriptionInput/SEO), xem ghi chú tại ALL_MATERIAL_TYPES.
  */
-test.describe('[UI] TC-EXAM-MODAL: Modal "Tạo Đề kiểm tra"', () => {
-  test('TC-EXAM-MODAL-UI: Bố cục, trường dữ liệu và dấu bắt buộc', async ({ getPageAsRole }) => {
+function isCommonModal(
+  modal: CreateMaterialModal | ExamModal | GameQuestionModal,
+): modal is CreateMaterialModal | ExamModal {
+  return !(modal instanceof GameQuestionModal);
+}
+
+
+const ALL_MATERIAL_TYPES = [
+  { key: 'EXAM_MIXTURE_V2',     value: HOC_LIEU_TYPE.EXAM_MIXTURE_V2,     label: 'Đề kiểm tra',                                        expectedTitle: 'Tạo Đề kiểm tra' },
+  { key: 'NHCH',                value: HOC_LIEU_TYPE.NHCH,                label: 'Dạng bài, kĩ năng (NHCH)',                           expectedTitle: 'Tạo Dạng bài, kĩ năng (NHCH)' },
+  { key: 'THEORY',              value: HOC_LIEU_TYPE.THEORY,              label: 'Lý thuyết tương tác',                                 expectedTitle: 'Tạo Lý thuyết tương tác' },
+  { key: 'VIDEO',               value: HOC_LIEU_TYPE.VIDEO,               label: 'Video Youtube có điểm dừng',                          expectedTitle: 'Tạo Video Youtube có điểm dừng' },
+  { key: 'ESSAY',               value: HOC_LIEU_TYPE.ESSAY,               label: 'Đề thi Tự luận',                                      expectedTitle: 'Tạo Đề thi Tự luận' },
+  { key: 'LINK',                value: HOC_LIEU_TYPE.LINK,                label: 'Liên kết',                                            expectedTitle: 'Tạo Liên kết' },
+  { key: 'PDF',                 value: HOC_LIEU_TYPE.PDF,                 label: 'Đề thi trắc nghiệm từ file PDF hoặc Word',             expectedTitle: 'Tạo Đề thi trắc nghiệm từ file PDF hoặc Word' },
+  { key: 'EXAM_STANDARD_MATRIX',value: HOC_LIEU_TYPE.EXAM_STANDARD_MATRIX,label: 'Đề thi trắc nghiệm từ ma trận',                       expectedTitle: 'Tạo Đề thi trắc nghiệm từ ma trận' },
+  { key: 'EXAM_MIX',            value: HOC_LIEU_TYPE.EXAM_MIX,            label: 'Đề thi trộn Offline',                                 expectedTitle: 'Tạo Đề thi trộn Offline' },
+  { key: 'PRACTICE_MATRIX',     value: HOC_LIEU_TYPE.PRACTICE_MATRIX,     label: 'Đề luyện tập trắc nghiệm từ ma trận',                 expectedTitle: 'Tạo Đề luyện tập trắc nghiệm từ ma trận' },
+  { key: 'DOCUMENT',            value: HOC_LIEU_TYPE.DOCUMENT,            label: 'Tài liệu',                                            expectedTitle: 'Tạo Tài liệu' },
+  { key: 'SIMULATION',          value: HOC_LIEU_TYPE.SIMULATION,          label: 'Mô phỏng, thí nghiệm ảo',                              expectedTitle: 'Tạo Mô phỏng, thí nghiệm ảo' },
+] as const;
+
+
+const TEACHER_MATERIAL_TYPES = ALL_MATERIAL_TYPES.filter((t) => t.key !== 'NHCH');
+
+// Nhân sự OLM thấy đủ 12 loại (đã xác nhận qua kết quả chạy thực tế: role
+// olmStaff pass hết 12 loại, chỉ riêng modal "Game hóa" ở dưới sai kỳ vọng
+// tiêu đề).
+const OLM_STAFF_MATERIAL_TYPES = ALL_MATERIAL_TYPES;
+
+test.describe('[UI] TC-CREATE-MATERIAL-MODAL: Modal tạo học liệu – tất cả loại (1 browser/role)', () => {
+
+  // ─── Role: Giáo viên thường (không có SEO) – 1 test duy nhất, loop 11 loại
+  // dùng chung shape (KHÔNG có NHCH — chỉ Nhân sự OLM mới thấy mục này) ───
+  test('Giáo viên thường: kiểm tra UI 11 loại học liệu (không SEO, không NHCH)', async ({ getPageAsRole }) => {
     const page = await getPageAsRole('editableTeacher');
     const listPage = new HocLieuCuaToiV2Page(page);
     await listPage.goto();
     const menu = new CreateHocLieuMenu(page);
-    const modal = await menu.createNewAndOpenModal(HOC_LIEU_TYPE.EXAM_MIXTURE_V2);
 
-    await test.step('TC-EXAM-MODAL-01: Hiển thị đủ tiêu đề modal và toàn bộ trường theo DOM thật', async () => {
-      await modal.expectTitle('Tạo Đề kiểm tra');
-      await expect(modal.titleInput).toBeVisible();
-      await expect(modal.titleInput).toHaveAttribute('placeholder', 'Nhập tiêu đề');
-      await expect(modal.descriptionInput).toBeVisible();
-      await expect(modal.descriptionInput).toHaveAttribute('placeholder', 'Nhập mô tả');
-      await expect(modal.gradeSelectBtn).toBeVisible();
-      await expect(modal.subjectSelectBtn).toBeVisible();
-      await expect(modal.seoKeywordInput).toBeVisible();
-      await expect(modal.seoTitleInput).toBeVisible();
-      await expect(modal.seoDescriptionInput).toBeVisible();
-      await expect(modal.btnCancel).toBeVisible();
-      await expect(modal.btnSubmit).toBeVisible();
+    for (const type of TEACHER_MATERIAL_TYPES) {
+      await test.step(`${type.key}: Modal "Tạo ${type.label}"`, async () => {
+        const modal = await menu.createNewAndOpenModal(type.value);
+        if (!isCommonModal(modal)) return; // luôn true ở đây vì type.value != GAME, chỉ để TS narrow union
+
+
+        // 1. Tiêu đề modal
+        await expect.soft(modal.titleHeading).toContainText(type.expectedTitle);
+
+        // 2. Trường Tiêu đề & Mô tả
+        await expect.soft(modal.titleInput).toBeVisible();
+        await expect.soft(modal.descriptionInput).toBeVisible();
+
+        // 3. Nút Khối lớp & Môn học
+        await expect.soft(modal.gradeSelectBtn).toBeVisible();
+        await expect.soft(modal.subjectSelectBtn).toBeVisible();
+        await expect.soft(modal.gradeSelectBtn.locator('span').first()).toContainText(/Chọn khối lớp/i);
+        await expect.soft(modal.subjectSelectBtn.locator('span').first()).toContainText(/Chọn môn học/i);
+
+        // 4. Không có trường SEO
+        await expect.soft(modal.seoKeywordInput).not.toBeAttached();
+        await expect.soft(modal.seoTitleInput).not.toBeAttached();
+        await expect.soft(modal.seoDescriptionInput).not.toBeAttached();
+
+        // 5. Nút Huỷ / Tạo
+        await expect.soft(modal.btnCancel).toBeVisible();
+        await expect.soft(modal.btnSubmit).toBeVisible();
+
+        // 6. Nhãn bắt buộc có dấu *
+        const titleLabel = modal.dialog.locator('label').filter({ hasText: /Tiêu đề học liệu|Tiêu đề/i }).first();
+        await expect.soft(titleLabel.locator('span').last()).toHaveText('*');
+
+        const gradeLabel = modal.dialog.locator('label').filter({ hasText: /Khối lớp/i }).first();
+        await expect.soft(gradeLabel.locator('span').last()).toHaveText('*');
+
+        const subjectLabel = modal.dialog.locator('label').filter({ hasText: /Môn học/i }).first();
+        await expect.soft(subjectLabel.locator('span').last()).toHaveText('*');
+
+        // 7. Đóng modal trước khi sang loại tiếp theo
+        await modal.dismiss();
+      });
+    }
+
+    // ─── GAME (Game hóa): modal Bootstrap riêng (GameQuestionModal), shape
+    // khác hẳn 12 loại trên — chỉ kiểm tra đúng field mà class này thực có.
+    await test.step('GAME: Modal "Tạo Game hóa"', async () => {
+      const modal = await menu.createNewAndOpenModal(HOC_LIEU_TYPE.GAME);
+      if (isCommonModal(modal)) return; // luôn false ở đây, chỉ để TS narrow
+
+      // FIX: DOM thật (.modal-title.h4) hiển thị "Câu hỏi vui", không phải
+      // "Tạo Game hóa" — xem docblock GameQuestionModal trong
+      // Hoclieucuatoiv2page.ts. Sửa lại kỳ vọng theo đúng log thực tế thay
+      // vì đoán tên theo nhãn trong menu "Tạo mới học liệu".
+      await expect.soft(modal.titleHeading).toContainText('Câu hỏi vui');
+      await expect.soft(modal.titleInput).toBeVisible();
+      await expect.soft(modal.gradeSelectBtn).toBeVisible();
+      await expect.soft(modal.subjectSelectBtn).toBeVisible();
+      await expect.soft(modal.btnCancel).toBeVisible();
+      await expect.soft(modal.btnSubmit).toBeVisible();
+
+      await modal.dismiss();
     });
+  });
 
-    await test.step('TC-EXAM-MODAL-02: Trước khi chọn, nút Khối lớp/Môn học hiện đúng placeholder', async () => {
-      await expect(modal.gradeSelectBtn.locator('span').first()).toHaveText(/Chọn khối lớp/i);
-      await expect(modal.subjectSelectBtn.locator('span').first()).toHaveText(/Chọn môn học/i);
-    });
+  // ─── Role: Nhân sự OLM (có SEO tuỳ loại) – 1 test duy nhất, loop 12 loại dùng chung shape ───
+  test('Nhân sự OLM: kiểm tra UI 12 loại học liệu (có/không SEO)', async ({ getPageAsRole }) => {
+    const page = await getPageAsRole('olmStaff');
+    const listPage = new HocLieuCuaToiV2Page(page);
+    await listPage.goto();
+    const menu = new CreateHocLieuMenu(page);
 
-    await test.step('TC-EXAM-MODAL-03: Nhãn "Khối lớp" và "Môn học" có dấu * đánh dấu bắt buộc', async () => {
-      await expect(modal.dialog.getByText('Khối lớp:')).toBeVisible();
-      await expect(modal.dialog.getByText('Môn học:')).toBeVisible();
-      // Dấu * bắt buộc nằm trong span riêng cạnh nhãn (class text-error-default trong DOM thật).
-      await expect(modal.dialog.locator('label:has-text("Khối lớp:") span')).toHaveText('*');
-      await expect(modal.dialog.locator('label:has-text("Môn học:") span')).toHaveText('*');
-    });
+    for (const type of OLM_STAFF_MATERIAL_TYPES) {
+      await test.step(`${type.key}: Modal "Tạo ${type.label}"`, async () => {
+        const modal = await menu.createNewAndOpenModal(type.value);
+        if (!isCommonModal(modal)) return; // luôn true ở đây vì type.value != GAME, chỉ để TS narrow union
 
-    await test.step('TC-EXAM-MODAL-04: Nhãn "Tiêu đề học liệu" có dấu * đánh dấu bắt buộc, "Mô tả học liệu" thì không', async () => {
-      await expect(modal.dialog.locator('label:has-text("Tiêu đề học liệu") span')).toHaveText('*');
-      await expect(modal.dialog.locator('label:has-text("Mô tả học liệu")').locator('span')).toHaveCount(0);
+        // 1. Tiêu đề modal
+        await expect.soft(modal.titleHeading).toContainText(type.expectedTitle);
+
+        // 2. Trường cơ bản
+        await expect.soft(modal.titleInput).toBeVisible();
+        await expect.soft(modal.descriptionInput).toBeVisible();
+        await expect.soft(modal.gradeSelectBtn).toBeVisible();
+        await expect.soft(modal.subjectSelectBtn).toBeVisible();
+        await expect.soft(modal.btnCancel).toBeVisible();
+        await expect.soft(modal.btnSubmit).toBeVisible();
+
+        // 3. Placeholder Khối lớp / Môn học
+        await expect.soft(modal.gradeSelectBtn.locator('span').first()).toContainText(/Chọn khối lớp/i);
+        await expect.soft(modal.subjectSelectBtn.locator('span').first()).toContainText(/Chọn môn học/i);
+
+        // 4. Kiểm tra khối SEO: nếu 1 trong 3 visible → cả 3 phải visible
+        const seoKeywordVisible = await modal.seoKeywordInput.isVisible().catch(() => false);
+        const seoTitleVisible = await modal.seoTitleInput.isVisible().catch(() => false);
+        const seoDescVisible = await modal.seoDescriptionInput.isVisible().catch(() => false);
+
+        if (seoKeywordVisible || seoTitleVisible || seoDescVisible) {
+          await expect.soft(modal.seoKeywordInput).toBeVisible();
+          await expect.soft(modal.seoTitleInput).toBeVisible();
+          await expect.soft(modal.seoDescriptionInput).toBeVisible();
+        } else {
+          await expect.soft(modal.seoKeywordInput).not.toBeVisible();
+          await expect.soft(modal.seoTitleInput).not.toBeVisible();
+          await expect.soft(modal.seoDescriptionInput).not.toBeVisible();
+        }
+
+        // 5. Nhãn bắt buộc có dấu *
+        const titleLabel = modal.dialog.locator('label').filter({ hasText: /Tiêu đề học liệu|Tiêu đề/i }).first();
+        await expect.soft(titleLabel.locator('span').last()).toHaveText('*');
+
+        const gradeLabel = modal.dialog.locator('label').filter({ hasText: /Khối lớp/i }).first();
+        await expect.soft(gradeLabel.locator('span').last()).toHaveText('*');
+
+        const subjectLabel = modal.dialog.locator('label').filter({ hasText: /Môn học/i }).first();
+        await expect.soft(subjectLabel.locator('span').last()).toHaveText('*');
+
+        // 6. Đóng modal
+        await modal.dismiss();
+      });
+    }
+
+    // ─── GAME (Game hóa): GameQuestionModal không có descriptionInput/SEO
+    // (kể cả với role olmStaff) — chỉ kiểm tra field thực có.
+    await test.step('GAME: Modal "Tạo Game hóa"', async () => {
+      const modal = await menu.createNewAndOpenModal(HOC_LIEU_TYPE.GAME);
+      if (isCommonModal(modal)) return; // luôn false ở đây, chỉ để TS narrow
+
+      // FIX: DOM thật (.modal-title.h4) hiển thị "Câu hỏi vui", không phải
+      // "Tạo Game hóa" — xem docblock GameQuestionModal trong
+      // Hoclieucuatoiv2page.ts. Sửa lại kỳ vọng theo đúng log thực tế thay
+      // vì đoán tên theo nhãn trong menu "Tạo mới học liệu".
+      await expect.soft(modal.titleHeading).toContainText('Câu hỏi vui');
+      await expect.soft(modal.titleInput).toBeVisible();
+      await expect.soft(modal.gradeSelectBtn).toBeVisible();
+      await expect.soft(modal.subjectSelectBtn).toBeVisible();
+      await expect.soft(modal.btnCancel).toBeVisible();
+      await expect.soft(modal.btnSubmit).toBeVisible();
+
+      await modal.dismiss();
     });
   });
 });

@@ -17,6 +17,11 @@
 // olm_playwright_tests_v1 và olm_playwright_tests_v2).
 
 import type { Page, Locator } from '@playwright/test';
+import {
+  LOGIN_USERNAME_SELECTORS,
+  LOGIN_PASSWORD_SELECTORS,
+  LOGIN_SUBMIT_SELECTORS,
+} from '../../config/constants';
 
 /**
  * Kiểm tra xem hiện có popup/modal nào đang che màn hình hay không
@@ -99,11 +104,114 @@ export async function dismissPopups(page: Page): Promise<void> {
   }
 }
 
+// ─── Khôi phục phiên đăng nhập (session recovery) ──────────────────────────
+//
+// Nhiều lỗi test trước đây thực chất KHÔNG phải do popup hay do trang tải
+// chậm: giữa chừng test, server thu hồi/hết hạn session (dù file
+// storageState còn "mới" theo timestamp) → mọi navigate tiếp theo bị
+// redirect thẳng về /dangnhap. Vì dismissPopups() không nhận diện được
+// trường hợp này (form đăng nhập không phải "popup"), các hàm gọi nó cứ lặp
+// lại dismiss vô ích rồi timeout, sinh lỗi khó hiểu như "heading không hiển
+// thị"/"table không hiển thị" dù nguyên nhân gốc là bị văng khỏi phiên đăng
+// nhập.
+//
+// Cơ chế dưới đây bổ sung 1 lượt kiểm tra + khôi phục "lần 2" trước khi coi
+// là lỗi thật:
+//   1. Nếu đang ở /dangnhap: dismissPopups() thêm 1 lượt (phòng trường hợp
+//      1 popup đang che chính form đăng nhập).
+//   2. Nếu SAU ĐÓ vẫn còn ở /dangnhap: đây là mất phiên thật -> tự điền lại
+//      form và đăng nhập bằng tài khoản khôi phục (RECOVERY_USERNAME/
+//      RECOVERY_PASSWORD, mặc định fallback OLM_SCHOOL_USERNAME/PASSWORD —
+//      cùng tài khoản role.fixture.ts đang dùng cho teacherPage).
+// Không throw ở đây — trả về true/false để caller (waitForWithPopupWatchdog,
+// page.goto() của từng page object) tự quyết định có thử lại thao tác gốc
+// hay để lỗi timeout ban đầu nổi lên.
+
+/** Kiểm tra (không throw) trang hiện tại có đang ở màn đăng nhập hay không. */
+export function isOnLoginPage(page: Page): boolean {
+  return page.url().includes('/dangnhap');
+}
+
+async function fillFirstVisible(page: Page, selectors: string[], value: string): Promise<boolean> {
+  for (const sel of selectors) {
+    const el = page.locator(sel).first();
+    if (await el.isVisible({ timeout: 1_000 }).catch(() => false)) {
+      await el.fill(value).catch(() => {});
+      return true;
+    }
+  }
+  return false;
+}
+
+async function clickFirstVisible(page: Page, selectors: string[]): Promise<boolean> {
+  for (const sel of selectors) {
+    const el = page.locator(sel).first();
+    if (await el.isVisible({ timeout: 1_000 }).catch(() => false)) {
+      await el.click().catch(() => {});
+      return true;
+    }
+  }
+  return false;
+}
+
+/** Điền + submit form đăng nhập bằng tài khoản khôi phục, đợi rời /dangnhap. */
+async function attemptRelogin(page: Page): Promise<boolean> {
+  const username = process.env.RECOVERY_USERNAME ?? process.env.OLM_SCHOOL_USERNAME;
+  const password = process.env.RECOVERY_PASSWORD ?? process.env.OLM_SCHOOL_PASSWORD;
+
+  if (!username || !password) {
+    console.warn(
+      '[sessionRecovery] Thiếu RECOVERY_USERNAME/RECOVERY_PASSWORD (hoặc ' +
+      'OLM_SCHOOL_USERNAME/PASSWORD dự phòng) trong biến môi trường — bỏ qua đăng nhập lại.'
+    );
+    return false;
+  }
+
+  await fillFirstVisible(page, LOGIN_USERNAME_SELECTORS, username);
+  await fillFirstVisible(page, LOGIN_PASSWORD_SELECTORS, password);
+  await clickFirstVisible(page, LOGIN_SUBMIT_SELECTORS);
+
+  const deadline = Date.now() + 15_000;
+  while (Date.now() < deadline) {
+    if (!isOnLoginPage(page)) return true;
+    await dismissPopups(page);
+    await page.waitForTimeout(500);
+  }
+  return !isOnLoginPage(page);
+}
+
+/**
+ * Bao quát "lần 2" khi phát hiện đang bị kẹt ở trang đăng nhập ngoài dự
+ * kiến. Xem giải thích đầy đủ ở khối comment phía trên. Idempotent — gọi
+ * lại khi không ở /dangnhap sẽ trả về true ngay, không làm gì thêm.
+ */
+export async function recoverFromLoginPage(page: Page): Promise<boolean> {
+  if (!isOnLoginPage(page)) return true;
+
+  console.warn('[sessionRecovery] Đang ở trang đăng nhập ngoài dự kiến — thử khôi phục (dismiss popup lần 2 + đăng nhập lại)...');
+
+  await dismissPopups(page);
+  if (!isOnLoginPage(page)) return true;
+
+  const relogged = await attemptRelogin(page);
+  if (relogged) {
+    console.log('[sessionRecovery] Đăng nhập lại thành công — tiếp tục thao tác ban đầu.');
+    await dismissPopups(page);
+  } else {
+    console.warn('[sessionRecovery] Không thể đăng nhập lại — trang vẫn ở /dangnhap.');
+  }
+  return relogged;
+}
+
 /**
  * Đợi điều kiện `check()` trả về true; nếu chưa đạt, mỗi ~2s tự động thử
  * dismissPopups() một lượt rồi kiểm tra lại — tránh trường hợp một popup
  * xuất hiện đúng lúc che mất phần tử đang chờ khiến việc chờ timeout dù
  * về bản chất trang đã sẵn sàng (chỉ là popup che khuất).
+ *
+ * Nếu phát hiện trang đang ở /dangnhap (mất phiên giữa chừng), thử
+ * recoverFromLoginPage() một lần thay vì chỉ dismissPopups() — xem chi tiết
+ * trong khối comment "Khôi phục phiên đăng nhập" phía trên.
  *
  * Throw Error nếu quá `timeoutMs` mà vẫn không đạt điều kiện.
  */
@@ -114,10 +222,19 @@ export async function waitForWithPopupWatchdog(
 ): Promise<void> {
   const { label = 'điều kiện mong đợi', timeoutMs = 20_000, intervalMs = 2_000 } = options;
   const deadline = Date.now() + timeoutMs;
+  let loginRecoveryAttempted = false;
 
   while (Date.now() < deadline) {
     if (await check().catch(() => false)) return;
-    await dismissPopups(page);
+
+    if (isOnLoginPage(page) && !loginRecoveryAttempted) {
+      // Chỉ thử khôi phục đăng nhập 1 lần trong cả vòng đợi này — tránh lặp
+      // đăng nhập liên tục nếu tài khoản khôi phục cũng không hoạt động.
+      loginRecoveryAttempted = true;
+      await recoverFromLoginPage(page);
+    } else {
+      await dismissPopups(page);
+    }
     await page.waitForTimeout(intervalMs);
   }
 

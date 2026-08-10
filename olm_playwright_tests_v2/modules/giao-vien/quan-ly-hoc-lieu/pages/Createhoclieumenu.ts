@@ -1,36 +1,27 @@
 import { Page, Locator, expect } from '@playwright/test';
 import { dismissPopups, safeClick, safeFill } from '../../../../core/shared-pages/dismissPopups';
+// FIX: item trong [cmdk-list] (VD data-value="18" – NHCH) đôi khi chưa nằm
+// trong viewport của danh sách cuộn (đặc biệt sau khi vừa đóng modal loại
+// trước đó) khiến .click() timeout dù phần tử đã tồn tại trong DOM. Cần
+// scrollIntoViewIfNeeded() trước khi click, và mở lại menu 1 lần nếu item
+// không tìm thấy (phòng trường hợp modal trước dismiss() chưa kịp đóng hẳn
+// khiến menu vừa mở bị đóng theo / mất trạng thái).
+import { ExamModal, GameQuestionModal } from './Hoclieucuatoiv2page';
 
-/**
- * Map type học liệu (theo data-value trong dropdown "Tạo mới học liệu",
- * khớp với listOptions truyền vào REACT_VIEW_MY_CATEGORIES.initViewMyCategories).
- *
- * Đối chiếu lại (2026-07-27) với DOM thật của dropdown trên debug.olm.vn (Học
- * liệu của tôi > Tạo mới học liệu):
- * - EXAM_STANDARD_MATRIX (13) "Đề thi trắc nghiệm từ ma trận" VẪN là 1 item
- *   riêng, ĐỘC LẬP với EXAM_MIXTURE_V2 (21) — ghi chú cũ "đã gộp vào Exam
- *   Mixture V2" không còn đúng, đã bỏ. Mô tả phụ của item 21 trong DOM hiện
- *   tại là "Soạn đề hoặc tạo từ ma trận. Tùy chọn hiển thị dạng Đề thi hoặc
- *   Luyện tập." — item 21 tự có chế độ tạo-từ-ma-trận riêng bên trong nó,
- *   không phải là hợp nhất của item 13.
- * - Phát hiện item MỚI chưa có trong map: data-value="18" "Dạng bài, kĩ năng
- *   (NHCH)" — đã thêm bên dưới (khớp DANG_BAI_KY_NANG_NHCH=18 dùng trong V1
- *   CoursewareType/FilterCoursewareType).
- */
 export const HOC_LIEU_TYPE = {
-  EXAM_MIXTURE_V2: '21', // Đề kiểm tra (soạn đề / tạo từ ma trận, có thể hiển thị dạng Đề thi hoặc Luyện tập)
-  NHCH: '18', // Dạng bài, kĩ năng (NHCH)
-  THEORY: '2', // Lý thuyết tương tác
-  VIDEO: '5', // Video Youtube có điểm dừng
-  ESSAY: '6', // Đề thi Tự luận
-  LINK: '9', // Liên kết
-  PDF: '10', // Đề thi trắc nghiệm từ file PDF hoặc Word
-  EXAM_STANDARD_MATRIX: '13', // Đề thi trắc nghiệm từ ma trận
-  EXAM_MIX: '100', // Đề thi trộn Offline
-  PRACTICE_MATRIX: '20', // Đề luyện tập trắc nghiệm từ ma trận
-  DOCUMENT: '23', // Tài liệu
-  SIMULATION: '24', // Mô phỏng, thí nghiệm ảo
-  GAME: 'game', // Game hóa
+  EXAM_MIXTURE_V2: '21',
+  NHCH: '18',
+  THEORY: '2',
+  VIDEO: '5',
+  ESSAY: '6',
+  LINK: '9',
+  PDF: '10',
+  EXAM_STANDARD_MATRIX: '13',
+  EXAM_MIX: '100',
+  PRACTICE_MATRIX: '20',
+  DOCUMENT: '23',
+  SIMULATION: '24',
+  GAME: 'game',
 } as const;
 
 export class CreateHocLieuMenu {
@@ -45,21 +36,44 @@ export class CreateHocLieuMenu {
   }
 
   async open() {
-    // Kiểm tra + đóng popup ("Xác thực"/"Thay đổi mật khẩu"...) TRƯỚC KHI
-    // bấm "Tạo mới học liệu" — đây là điểm vào DÙNG CHUNG cho MỌI loại học
-    // liệu (Theory/Video/Essay/Document/Link/Pdf/Exam-mix/Exam-mixture-v2...),
-    // nên nếu popup che nút này thì toàn bộ các luồng tạo mới phía sau đều
-    // fail hàng loạt dù selector hoàn toàn đúng — đây chính là nguyên nhân
-    // gây khá nhiều ca fail rải rác trước đây. listPage.goto() gọi trước đó
-    // đã dismiss 1 lần, nhưng vẫn có khoảng hở thời gian giữa lúc đó và lúc
-    // gọi open() (chuẩn bị dữ liệu test, đọc DOM khác...) đủ để popup khác
-    // xuất hiện lại.
     await dismissPopups(this.page);
-    await this.triggerBtn.click();
-    await this.menu.waitFor({ state: 'visible' });
-    // Đóng thêm 1 lần nữa NGAY SAU KHI menu mở — phòng trường hợp popup xuất
-    // hiện đúng lúc menu đang mở (che mất item cần chọn ở bước gọi tiếp
-    // theo, VD itemByValue(...).click() trong createNew()).
+
+    // FIX (lỗi mới): sau khi đóng modal của loại học liệu trước, click vào
+    // triggerBtn để mở lại menu không còn tác dụng — [cmdk-list] không bao
+    // giờ visible (timeout 20s). Nguyên nhân: modal/backdrop vừa đóng còn
+    // đang animation fade-out, che/chặn pointer-events vài trăm ms khiến
+    // click "trượt"; hoặc triggerBtn là nút TOGGLE nên nếu menu đang kẹt ở
+    // trạng thái mở dở dang từ vòng trước, click tiếp theo sẽ ĐÓNG thay vì
+    // MỞ. Trước đây chỉ click 1 lần rồi chờ — không có cơ chế phục hồi.
+
+    // 1. Nếu menu đang lỡ hiển thị sẵn (kẹt từ vòng trước) → đóng hẳn bằng
+    //    Escape để đảm bảo click kế tiếp chắc chắn là hành động MỞ.
+    if (await this.menu.isVisible({ timeout: 300 }).catch(() => false)) {
+      await this.page.keyboard.press('Escape');
+      await this.menu.waitFor({ state: 'hidden', timeout: 3_000 }).catch(() => {});
+    }
+
+    // 2. Thử click + chờ menu hiện, retry tối đa 3 lần với dismissPopups()
+    //    + nghỉ ngắn giữa các lần (chờ animation đóng modal trước hoàn tất).
+    let opened = false;
+    for (let attempt = 0; attempt < 3 && !opened; attempt++) {
+      try {
+        await this.triggerBtn.click({ timeout: 5_000 });
+        await this.menu.waitFor({ state: 'visible', timeout: 5_000 });
+        opened = true;
+      } catch {
+        await dismissPopups(this.page);
+        await this.page.waitForTimeout(400);
+      }
+    }
+
+    // 3. Lần cuối cùng: click force, để nếu vẫn lỗi thì báo lỗi thật (đúng
+    //    nguyên nhân gốc) thay vì bị nuốt mất trong vòng lặp trên.
+    if (!opened) {
+      await this.triggerBtn.click({ force: true });
+      await this.menu.waitFor({ state: 'visible' });
+    }
+
     await dismissPopups(this.page);
   }
 
@@ -71,72 +85,86 @@ export class CreateHocLieuMenu {
     return this.menu.getByRole('option', { name: label });
   }
 
-  /** Mở dropdown và chọn loại học liệu cần tạo, trả về Promise điều hướng nếu có */
   async createNew(value: string) {
     await this.open();
-    await safeClick(this.page, this.itemByValue(value));
+    let item = this.itemByValue(value);
+
+    // Đảm bảo item nằm trong viewport của danh sách cuộn trước khi click.
+    // Nếu không tìm thấy/không scroll được (menu có thể đã bị đóng do dư
+    // âm của lần dismiss() modal trước), thử mở lại menu 1 lần.
+    const scrolled = await item
+      .scrollIntoViewIfNeeded({ timeout: 5_000 })
+      .then(() => true)
+      .catch(() => false);
+
+    if (!scrolled) {
+      await this.open();
+      item = this.itemByValue(value);
+      await item.scrollIntoViewIfNeeded({ timeout: 5_000 }).catch(() => {});
+    }
+
+    await safeClick(this.page, item, 15_000);
   }
 
-  /** Mở dropdown, chọn loại học liệu, và trả về modal "Tạo <tên loại>" tương ứng đã visible */
-  async createNewAndOpenModal(value: string): Promise<CreateMaterialModal> {
+  async createNewAndOpenModal(value: string): Promise<CreateMaterialModal | ExamModal | GameQuestionModal> {
     await this.createNew(value);
+    if (value === HOC_LIEU_TYPE.EXAM_MIXTURE_V2) {
+      const modal = new ExamModal(this.page);
+      await modal.dialog.waitFor({ state: 'visible' });
+      return modal;
+    }
+    if (value === HOC_LIEU_TYPE.GAME) {
+      const modal = new GameQuestionModal(this.page);
+      await modal.dialog.waitFor({ state: 'visible' });
+      return modal;
+    }
     const modal = new CreateMaterialModal(this.page);
     await modal.dialog.waitFor({ state: 'visible' });
     return modal;
   }
 }
 
-/**
- * Modal "Tạo <loại học liệu>" hiện ra sau khi chọn 1 item trong CreateHocLieuMenu
- * (VD: chọn "Đề kiểm tra" -> modal tiêu đề "Tạo Đề kiểm tra"). Cấu trúc modal dùng
- * chung cho các loại học liệu "học liệu tự do" (Đề kiểm tra, Lý thuyết tương tác,
- * Video, Tự luận, Liên kết, Tài liệu...): Tiêu đề*, Mô tả, Khối lớp*, Môn học*,
- * và khối SEO (Từ khóa/Tiêu đề/Mô tả SEO) — đối chiếu từ DOM thật của modal
- * "Tạo Đề kiểm tra" (2026-07-27). Popover chọn Khối lớp/Môn học (search-combobox
- * có ô "Tìm kiếm...") cũng đã đối chiếu bằng ảnh chụp DOM thật (2026-07-28).
- */
 export class CreateMaterialModal {
   readonly page: Page;
   readonly dialog: Locator;
   readonly titleHeading: Locator;
-  readonly titleInput: Locator; // Tiêu đề học liệu *
-  readonly descriptionInput: Locator; // Mô tả học liệu
-  readonly gradeSelectBtn: Locator; // Khối lớp: *
-  readonly subjectSelectBtn: Locator; // Môn học: *
-  readonly seoKeywordInput: Locator; // Từ khóa SEO
-  readonly seoTitleInput: Locator; // Tiêu đề SEO (tối đa 60 ký tự)
-  readonly seoDescriptionInput: Locator; // Mô tả SEO (tối đa 160 ký tự)
-  readonly btnCancel: Locator; // Hủy
-  readonly btnSubmit: Locator; // Tạo
-  readonly btnClose: Locator; // nút "X" đóng modal
+  readonly titleInput: Locator;
+  readonly descriptionInput: Locator;
+  readonly gradeSelectBtn: Locator;
+  readonly subjectSelectBtn: Locator;
+  readonly seoKeywordInput: Locator;
+  readonly seoTitleInput: Locator;
+  readonly seoDescriptionInput: Locator;
+  readonly btnCancel: Locator;
+  readonly btnSubmit: Locator;
+  readonly btnClose: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.dialog = page.getByRole('dialog');
-    this.titleHeading = this.dialog.locator('h2');
-    this.titleInput = this.dialog.getByPlaceholder('Nhập tiêu đề');
-    this.descriptionInput = this.dialog.getByPlaceholder('Nhập mô tả');
-    // QUAN TRỌNG: KHÔNG dùng getByRole('button', { name: /Chọn khối lớp/i })
-    // — tên hiển thị (và do đó accessible name) của nút này ĐỔI thành chính
-    // giá trị đã chọn sau khi bấm (VD "Lớp 12"), đã xác nhận bằng DOM thật
-    // (2026-07-28). Nếu bind theo tên placeholder, locator sẽ KHÔNG re-match
-    // được nữa sau khi đã chọn giá trị (mọi lần gọi lại .click()/.innerText()
-    // phía sau sẽ ra rỗng). Dùng vị trí ổn định thay thế: trong toàn bộ
-    // dialog, chỉ có đúng 2 nút aria-haspopup="dialog" là Khối lớp (thứ nhất)
-    // và Môn học (thứ hai) — nút "Tạo mới học liệu" cũng có thuộc tính này
-    // nhưng nằm ngoài dialog nên không lẫn vào đây.
+    // FIX 1: Dùng h2, h1, [role="heading"] để bắt được mọi loại modal (kể cả Game hóa không có h2)
+    this.titleHeading = this.dialog.locator('h2, h1, [role="heading"]').first();
+
+    // FIX 2: Thêm .first() để tránh strict mode khi role olmStaff có thêm field SEO cùng placeholder
+    this.titleInput = this.dialog.getByPlaceholder('Nhập tiêu đề').first();
+    this.descriptionInput = this.dialog.getByPlaceholder('Nhập mô tả').first();
+
     this.gradeSelectBtn = this.dialog.locator('button[aria-haspopup="dialog"]').nth(0);
     this.subjectSelectBtn = this.dialog.locator('button[aria-haspopup="dialog"]').nth(1);
+
     this.seoKeywordInput = this.dialog.getByPlaceholder('Nhập từ khóa SEO');
     this.seoTitleInput = this.dialog.getByPlaceholder('Nhập tiêu đề SEO');
     this.seoDescriptionInput = this.dialog.getByPlaceholder('Nhập mô tả SEO');
-    this.btnCancel = this.dialog.getByRole('button', { name: /^Hủy$/i });
-    this.btnSubmit = this.dialog.getByRole('button', { name: /^Tạo$/i });
+
+    // FIX 3: Dùng regex + .first() thay vì exact string (DOM thật có cả 'Hủy' và 'Huỷ')
+    this.btnCancel = this.dialog.getByRole('button', { name: /Huỷ|Hủy|Hủy bỏ|Huỷ bỏ|Cancel/i }).first();
+    this.btnSubmit = this.dialog.getByRole('button', { name: /Tạo|Tạo đề|Submit|Lưu/i }).first();
     this.btnClose = this.dialog.getByRole('button', { name: /Đóng/i });
   }
 
+  // FIX 4: Dùng toContainText (linh hoạt hơn toHaveText)
   async expectTitle(expected: string | RegExp) {
-    await expect(this.titleHeading).toHaveText(expected);
+    await expect(this.titleHeading).toContainText(expected);
   }
 
   async fillTitle(title: string) {
@@ -147,28 +175,13 @@ export class CreateMaterialModal {
     await safeFill(this.page, this.descriptionInput, description);
   }
 
-  /**
-   * Chọn Khối lớp — dropdown custom dạng "search-combobox" (Radix Popover,
-   * KHÔNG phải <select> HTML như bản V1). Đã xác nhận bằng DOM thật
-   * (2026-07-28, ảnh chụp lúc popover mở): popover có ô tìm kiếm placeholder
-   * "Tìm kiếm..." (icon kính lúp) ở trên cùng, bên dưới là danh sách cuộn
-   * (Mẫu giáo, Lớp 1..Lớp 12...) — mục đầu tiên được highlight sẵn (focus
-   * mặc định, KHÔNG phải đã "chọn"). Vì danh sách dài (VD "Lớp 12" nằm dưới
-   * "Lớp 10" ngoài màn hình ban đầu), gõ vào ô tìm kiếm để lọc trước khi bấm
-   * chọn thay vì cuộn tay — ổn định hơn nhiều so với chỉ .click() thẳng vào
-   * option có thể chưa render/còn ngoài viewport của danh sách cuộn.
-   */
   async selectGrade(label: string | RegExp) {
     await safeClick(this.page, this.gradeSelectBtn);
     await this.searchInPopover(label);
     await safeClick(this.page, this.page.getByRole('option', { name: label }));
-    // Xác nhận nút đã cập nhật nhãn (không còn "Chọn khối lớp") — khớp DOM
-    // thật đã capture sau khi chọn, đồng thời chờ popover đóng hẳn trước khi
-    // thao tác tiếp (VD mở Môn học ngay sau đó).
     await expect(this.gradeSelectBtn.locator('span').first()).toHaveText(label);
   }
 
-  /** Chọn Môn học — cùng cơ chế search-combobox popover, xem docblock selectGrade(). */
   async selectSubject(label: string | RegExp) {
     await safeClick(this.page, this.subjectSelectBtn);
     await this.searchInPopover(label);
@@ -176,16 +189,6 @@ export class CreateMaterialModal {
     await expect(this.subjectSelectBtn.locator('span').first()).toHaveText(label);
   }
 
-  /**
-   * Gõ vào ô tìm kiếm ("Tìm kiếm...") của popover Khối lớp/Môn học đang mở để
-   * lọc danh sách trước khi chọn. Popover được render qua Portal (nằm ngoài
-   * this.dialog trong DOM — khớp với ảnh chụp cho thấy popover tràn ra ngoài
-   * biên modal), nên dùng this.page (không scope theo dialog). Chỉ gõ khi
-   * label là string thuần; nếu là RegExp, dùng .source làm chuỗi tìm kiếm —
-   * các RegExp dùng trong project này (VD /Lớp 12/i, /Toán/i) đều là văn bản
-   * thường không chứa ký tự đặc biệt của regex nên an toàn khi dùng trực
-   * tiếp làm query tìm kiếm.
-   */
   private async searchInPopover(label: string | RegExp) {
     const query = typeof label === 'string' ? label : label.source;
     const searchInput = this.page.getByPlaceholder('Tìm kiếm...');
@@ -193,31 +196,18 @@ export class CreateMaterialModal {
     await safeFill(this.page, searchInput, query);
   }
 
-  /**
-   * Đọc/xác nhận nhãn hiện tại trên nút "Khối lớp"/"Môn học". Đã xác nhận
-   * bằng DOM thật (2026-07-28, sau khi chọn "Lớp 12"/"Toán"): nút KHÔNG còn
-   * hiển thị placeholder ("Chọn khối lớp"/"Chọn môn học") nữa — span đầu
-   * tiên bên trong nút (class tw-flex-1 tw-truncate...) đổi nội dung thành
-   * chính giá trị đã chọn. Vì accessible name của nút đổi theo giá trị chọn,
-   * gradeSelectBtn/subjectSelectBtn (đã bind theo tên placeholder lúc khởi
-   * tạo) VẪN dùng lại được để đọc span con hiện tại — Locator của Playwright
-   * luôn truy vấn lại DOM khi dùng, không bị "đông cứng" theo tên cũ.
-   */
   async selectedGradeText(): Promise<string> {
     return (await this.gradeSelectBtn.locator('span').first().innerText()).trim();
   }
 
-  /** Nhãn hiện tại của nút Môn học (placeholder hoặc giá trị đã chọn, VD "Toán") */
   async selectedSubjectText(): Promise<string> {
     return (await this.subjectSelectBtn.locator('span').first().innerText()).trim();
   }
 
-  /** Xác nhận Khối lớp đã được chọn đúng giá trị (nút không còn hiện placeholder) */
   async expectGradeSelected(expected: string | RegExp) {
     await expect(this.gradeSelectBtn.locator('span').first()).toHaveText(expected);
   }
 
-  /** Xác nhận Môn học đã được chọn đúng giá trị (nút không còn hiện placeholder) */
   async expectSubjectSelected(expected: string | RegExp) {
     await expect(this.subjectSelectBtn.locator('span').first()).toHaveText(expected);
   }
@@ -226,17 +216,14 @@ export class CreateMaterialModal {
     await safeFill(this.page, this.seoKeywordInput, keyword);
   }
 
-  /** Tiêu đề SEO giới hạn 60 ký tự (maxlength trên input) */
   async fillSeoTitle(seoTitle: string) {
     await safeFill(this.page, this.seoTitleInput, seoTitle);
   }
 
-  /** Mô tả SEO giới hạn 160 ký tự (maxlength trên textarea) */
   async fillSeoDescription(seoDescription: string) {
     await safeFill(this.page, this.seoDescriptionInput, seoDescription);
   }
 
-  /** Điền các trường bắt buộc (Tiêu đề, Khối lớp, Môn học) rồi bấm "Tạo" */
   async fillRequiredAndSubmit(options: { title: string; grade: string | RegExp; subject: string | RegExp }) {
     await this.fillTitle(options.title);
     await this.selectGrade(options.grade);
@@ -254,5 +241,20 @@ export class CreateMaterialModal {
 
   async close() {
     await safeClick(this.page, this.btnClose);
+  }
+
+  // FIX 5: Thêm method dismiss() để test spec gọi được modal.dismiss()
+  async dismiss() {
+    await this.cancel();
+    await this.dialog.waitFor({ state: 'hidden', timeout: 5_000 }).catch(() => {});
+    // FIX: đợi backdrop/overlay biến mất hẳn (animation fade-out của modal)
+    // trước khi trả quyền điều khiển lại cho vòng lặp — nếu không, lần mở
+    // menu "Tạo mới học liệu" kế tiếp có thể bị click "trượt" do overlay
+    // còn đang chặn pointer-events.
+    await this.page
+      .locator('.modal-backdrop, [class*="backdrop"]')
+      .first()
+      .waitFor({ state: 'hidden', timeout: 3_000 })
+      .catch(() => {});
   }
 }

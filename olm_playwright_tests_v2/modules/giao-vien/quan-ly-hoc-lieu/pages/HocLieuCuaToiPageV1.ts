@@ -1,7 +1,12 @@
 // modules/giao-vien/hoc-lieu-v1/pages/HocLieuCuaToiPage.ts
 import { Page, Locator, expect, Dialog } from '@playwright/test';
-import { BasePage } from '@core/shared-pages/BasePage';
-import { waitForWithPopupWatchdog, hasBlockingPopup } from '@core/shared-pages/dismissPopups';
+// FIX: đổi từ alias '@core/...' (không nhất quán, có thể không resolve được
+// nếu tsconfig chưa cấu hình path alias này) sang relative path — khớp quy
+// ước import '../../../../core/shared-pages/...' đang dùng xuyên suốt các
+// page object khác trong module (Hoclieucuatoiv2page.ts, Basehoclieuv2page.ts,
+// Createhoclieumenu.ts, Hoclieudaxoav2page.ts, HoclieuduocchiaseV2page.ts).
+import { BasePage } from '../../../../core/shared-pages/BasePage';
+import { waitForWithPopupWatchdog, hasBlockingPopup } from '../../../../core/shared-pages/dismissPopups';
 
 /**
  * Danh sách các loại học liệu có thể tạo từ dropdown "Tạo mới học liệu".
@@ -138,25 +143,13 @@ export class HocLieuCuaToiPage extends BasePage {
   // ---- Header (xác nhận từ HTML thật) ----
   static readonly PAGE_TITLE = 'h3:has-text("Học liệu của tôi")';
   static readonly GUIDE_LINK = 'a.olm-text-link:has-text("Hướng dẫn tạo")';
-  // Nút chuyển sang giao diện "Học liệu của tôi" V2 (xác nhận từ ảnh chụp
-  // màn hình thật 2026-07-28: nút xanh lá "⚡ Thử phiên bản mới" nằm cạnh
-  // tiêu đề trang, CÙNG URL /hoc-lieu-cua-toi — bấm xong giao diện đổi
-  // client-side sang bảng/tabs kiểu V2, KHÔNG có full page navigation.
-  // CẬP NHẬT (2026-08-04): KHÔNG còn là điểm vào V2 dùng cho test nữa —
-  // HocLieuCuaToiV2Page.goto()/BaseHocLieuV2Page.gotoDirectly() đã quay lại
-  // dùng query param ?v=v2 (page.goto() thẳng URL kèm param) để vào V2, đơn
-  // giản và ổn định hơn đi qua trang V1 rồi bấm nút này. Selector/hàm
-  // switchToNewVersion() bên dưới VẪN giữ lại (còn dùng được nếu có test
-  // riêng verify hành vi bấm nút này ở V1), chỉ không còn là bước bắt buộc
-  // trong luồng vào V2 của các test khác nữa.
-  // FIX (2026-07-28): DOM thật (từ log lỗi thực tế) cho thấy đây là thẻ
-  // <a class="btn btn-success">, KHÔNG PHẢI <button> như suy đoán cũ —
-  // `button:has-text(...)` không bao giờ khớp nên switchToNewVersion() luôn
-  // timeout ở waitFor() dù nút vẫn hiển thị bình thường trên trang, khiến
-  // TOÀN BỘ luồng V2 (mọi test đi qua goto()/gotoDirectly()) fail hàng loạt.
-  // Khớp cả 2 tag để an toàn nếu sau này đổi lại thành button.
-  static readonly TRY_NEW_VERSION_BTN =
-    'a:has-text("Thử phiên bản mới"), button:has-text("Thử phiên bản mới")';
+  // ĐÃ BỎ TRY_NEW_VERSION_BTN + switchToNewVersion() (2026-08-07, theo yêu
+  // cầu): trang V2 giờ là mặc định, luôn vào thẳng qua query param ?v=v2
+  // (xem HocLieuCuaToiV2Page.goto()/BaseHocLieuV2Page.gotoDirectly()) — nút
+  // "⚡ Thử phiên bản mới" trên giao diện V1 không còn là luồng test nào
+  // dùng tới, và cũng không còn nút "Quay lại giao diện cũ" ở phía V2 để
+  // quay ngược lại V1 nữa. Nếu OLM sau này thêm lại cơ chế chuyển đổi UI,
+  // tạo lại selector kèm DOM thật lúc đó.
 
   // ---- Sidebar navigation (đã xác nhận từ HTML sidebar thật) ----
   static readonly MENU_HOC_LIEU = 'button[data-menu-key="hoc-lieu"]';
@@ -358,41 +351,8 @@ export class HocLieuCuaToiPage extends BasePage {
     return this;
   }
 
-  /**
-   * Bấm nút "⚡ Thử phiên bản mới" để chuyển giao diện "Học liệu của tôi"
-   * hiện tại (V1) sang V2.
-   *
-   * CẬP NHẬT (2026-08-04): KHÔNG còn là điểm vào V2 dùng cho các test khác
-   * nữa. HocLieuCuaToiV2Page.goto()/BaseHocLieuV2Page.gotoDirectly() đã quay
-   * lại dùng query param ?v=v2 (page.goto() thẳng URL kèm param) thay vì gọi
-   * hàm này — đơn giản, ổn định và không phụ thuộc trạng thái client-side.
-   * Hàm này giữ lại để dùng khi CHÍNH nút "Thử phiên bản mới" là đối tượng
-   * cần test (VD verify hành vi bấm nút trên giao diện V1), không dùng làm
-   * bước setup chung nữa.
-   *
-   * PHẢI gọi navigateToHocLieuCuaToi() trước (đảm bảo đang đứng đúng trang
-   * V1 "Học liệu của tôi" — nút này chỉ xuất hiện ở đây, không phải trang
-   * khác) — hàm này không tự gọi lại navigateToHocLieuCuaToi() để tránh
-   * gọi lặp nếu caller đã đứng sẵn đúng trang.
-   *
-   * Sau khi bấm, URL KHÔNG đổi (vẫn /hoc-lieu-cua-toi) — giao diện chuyển
-   * client-side, nên không waitForURL() được; thay vào đó đợi 1 dấu hiệu
-   * đặc trưng CHỈ CÓ ở giao diện V2 (tab "Tất cả" dạng role=tab, V1 không
-   * có khái niệm tab trạng thái) để xác nhận đã chuyển xong trước khi trả
-   * quyền điều khiển lại cho caller.
-   */
-  async switchToNewVersion(): Promise<void> {
-    await this.dismissPopups();
-    const btn = this.page.locator(HocLieuCuaToiPage.TRY_NEW_VERSION_BTN);
-    await btn.waitFor({ state: 'visible', timeout: 10_000 });
-    await this.jsClick(btn);
-
-    // Dấu hiệu riêng của V2: tab "Tất cả" (role=tab) — V1 không có tab
-    // trạng thái, chỉ có dropdown lọc <select>.
-    await this.page
-      .getByRole('tab', { name: /^Tất cả/i })
-      .waitFor({ state: 'visible', timeout: 10_000 });
-  }
+  // ĐÃ BỎ switchToNewVersion() (2026-08-07, theo yêu cầu) — không còn luồng
+  // test nào cần chuyển đổi qua lại giữa 2 giao diện V1/V2 nữa.
 
   /** Mở dropdown "Tạo mới học liệu" và trả về locator dropdown đang mở */
   async openCreateDropdown(): Promise<Locator> {

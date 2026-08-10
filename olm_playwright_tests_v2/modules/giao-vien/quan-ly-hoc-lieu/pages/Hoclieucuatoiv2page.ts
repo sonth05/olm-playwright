@@ -346,7 +346,6 @@ export class HocLieuCuaToiV2Page {
   readonly heading: Locator; // "Học liệu của tôi"
   readonly guideLink: Locator; // "Hướng dẫn tạo học liệu"
   readonly btnCreateNew: Locator; // "Tạo mới học liệu" (mở CreateHocLieuMenu)
-  readonly btnBackToOldUI: Locator; // "Quay lại giao diện cũ"
 
   // ---- Tabs trạng thái ----
   readonly tabAll: Locator;
@@ -392,11 +391,11 @@ export class HocLieuCuaToiV2Page {
     this.heading = page.locator('div.tw-text-2xl.tw-font-semibold', { hasText: 'Học liệu của tôi' }).first();
     this.guideLink = page.getByRole('link', { name: /Hướng dẫn tạo học liệu/i });
     this.btnCreateNew = page.getByRole('button', { name: /Tạo mới học liệu/i });
-    // TODO: chưa có DOM thật của nút "Quay lại giao diện cũ" (chỉ có ảnh chụp
-    // màn hình 2026-08-04) — chưa xác nhận đây là <a> hay <button>, nên tạm
-    // tra theo text hiển thị (an toàn, không phụ thuộc role). Cần đối chiếu
-    // lại với DOM thật khi có, đúng quy tắc "không đoán selector" của dự án.
-    this.btnBackToOldUI = page.getByText('Quay lại giao diện cũ', { exact: true });
+    // ĐÃ BỎ btnBackToOldUI ("Quay lại giao diện cũ") + toàn bộ test liên quan
+    // (2026-08-07, theo yêu cầu): V2 giờ là giao diện mặc định, không còn nút
+    // chuyển ngược về V1 trên trang này nữa. Nếu OLM sau này thêm lại 1 cơ chế
+    // chuyển đổi UI khác, tạo lại locator kèm DOM thật lúc đó thay vì phỏng
+    // đoán theo ảnh chụp cũ.
 
     this.tabAll = page.getByRole('tab', { name: /^Tất cả/i });
     this.tabPublished = page.getByRole('tab', { name: /Đã xuất bản/i });
@@ -678,5 +677,259 @@ export class HocLieuCuaToiV2Page {
       'aria-current',
       'page',
     );
+  }
+}
+
+export class ExamModal {
+  readonly page: Page;
+  readonly dialog: Locator;
+
+  // Fields cơ bản (hiển thị cho tất cả role)
+  readonly titleInput: Locator;
+  readonly descriptionInput: Locator;
+  readonly gradeSelectBtn: Locator;
+  readonly subjectSelectBtn: Locator;
+  readonly btnCancel: Locator;
+  readonly btnSubmit: Locator;
+
+  // Fields SEO (chỉ hiển thị với role olmStaff – nhân sự OLM)
+  readonly seoKeywordInput: Locator;
+  readonly seoTitleInput: Locator;
+  readonly seoDescriptionInput: Locator;
+
+  constructor(page: Page) {
+    this.page = page;
+    this.dialog = page.getByRole('dialog');
+
+    // .first() giải quyết strict mode: khi modal của nhân sự OLM có cả field
+    // "Nhập tiêu đề" (học liệu) và "Nhập tiêu đề SEO", .first() luôn trả về
+    // field đầu tiên trong DOM — là tiêu đề học liệu (xuất hiện trước SEO).
+    this.titleInput = this.dialog.getByPlaceholder('Nhập tiêu đề').first();
+    this.descriptionInput = this.dialog.getByPlaceholder('Nhập mô tả').first();
+
+    this.gradeSelectBtn = this.dialog.getByRole('button', { name: /Chọn khối lớp/i });
+    this.subjectSelectBtn = this.dialog.getByRole('button', { name: /Chọn môn học/i });
+
+    // FIX 2026-08-07: DOM thật của modal "Tạo Đề kiểm tra" có thể dùng chữ
+    // "Huỷ", "Hủy", "Huỷ bỏ", "Hủy bỏ" hoàn toàn khác với exact string 'Huỷ'.
+    // Dùng regex case-insensitive + .first() để bắt đúng nút ĐÓNG/MỞ duy nhất
+    // trong dialog, tránh strict mode nếu có nhiều button chứa chữ "Huỷ"/"Hủy".
+    this.btnCancel = this.dialog.getByRole('button', { name: /Huỷ|Hủy|Hủy bỏ|Huỷ bỏ|Cancel/i }).first();
+    this.btnSubmit = this.dialog.getByRole('button', { name: /Tạo|Tạo đề|Submit|Lưu/i }).first();
+
+    // Placeholder SEO hoàn toàn riêng biệt, không trùng field cơ bản
+    this.seoKeywordInput = this.dialog.getByPlaceholder('Nhập từ khóa SEO');
+    this.seoTitleInput = this.dialog.getByPlaceholder('Nhập tiêu đề SEO');
+    this.seoDescriptionInput = this.dialog.getByPlaceholder('Nhập mô tả SEO');
+  }
+   get titleHeading(): Locator {
+    return this.dialog.locator('h2, h1, [role="heading"]').first();
+  }
+
+  async expectTitle(expected: string | RegExp) {
+    await expect(this.titleHeading).toContainText(expected);
+  }
+
+  /** Đóng modal bằng nút Huỷ/Hủy, chờ dialog biến mất */
+  async dismiss() {
+    await this.btnCancel.click();
+    await this.dialog.waitFor({ state: 'hidden', timeout: 5_000 }).catch(() => {});
+  }
+
+  async selectGrade(label: string | RegExp) {
+    await this.gradeSelectBtn.click();
+    await this.searchInPopover(label);
+    await this.page.getByRole('option', { name: label }).click();
+    await expect(this.gradeSelectBtn.locator('span').first()).toHaveText(label);
+  }
+
+  async selectSubject(label: string | RegExp) {
+    await this.subjectSelectBtn.click();
+    await this.searchInPopover(label);
+    await this.page.getByRole('option', { name: label }).click();
+    await expect(this.subjectSelectBtn.locator('span').first()).toHaveText(label);
+  }
+
+  /** Nhập từ khóa vào ô tìm kiếm trong popover vừa mở */
+  private async searchInPopover(label: string | RegExp) {
+    const query = typeof label === 'string' ? label : label.source;
+    const searchInput = this.page.getByPlaceholder('Tìm kiếm...');
+    await searchInput.waitFor({ state: 'visible' });
+    await searchInput.fill(query);
+  }
+
+  /** Lấy text hiện tại trên nút Khối lớp (bỏ khoảng trắng thừa) */
+  async selectedGradeText(): Promise<string> {
+    return (await this.gradeSelectBtn.locator('span').first().innerText()).trim();
+  }
+
+  /** Lấy text hiện tại trên nút Môn học */
+  async selectedSubjectText(): Promise<string> {
+    return (await this.subjectSelectBtn.locator('span').first().innerText()).trim();
+  }
+
+  /** Assert nhãn nút Khối lớp khớp với expected */
+  async expectGradeSelected(expected: string | RegExp) {
+    await expect(this.gradeSelectBtn.locator('span').first()).toHaveText(expected);
+  }
+
+  /** Assert nhãn nút Môn học khớp với expected */
+  async expectSubjectSelected(expected: string | RegExp) {
+    await expect(this.subjectSelectBtn.locator('span').first()).toHaveText(expected);
+  }
+
+  /** Bấm nút Tạo */
+  async submit() {
+    await this.btnSubmit.click();
+  }
+
+  /** Bấm nút Hủy */
+  async cancel() {
+    await this.btnCancel.click();
+  }
+
+  /** Bấm nút đóng (X) – modal có thể có nút Đóng thay vì Hủy */
+  async close() {
+    // Ưu tiên nút Đóng (X), nếu không có thì dùng nút Hủy
+    const btnClose = this.dialog.getByRole('button', { name: /Đóng/i });
+    if (await btnClose.isVisible().catch(() => false)) {
+      await btnClose.click();
+    } else {
+      await this.btnCancel.click();
+    }
+    await this.dialog.waitFor({ state: 'hidden', timeout: 5_000 }).catch(() => {});
+  }
+}
+
+/**
+ * Modal "Câu hỏi vui" (Game hoá) — dùng Bootstrap, KHÔNG dùng Tailwind.
+ * Chỉ dùng cho HOC_LIEU_TYPE.GAME (data-value="game").
+ * DOM sử dụng .modal/.modal-header/.modal-body/.modal-title và
+ * .custom-dropdown-header (custom dropdown Bootstrap thay vì Radix/Popover).
+ */
+export class GameQuestionModal {
+  readonly page: Page;
+  readonly dialog: Locator;
+  /** Tiêu đề modal "Câu hỏi vui" (nằm trong .modal-title.h4) */
+  readonly titleHeading: Locator;
+  /** Input tiêu đề học liệu (#tieudeInput, placeholder "Nhập tiêu đề học liệu") */
+  readonly titleInput: Locator;
+  /** Button dropdown "Chọn khối lớp" (Bootstrap .custom-dropdown-header) */
+  readonly gradeSelectBtn: Locator;
+  /** Button dropdown "Chọn môn học" */
+  readonly subjectSelectBtn: Locator;
+  /** Nút close (X) ở góc modal (button.close) */
+  readonly btnClose: Locator;
+  /** Nút Hủy/Đóng (bootstrap btn-secondary hoặc tương tự) */
+  readonly btnCancel: Locator;
+  /** Nút Tạo/Submit (bootstrap btn-primary hoặc tương tự) */
+  readonly btnSubmit: Locator;
+
+  constructor(page: Page) {
+    this.page = page;
+    // Dialog: dùng class .modal.show (Bootstrap) — sẽ match .modal.fade.show.
+    this.dialog = page.locator('.modal.show');
+
+    // Tiêu đề "Câu hỏi vui" nằm trong .modal-title.h4
+    this.titleHeading = this.dialog.locator('.modal-title.h4');
+
+    // Input tiêu đề học liệu có id="tieudeInput"
+    this.titleInput = this.dialog.locator('#tieudeInput');
+
+    // Dropdown Khối lớp & Môn học: cùng class .custom-dropdown-header,
+    // phân biệt bằng hasText (tìm button có chứa "Chọn khối lớp" / "Chọn môn học")
+    this.gradeSelectBtn = this.dialog
+      .locator('.custom-dropdown-header')
+      .filter({ hasText: /Chọn khối lớp/i })
+      .first();
+    this.subjectSelectBtn = this.dialog
+      .locator('.custom-dropdown-header')
+      .filter({ hasText: /Chọn môn học/i })
+      .first();
+
+    // Nút close (X) — thường <button class="close"> ở .modal-header
+    this.btnClose = this.dialog.locator('button.close').first();
+
+    // Nút Hủy & Tạo — dùng role="button" + name regex để an toàn
+    // TODO: Cập nhật locator nếu DOM thật có id cụ thể (VD #btnSubmit, #btnCancel)
+    this.btnSubmit = this.dialog.getByRole('button', { name: /Tạo|Tạo câu hỏi|Submit/i }).first();
+    // FIX: Locator không có method .not() (bug cũ gây TypeError lúc chạy).
+    // Đồng thời .filter({ has: ... }) vốn kiểm tra PHẦN TỬ CON bên trong, không
+    // dùng để loại trừ chính locator đó ra khỏi 1 tập kết quả khác — dùng CSS
+    // :not(.close) ngay trên locator gốc để loại nút close (X) ra khỏi tập nút
+    // Huỷ/Hủy/Đóng, tránh nhầm sang chính nút btnClose ở trên.
+    this.btnCancel = this.dialog
+      .locator('button:not(.close)')
+      .filter({ hasText: /Huỷ|Hủy|Đóng/i })
+      .first();
+  }
+
+  /** Kiểm tra tiêu đề modal khớp với expected text/regex */
+  async expectTitle(expected: string | RegExp) {
+    await expect(this.titleHeading).toContainText(expected);
+  }
+
+  /** Điền tiêu đề học liệu */
+  async fillTitle(title: string) {
+    await this.titleInput.clear();
+    await this.titleInput.fill(title);
+  }
+
+  /** Lấy giá trị tiêu đề hiện tại */
+  async getTitleValue(): Promise<string> {
+    return (await this.titleInput.inputValue()).trim();
+  }
+
+  /** Bấm nút Khối lớp dropdown (chưa bao gồm logic chọn option) */
+  async openGradeSelect() {
+    await safeClick(this.page, this.gradeSelectBtn);
+  }
+
+  /** Bấm nút Môn học dropdown (chưa bao gồm logic chọn option) */
+  async openSubjectSelect() {
+    await safeClick(this.page, this.subjectSelectBtn);
+  }
+
+  /** Lấy text hiện tại ở nút Khối lớp */
+  async getSelectedGradeText(): Promise<string> {
+    return (await this.gradeSelectBtn.innerText()).trim();
+  }
+
+  /** Lấy text hiện tại ở nút Môn học */
+  async getSelectedSubjectText(): Promise<string> {
+    return (await this.subjectSelectBtn.innerText()).trim();
+  }
+
+  /** Đóng modal bằng nút close (X) */
+  async close() {
+    await safeClick(this.page, this.btnClose);
+    await this.dialog.waitFor({ state: 'hidden', timeout: 5_000 }).catch(() => {});
+  }
+
+  /** Đóng modal bằng nút Hủy */
+  async cancel() {
+    await safeClick(this.page, this.btnCancel);
+    await this.dialog.waitFor({ state: 'hidden', timeout: 5_000 }).catch(() => {});
+  }
+
+  /** Bấm nút Tạo để submit form */
+  async submit() {
+    await safeClick(this.page, this.btnSubmit);
+  }
+
+  /** Luồng đầy đủ: điền tiêu đề + bấm Tạo */
+  async fillAndSubmit(title: string) {
+    await this.fillTitle(title);
+    await this.submit();
+  }
+
+  /** Đóng modal (prefer nút close X, fallback nút Hủy) */
+  async dismiss() {
+    const isCloseVisible = await this.btnClose.isVisible({ timeout: 300 }).catch(() => false);
+    if (isCloseVisible) {
+      await this.close();
+    } else {
+      await this.cancel();
+    }
   }
 }

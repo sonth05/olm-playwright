@@ -1,5 +1,6 @@
 import type { Page, Locator } from '@playwright/test';
 import { BASE_URL, appendV2Param } from '../../config/config';
+import { isOnLoginPage, recoverFromLoginPage } from './dismissPopups';
 
 /**
  * Lớp cơ sở cho tất cả Page Object.
@@ -54,6 +55,22 @@ export class BasePage {
 
     await this._dismissPopupsInline();
     await this.dismissAllNotifications();
+
+    // Phiên đăng nhập có thể bị server thu hồi giữa chừng dù storageState
+    // còn "mới" theo timestamp file — nếu navigate bị redirect thẳng về
+    // /dangnhap, đây KHÔNG phải popup nên 2 bước dismiss ở trên không xử lý
+    // được. Thử khôi phục 1 lần (dismiss lần 2 + đăng nhập lại) rồi điều
+    // hướng lại đúng targetUrl, thay vì để lỗi lan xuống page object với
+    // thông báo mù mờ ("heading không thấy", "table không thấy"...).
+    if (isOnLoginPage(this.page)) {
+      const recovered = await recoverFromLoginPage(this.page);
+      if (recovered) {
+        await this.page.goto(targetUrl, { waitUntil: 'commit', timeout });
+        await this.page.waitForLoadState('domcontentloaded', { timeout: 15_000 }).catch(() => {});
+        await this._dismissPopupsInline();
+        await this.dismissAllNotifications();
+      }
+    }
   }
 
   async goHome(): Promise<void> {
