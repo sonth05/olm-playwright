@@ -200,14 +200,47 @@ export class FilterOptionPopover {
 
   async open() {
     await dismissPopups(this.page);
+    // FIX 2026-08-11: `this.list` = page.locator('[cmdk-list]') dùng CHUNG
+    // cho cả 3 popover (loại học liệu/môn học/khối lớp) trên cùng trang —
+    // không scope riêng theo từng popover. Nếu popover MỞ TRƯỚC ĐÓ (VD
+    // "Loại học liệu"/"Khối lớp" trong TC-LIST-22/23) chưa unmount hẳn khi
+    // close() của nó bị lỗi im lặng (xem comment trong close() bên dưới),
+    // `[cmdk-list]` cũ đó vẫn còn trong DOM. Mở popover MỚI xong,
+    // getByRole('option') sẽ CỘNG DỒN option của cả 2 popover — đây là
+    // nguyên nhân đã xác nhận của lỗi TC-LIST-24 (đếm ra 80 thay vì 77,
+    // 77 vẫn ĐÚNG với FILTER_SUBJECT_VALUE, dữ liệu không hề đổi).
+    // Chủ động đóng dứt điểm mọi [cmdk-list] còn sót TRƯỚC khi mở popover
+    // mới, để list luôn chỉ còn đúng 1 popover tại 1 thời điểm.
+    await this.closeAnyStrayList();
     await safeClick(this.page, this.trigger);
     await this.list.waitFor({ state: 'visible' });
   }
 
   async close() {
-    if (await this.list.isVisible({ timeout: 300 }).catch(() => false)) {
+    // FIX 2026-08-11: bản cũ dùng `this.list.isVisible({ timeout: 300 })` —
+    // khi có ≥2 phần tử [cmdk-list] khớp cùng lúc trên trang, isVisible()
+    // (vốn chỉ chấp nhận locator khớp ĐÚNG 1 phần tử) ném lỗi strict-mode,
+    // bị `.catch(() => false)` nuốt mất → coi như "không có gì đang mở" →
+    // KHÔNG bấm Escape → popover không được đóng thật sự. Dùng `.count()`
+    // (an toàn với nhiều phần tử) thay vì `.isVisible()`, và chờ 'detached'
+    // (gỡ khỏi DOM hẳn) thay vì 'hidden' (có thể chỉ ẩn CSS, vẫn còn trong
+    // DOM và vẫn có thể bị đếm nhầm ở lần mở popover tiếp theo).
+    if ((await this.list.count()) > 0) {
       await this.page.keyboard.press('Escape');
-      await this.list.waitFor({ state: 'hidden', timeout: 3000 }).catch(() => {});
+      await this.list.first().waitFor({ state: 'detached', timeout: 3000 }).catch(() => {});
+    }
+  }
+
+  /** Đóng dứt điểm mọi [cmdk-list] còn sót lại trên trang (từ popover mở trước đó chưa unmount hẳn) */
+  private async closeAnyStrayList() {
+    const strayCount = await this.page.locator('[cmdk-list]').count();
+    if (strayCount > 0) {
+      await this.page.keyboard.press('Escape');
+      await this.page
+        .locator('[cmdk-list]')
+        .first()
+        .waitFor({ state: 'detached', timeout: 3000 })
+        .catch(() => {});
     }
   }
 

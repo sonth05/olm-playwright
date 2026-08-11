@@ -1,6 +1,25 @@
 import { BasePage } from '@core/shared-pages/BasePage';
 import { BASE_URL, LOP_HOC_CUA_TRUONG_URL, LOP_HOC_CUA_TRUONG_DA_XOA_URL } from '@config/config';
-import { SchoolAdminTab } from '@modules/giao-vien/quan-ly-giao-vien/pages/PhanCongGiangDayPage';
+
+// FIX 2026-08-11: `PhanCongGiangDayPage.ts` (modules/giao-vien/quan-ly-giao-vien/pages/)
+// không tồn tại trong project này — thư mục `quan-ly-giao-vien/` rỗng, không có
+// source để khôi phục (đã ghi nhận là gap từ trước, không phải lỗi mới). File này
+// chỉ cần type `SchoolAdminTab` từ đó (dùng cho switchAdminTab() bên dưới), nên định
+// nghĩa cục bộ tại đây theo đúng danh sách tab đã mô tả trong docblock phía dưới, thay
+// vì import từ 1 file không tồn tại. Khi PhanCongGiangDayPage.ts được khôi phục/viết
+// lại, nên gộp lại thành 1 enum dùng chung như comment gốc dự định.
+export type SchoolAdminTab =
+  | 'Giới thiệu'
+  | 'Giáo viên'
+  | 'Thống kê'
+  | 'Lớp học'
+  | 'Khóa học'
+  | 'Thống kê dung lượng'
+  | 'Bài đã giao'
+  | 'Nâng lớp'
+  | 'Điểm danh'
+  | 'Xếp TKB'
+  | 'Thảo luận trong trường';
 
 /**
  * Page Object — Lớp học của trường (1.2.1).

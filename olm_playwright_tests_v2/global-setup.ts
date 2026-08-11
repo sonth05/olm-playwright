@@ -284,7 +284,7 @@ async function loginAndSave(opts: {
   const page = await context.newPage();
 
   try {
-    await page.goto('/dangnhap', { waitUntil: 'domcontentloaded', timeout: 25_000 });
+    await page.goto('/dangnhap', { waitUntil: 'domcontentloaded', timeout: 35_000 });
 
     for (const sel of LOGIN_USERNAME_SELECTORS) {
       const el = page.locator(sel).first();
@@ -320,7 +320,7 @@ async function loginAndSave(opts: {
     // vì lẳng lặng để lại 1 file "trông như hợp lệ" nhưng thực chất là rỗng.
     let loginSucceeded = true;
     await page
-      .waitForURL((url) => !url.toString().includes('dangnhap'), { timeout: 15_000 })
+      .waitForURL((url) => !url.toString().includes('dangnhap'), { timeout: 25_000 })
       .catch(() => {
         loginSucceeded = false;
       });
@@ -342,6 +342,50 @@ async function loginAndSave(opts: {
   }
 }
 
+// ─── Retry cho loginAndSave ─────────────────────────────────────────────────
+// FIX: trước đây login CHỈ thử 1 lần — khi 6 tài khoản đăng nhập THẬT SỰ song
+// song (6 browser cùng launch 1 tick), 1 trong số đó có thể bị timeout ở
+// waitForURL do tranh CPU/mạng hoặc server giới hạn nhiều lượt login gần như
+// đồng thời cùng IP, dù username/password hoàn toàn đúng. Khi đó fallback
+// phía dưới (globalSetup) sẽ ÂM THẦM copy state của worker-0 (admin) đè lên
+// file của role bị fail — khiến role.fixture.ts đọc nhầm session, mọi test
+// tưởng đang chạy đúng role (vd teacher_vip) nhưng thực chất chạy dưới admin,
+// dẫn tới sai UI (thấy nhiều trường/loại hơn thực tế) và fail khó hiểu. Giờ
+// retry tối đa 2 lần (cách nhau 2s) trước khi coi là thất bại thật sự và
+// nhường cho fallback xử lý.
+async function loginAndSaveWithRetry(
+  opts: {
+    username: string;
+    password: string;
+    label: string;
+    savePath: string;
+    headless: boolean;
+  },
+  maxRetries = 2,
+): Promise<void> {
+  let lastErr: unknown;
+  for (let attempt = 1; attempt <= maxRetries + 1; attempt++) {
+    try {
+      await loginAndSave(opts);
+      if (attempt > 1) {
+        console.log(`[globalSetup] ✓ ${opts.label}: login thành công ở lần thử ${attempt}`);
+      }
+      return;
+    } catch (err) {
+      lastErr = err;
+      if (attempt <= maxRetries) {
+        const delayMs = 2_000 * 2 ** (attempt - 1); // 2s, 4s, 8s...
+        console.warn(
+          `[globalSetup] ⚠ ${opts.label}: login lần ${attempt} thất bại (${getErrorMessage(err)}). ` +
+          `Thử lại sau ${delayMs / 1000}s (còn ${maxRetries + 1 - attempt} lần)...`,
+        );
+        await new Promise((r) => setTimeout(r, delayMs));
+      }
+    }
+  }
+  throw lastErr;
+}
+
 // ─── Login (có cache) — bỏ qua nếu storageState đã "mới" ──────────────────
 async function loginAndSaveMaybeCached(opts: {
   username: string;
@@ -357,7 +401,32 @@ async function loginAndSaveMaybeCached(opts: {
     );
     return;
   }
-  await loginAndSave(opts);
+  await loginAndSaveWithRetry(opts);
+}
+
+// ─── Login song song có giãn nhịp (stagger) ────────────────────────────────
+// FIX: Promise.allSettled bắn cả 6 chromium.launch() cùng 1 tick khiến máy bị
+// dồn tải đúng lúc khởi động (spike CPU/mạng), làm tăng khả năng 1 trong số
+// đó bị chậm và timeout. Giãn nhịp launch mỗi tài khoản cách nhau 400ms —
+// vẫn chạy song song thật (không phải tuần tự), chỉ trải đều điểm bắt đầu để
+// giảm tranh tài nguyên tại đúng thời điểm khởi động.
+async function loginAllStaggered(
+  optsList: Array<{
+    username: string;
+    password: string;
+    label: string;
+    savePath: string;
+    headless: boolean;
+  }>,
+  staggerMs = 400,
+): Promise<PromiseSettledResult<void>[]> {
+  const tasks = optsList.map(
+    (opts, i) =>
+      new Promise<void>((resolve) => setTimeout(resolve, i * staggerMs)).then(() =>
+        loginAndSaveMaybeCached(opts),
+      ),
+  );
+  return Promise.allSettled(tasks);
 }
 
 // ─── Main ──────────────────────────────────────────────────────────────────
@@ -386,10 +455,8 @@ async function globalSetup(_config: FullConfig): Promise<void> {
   const primaryPath = authPathForWorker(0);
 
   console.log(`[globalSetup] 🔐 Đăng nhập song song ${WORKER_ACCOUNTS.length} tài khoản (worker-0..${WORKER_ACCOUNTS.length - 1})...`);
-  const workerResults = await Promise.allSettled(
-    WORKER_ACCOUNTS.map((acc, i) =>
-      loginAndSaveMaybeCached({ ...acc, savePath: authPathForWorker(i), headless }),
-    ),
+  const workerResults = await loginAllStaggered(
+    WORKER_ACCOUNTS.map((acc, i) => ({ ...acc, savePath: authPathForWorker(i), headless })),
   );
 
   // worker-0 là fallback cuối cùng cho MỌI worker/role khác (xem các
@@ -405,8 +472,13 @@ async function globalSetup(_config: FullConfig): Promise<void> {
     if (result.status === 'rejected') {
       const acc = WORKER_ACCOUNTS[i];
       console.warn(
-        `[globalSetup] ⚠ Không thể login worker-${i} (${acc.label}), ` +
-        `fallback copy state từ worker-0. Lỗi: ${getErrorMessage(result.reason)}`
+        `\n${'!'.repeat(70)}\n` +
+        `[globalSetup] ⚠⚠⚠ FALLBACK ROLE: worker-${i} (${acc.label}) đăng nhập thất bại ` +
+        `sau cả retry, dùng tạm session ADMIN (worker-0) thay cho tài khoản thật. ` +
+        `MỌI test dùng role "${acc.label}" qua role.fixture.ts (vd teacherPage nếu ` +
+        `${acc.label}=teacher_vip) sẽ chạy SAI ROLE và rất dễ fail khó hiểu (UI khác ` +
+        `với role thật). Lỗi gốc: ${getErrorMessage(result.reason)}\n` +
+        `${'!'.repeat(70)}\n`,
       );
       fs.copyFileSync(primaryPath, authPathForWorker(i));
     }

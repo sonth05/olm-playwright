@@ -44,6 +44,24 @@ if (FORCE_V2_ROLE && !(FORCE_V2_ROLE in STORAGE_STATE_BY_ROLE)) {
     `Các role hợp lệ: ${Object.keys(STORAGE_STATE_BY_ROLE).join(', ')}`,
   );
 }
+// FIX: FORCE_V2_ROLE là biến môi trường (set bằng $env:FORCE_V2_ROLE=... trong
+// PowerShell) — nó KHÔNG tự mất giữa các lần chạy lệnh trong cùng 1 cửa sổ
+// terminal. Nếu quên unset sau khi chạy thử 1 role riêng, lần chạy suite đầy
+// đủ tiếp theo sẽ ÂM THẦM ép MỌI getPageAsRole(...) về đúng 1 role đó — test
+// xin role khác (vd 'olmStaff' cần thấy SEO) vẫn nhận storageState của role bị
+// force (vd 'editableTeacher' không SEO) → fail khó hiểu, tưởng lỗi UI/DOM
+// nhưng thực ra do sai session. Cảnh báo to ngay khi fixture được load để
+// không còn là lỗi im lặng.
+if (FORCE_V2_ROLE) {
+  console.warn(
+    `\n${'!'.repeat(70)}\n` +
+    `[V2authoringrole.fixture] ⚠⚠⚠ FORCE_V2_ROLE="${FORCE_V2_ROLE}" ĐANG BẬT. ` +
+    `MỌI getPageAsRole(role) trong suite này — kể cả gọi với role khác — sẽ dùng ` +
+    `chung storageState của "${FORCE_V2_ROLE}". Nếu đây không phải ý định cho lần ` +
+    `chạy này, chạy: Remove-Item Env:\\FORCE_V2_ROLE (PowerShell) rồi chạy lại.\n` +
+    `${'!'.repeat(70)}\n`,
+  );
+}
 
 type Fixtures = {
   /** Trả về 1 Page đã đăng nhập đúng vai trò yêu cầu, tái sử dụng trong cùng 1 test nếu gọi lại với cùng role */
