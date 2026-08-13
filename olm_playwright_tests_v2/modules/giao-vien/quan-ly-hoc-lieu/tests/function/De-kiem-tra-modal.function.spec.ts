@@ -22,22 +22,7 @@ async function openExamModal(menu: CreateHocLieuMenu): Promise<ExamModal> {
   return modal;
 }
 
-/**
- * [FUNCTION] TC-EXAM-MODAL: Hành vi từng phần của modal "Tạo Đề kiểm tra" —
- * chọn Khối lớp/Môn học, tìm kiếm trong popover, submit khi thiếu field bắt
- * buộc (modal KHÔNG đóng, KHÔNG điều hướng), và đóng modal qua "Hủy"/"X"
- * (không tạo học liệu). File này KHÔNG tạo dữ liệu thật trên hệ thống —
- * trường hợp submit thành công (có ghi dữ liệu) nằm riêng ở
- * ../e2e/De-kiem-tra-modal.e2e.spec.ts.
- *
- * Toàn bộ các ca (TC-05,06,10,12,13) đều xử lý trên CÙNG 1 trang (mở/đóng
- * modal, không điều hướng sang trang khác) nên gộp chung 1 test / 1 page /
- * 1 browser context, chạy tuần tự qua test.step() — không mở lại
- * getPageAsRole() (tức không mở browser mới) cho từng ca nhỏ. Mỗi step tự
- * mở lại modal từ đầu và có dọn dẹp (đóng modal) trước khi sang step kế
- * tiếp.
- */
-test.describe('[FUNCTION] TC-EXAM-MODAL: Modal "Tạo Đề kiểm tra"', () => {
+test.describe('[FUNCTION] TC-EXAM-MODAL: Modal "Tạo Đề kiểm tra" @v2role_editableTeacher', () => {
   test('TC-EXAM-MODAL-05, 06, 10, 12, 13: Chọn Khối lớp/Môn học và hành vi đóng/không đóng modal', async ({
     getPageAsRole,
   }) => {

@@ -20,7 +20,7 @@ import { dismissPopups } from '../../../../../core/shared-pages/dismissPopups';
 // `test.step()` chạy tuần tự trong cùng 1 browser (theo đúng pattern đã dùng
 // ở Hoc-lieu-cua-toi.ui.spec.ts). Giữ nguyên toàn bộ nội dung/assertion của
 // từng bước, chỉ đổi cách tổ chức.
-test.describe('[UI] Trang Học liệu đã xóa (V2)', () => {
+test.describe('[UI] Trang Học liệu đã xóa (V2) @v2role_editableTeacher', () => {
   test('Header, breadcrumb, bảng dữ liệu, badge, bộ lọc, phân trang', async ({ getPageAsRole }) => {
     const p = await getPageAsRole('editableTeacher');
     await dismissPopups(p);

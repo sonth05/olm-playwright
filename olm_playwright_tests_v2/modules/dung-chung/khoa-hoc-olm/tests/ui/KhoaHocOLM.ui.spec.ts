@@ -19,7 +19,7 @@ import { KhoaHocOLMPage, GradeLevel } from '../../pages/KhoaHocOLMPage';
  *
  * DOM tham chiếu: 2026-08-04 (debug.olm.vn/khoa-hoc)
  */
-test.describe.serial('[UI] TC-COURSES: Trang Khóa học OLM (gộp, dùng chung 1 browser)', () => {
+test.describe.serial('[UI] TC-COURSES: Trang Khóa học OLM (gộp, dùng chung 1 browser) @v2role_editableTeacher', () => {
   let coursePage: KhoaHocOLMPage;
 
   test.beforeAll(async ({ browser }) => {

@@ -5,9 +5,9 @@ import { PaymentPage } from '../pages/PaymentPage';
 /**
  * Regression tests cho trang /gio-hang (OLM 2026).
  */
-test.describe('Payment @payment @regression', () => {
+test.describe('Payment @payment @regression @role_student_vip', () => {
 
-	test.describe('Load trang /gio-hang', () => {
+	test.describe('Load trang /gio-hang @role_student_vip', () => {
 
 		test('[Happy] Trang gio-hang load được sau khi login', async ({ authenticatedPage }) => {
 			const pp = new PaymentPage(authenticatedPage);
@@ -43,7 +43,7 @@ test.describe('Payment @payment @regression', () => {
 
 	});
 
-	test.describe('Chọn thời gian (plan)', () => {
+	test.describe('Chọn thời gian (plan) @role_student_vip', () => {
 
 		test('[Happy] Hiển thị đủ tối thiểu 5 lựa chọn thời gian', async ({ authenticatedPage }) => {
 			const pp = new PaymentPage(authenticatedPage);
@@ -131,7 +131,7 @@ test.describe('Payment @payment @regression', () => {
 
 	});
 
-	test.describe('Gói VIP (package cards)', () => {
+	test.describe('Gói VIP (package cards) @role_student_vip', () => {
 
 		test('[Happy] Hiển thị đủ 3 gói VIP: vip, subject, exam', async ({ authenticatedPage }) => {
 			const pp = new PaymentPage(authenticatedPage);

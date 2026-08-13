@@ -28,7 +28,7 @@ const SEED_ROWS = [
   },
 ] as const;
 
-test.describe('[FUNCTION] TC-LIST: Trang Học liệu của tôi (V2)', () => {
+test.describe('[FUNCTION] TC-LIST: Trang Học liệu của tôi (V2) @v2role_editableTeacher', () => {
   test('TC-LIST-FUNC: Tabs, bảng dữ liệu, tìm kiếm, bộ lọc, hành động, chọn nhiều dòng', async ({
     getPageAsRole,
   }) => {

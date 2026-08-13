@@ -453,7 +453,7 @@ export class BasePage {
    * Đảm bảo trang hiện tại đã có nội dung ứng dụng thật (không còn ở
    * about:blank) trước khi thao tác với sidebar/menu.
    *
-   * Page mới được tạo từ role.fixture/dual-role.fixture thường bắt đầu ở
+   * Page mới được tạo từ role.fixture thường bắt đầu ở
    * about:blank (chỉ có cookie đăng nhập từ storageState, chưa từng
    * goto() lần nào) — nếu thao tác luôn (VD: click menu sidebar) mà không
    * qua bước này trước, mọi locator sẽ timeout vì DOM chưa tồn tại.

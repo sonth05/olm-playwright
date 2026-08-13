@@ -11,7 +11,7 @@ import { HocLieuDuocChiaSeV2Page, HocLieuDuocChiaSeRow } from '../../pages/Hocli
  * gộp chung vào 1 test / 1 page / 1 browser context, chạy tuần tự qua
  * test.step() thay vì mở lại getPageAsRole() cho từng ca nhỏ.
  */
-test.describe('HocLieuDuocChiaSeV2Page – Functional', () => {
+test.describe('HocLieuDuocChiaSeV2Page – Functional @v2role_editableTeacher', () => {
   test('Đọc dữ liệu dòng, tra cứu theo tiêu đề và mở menu Tùy chọn', async ({ getPageAsRole }) => {
     const p = await getPageAsRole('editableTeacher');
     const page = new HocLieuDuocChiaSeV2Page(p);

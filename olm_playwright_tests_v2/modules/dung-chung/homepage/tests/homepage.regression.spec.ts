@@ -15,7 +15,7 @@ async function getHomePage(page: import('@playwright/test').Page) {
 	return hp;
 }
 
-test.describe('Homepage regression (copied)', () => {
+test.describe('Homepage regression (copied) @role_student_vip', () => {
 	test('User card hiển thị và có avatar', async ({ authenticatedPage: page }) => {
 		const hp = await getHomePage(page);
 		await expect(hp.userCard).toBeVisible();

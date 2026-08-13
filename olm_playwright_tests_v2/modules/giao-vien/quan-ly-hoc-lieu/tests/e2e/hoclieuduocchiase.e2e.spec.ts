@@ -18,7 +18,7 @@ import { FilterCoursewareTypeV2, FilterGradeValue, FILTER_SUBJECT_VALUE } from '
  * dưới) vì đây là ca ĐIỀU HƯỚNG THẬT sang trang chi tiết học liệu — đúng
  * bản chất E2E, không gộp chung page với các ca chỉ ở lại trang này.
  */
-test.describe('Học liệu được chia sẻ – E2E', () => {
+test.describe('Học liệu được chia sẻ – E2E @v2role_editableTeacher', () => {
   test('Lọc tab, tìm kiếm và bộ lọc trên trang "Học liệu được chia sẻ"', async ({ getPageAsRole }) => {
     const p = await getPageAsRole('editableTeacher');
     const page = new HocLieuDuocChiaSeV2Page(p);

@@ -11,7 +11,7 @@ import { KhoaHocOLMPage, GradeLevel } from '../../pages/KhoaHocOLMPage';
  *
  * Dom tham chiếu: 2026-08-04 (debug.olm.vn/khoa-hoc)
  */
-test.describe('[E2E] TC-COURSES-E2E: Trang Khóa học OLM', () => {
+test.describe('[E2E] TC-COURSES-E2E: Trang Khóa học OLM @v2role_editableTeacher', () => {
   test('TC-E2E-01: User flow — Browse courses with filters', async ({ getPageAsRole }) => {
     const page = await getPageAsRole('editableTeacher');
     const coursePage = new KhoaHocOLMPage(page);

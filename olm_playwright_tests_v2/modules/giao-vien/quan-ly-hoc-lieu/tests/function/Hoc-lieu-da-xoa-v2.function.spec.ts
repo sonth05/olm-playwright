@@ -13,7 +13,7 @@ import { HocLieuDaXoaV2Page, HocLieuDaXoaRow } from '../../pages/Hoclieudaxoav2p
  * khỏi bảng) nên đặt SAU CÙNG để không làm sai lệch số đếm của các step
  * phía trước.
  */
-test.describe('HocLieuDaXoaV2Page – Functional', () => {
+test.describe('HocLieuDaXoaV2Page – Functional @v2role_editableTeacher', () => {
   test('Đọc dữ liệu bảng, tìm kiếm, phân trang và khôi phục học liệu', async ({ getPageAsRole }) => {
     const p = await getPageAsRole('editableTeacher');
     const page = new HocLieuDaXoaV2Page(p);

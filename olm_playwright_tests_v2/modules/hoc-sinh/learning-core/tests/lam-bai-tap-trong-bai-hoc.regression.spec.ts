@@ -11,7 +11,7 @@ import { LessonPage } from '../pages/LessonPage';
 import { SAMPLE_LUYEN_TAP_URL } from '@config/testData';
 import { khoiDongLuyenTap, loopLuyenTapPartial } from '@core/automation/lamBaiEngine';
 
-test.describe('Làm bài tập trong bài học @learning-core @regression', () => {
+test.describe('Làm bài tập trong bài học @learning-core @regression @role_student_vip', () => {
   test.setTimeout(3 * 60_000);
 
   test('VIP HS vào bài luyện tập → hasExercises → làm bài → nộp → có kết quả', async ({

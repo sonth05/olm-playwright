@@ -6,7 +6,7 @@ import {
   FILTER_SUBJECT_VALUE,
 } from '../../pages/Hoclieucuatoiv2page';
 
-test.describe('[UI] TC-LIST: Trang Học liệu của tôi (V2)', () => {
+test.describe('[UI] TC-LIST: Trang Học liệu của tôi (V2) @v2role_editableTeacher', () => {
   test('TC-LIST-UI: Header, banner, tabs, nhãn bộ lọc, trạng thái phân trang', async ({ getPageAsRole }) => {
     const page = await getPageAsRole('editableTeacher');
     const listPage = new HocLieuCuaToiV2Page(page);

@@ -88,7 +88,7 @@ for (const course of KIDS_COURSES) {
 	});
 }
 
-test.describe('KidsCoursePath - Đối chiếu chéo giữa các khóa học @kids-course-path @regression', () => {
+test.describe('KidsCoursePath - Đối chiếu chéo giữa các khóa học @kids-course-path @regression @role_student_vip', () => {
 
 	test('[Happy] Mỗi khóa học có topicTitle khác nhau (không trùng nội dung)', async ({ authenticatedPage }) => {
 		const p = new KidsCoursePathPage(authenticatedPage);

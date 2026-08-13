@@ -7,7 +7,7 @@ import { HocLieuCuaToiV2Page } from '../../pages/Hoclieucuatoiv2page';
  * dùng đúng tới trang chi tiết/quản lý học liệu tương ứng (không chỉ verify
  * href tĩnh mà verify cả URL thực tế sau khi điều hướng).
  */
-test.describe('[E2E] TC-LIST: Điều hướng Xem/Sửa học liệu', () => {
+test.describe('[E2E] TC-LIST: Điều hướng Xem/Sửa học liệu @v2role_editableTeacher', () => {
   test('TC-LIST-17: Bấm "Xem" mở đúng trang chi tiết học liệu (link Xem trỏ đúng URL)', async ({
     getPageAsRole,
   }) => {

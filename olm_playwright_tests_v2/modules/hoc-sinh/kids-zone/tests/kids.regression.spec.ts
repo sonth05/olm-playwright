@@ -6,7 +6,7 @@ import { expect } from '@playwright/test';
 import { test } from '../../../../fixtures/auth.fixture';
 import { KidsPage } from '../pages/KidsPage';
 
-test.describe('Kids /kids @kids @regression', () => {
+test.describe('Kids /kids @kids @regression @role_student_vip', () => {
 
 	test('[Happy] Trang /kids load thành công', async ({ authenticatedPage }) => {
 		const p = new KidsPage(authenticatedPage);

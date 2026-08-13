@@ -26,7 +26,7 @@ import {
  * đây là ca ĐIỀU HƯỚNG THẬT sang trang "Học liệu của tôi" — đúng bản chất
  * E2E, không gộp chung page với các ca chỉ ở lại trang này.
  */
-test.describe('Trang Học liệu đã xóa – E2E', () => {
+test.describe('Trang Học liệu đã xóa – E2E @v2role_editableTeacher', () => {
   test('Lọc, khôi phục, phân trang và tải lại trên trang "Học liệu đã xóa"', async ({ getPageAsRole }) => {
     const p = await getPageAsRole('editableTeacher');
     const page = new HocLieuDaXoaV2Page(p);

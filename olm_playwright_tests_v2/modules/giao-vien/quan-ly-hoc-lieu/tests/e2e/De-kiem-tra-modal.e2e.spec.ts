@@ -3,7 +3,7 @@ import { HocLieuCuaToiV2Page } from '../../pages/Hoclieucuatoiv2page';
 import { CreateHocLieuMenu, HOC_LIEU_TYPE } from '../../pages/Createhoclieumenu';
 import { ExamModal } from '../../pages/Hoclieucuatoiv2page';
 
-test.describe('[E2E] TC-EXAM-MODAL: Tạo mới "Đề kiểm tra"', () => {
+test.describe('[E2E] TC-EXAM-MODAL: Tạo mới "Đề kiểm tra" @v2role_editableTeacher', () => {
   test('TC-EXAM-MODAL-11: Điền đủ Tiêu đề/Khối lớp/Môn học rồi bấm "Tạo" -> vào đúng trang quản lý học liệu mới', async ({
     getPageAsRole,
   }) => {

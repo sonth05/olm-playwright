@@ -5,7 +5,7 @@ import { PaymentPage } from '../pages/PaymentPage';
 /**
  * Smoke tests cho trang Payment (/gio-hang).
  */
-test.describe('Payment @payment @smoke', () => {
+test.describe('Payment @payment @smoke @role_student_vip', () => {
 
 	test('[Happy] Trang Mua VIP load được, không redirect về login', async ({ authenticatedPage }) => {
 		const pp = new PaymentPage(authenticatedPage);

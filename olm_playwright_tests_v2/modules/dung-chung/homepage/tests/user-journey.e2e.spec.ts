@@ -4,7 +4,7 @@ import { HeaderComponent } from '@core/shared-pages/HeaderComponent';
 import { HocBaiPage } from '@modules/hoc-sinh/learning-core/pages/HocBaiPage';
 import { authPathForWorker } from '../../../../global-setup';
 
-test.describe('User journey @e2e', () => {
+test.describe('User journey @e2e @role_admin', () => {
 	test('Trang chủ → Học bài → Lớp 1', async ({ browser }) => {
 		const context = await browser.newContext({ storageState: authPathForWorker(0) });
 		const page = await context.newPage();

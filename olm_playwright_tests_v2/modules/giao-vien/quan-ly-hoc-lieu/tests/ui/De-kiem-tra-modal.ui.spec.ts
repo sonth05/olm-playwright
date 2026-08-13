@@ -44,7 +44,7 @@ test.describe('[UI] TC-CREATE-MATERIAL-MODAL: Modal tạo học liệu – tất
 
   // ─── Role: Giáo viên thường (không có SEO) – 1 test duy nhất, loop 11 loại
   // dùng chung shape (KHÔNG có NHCH — chỉ Nhân sự OLM mới thấy mục này) ───
-  test('Giáo viên thường: kiểm tra UI 11 loại học liệu (không SEO, không NHCH)', async ({ getPageAsRole }) => {
+  test('Giáo viên thường: kiểm tra UI 11 loại học liệu (không SEO, không NHCH) @v2role_editableTeacher', async ({ getPageAsRole }) => {
     const page = await getPageAsRole('editableTeacher');
     const listPage = new HocLieuCuaToiV2Page(page);
     await listPage.goto();
@@ -114,8 +114,73 @@ test.describe('[UI] TC-CREATE-MATERIAL-MODAL: Modal tạo học liệu – tất
     });
   });
 
+  // ─── Tạo mới THẬT (fill + submit) cho các loại học liệu dùng chung shape.
+  // MỤC ĐÍCH đợt này: xác nhận modal ĐÓNG sau khi bấm "Tạo" với 3 field
+  // chung (Tiêu đề/Khối lớp/Môn học) — CHƯA assert URL/trang quản lý đích
+  // theo từng loại vì chưa có DOM thật của các trang quản lý bên trong (sẽ
+  // bổ sung ở phần e2e/function khi có DOM, theo yêu cầu làm UI trước).
+  //
+  // LƯU Ý QUAN TRỌNG: một số loại học liệu (VD Liên kết cần URL, Video
+  // Youtube cần link, PDF/Word cần upload file...) CÓ THỂ có field bắt buộc
+  // RIÊNG ngoài 3 field chung mà class CreateMaterialModal hiện chưa model
+  // hoá — nếu vậy submit sẽ KHÔNG thành công (modal không đóng) và bước
+  // expect.soft dưới đây sẽ báo lỗi rõ ràng theo từng loại (không nuốt lỗi
+  // toàn bộ loop nhờ dùng test.step + expect.soft). Đây là TÍN HIỆU CHỦ ĐÍCH
+  // để xác định loại nào cần field riêng — không phải bug của test.
+  test('Giáo viên thường: tạo mới thành công 11 loại học liệu (không SEO, không NHCH) @v2role_editableTeacher', async ({ getPageAsRole }) => {
+    test.slow(); // 11 lần tạo học liệu thật (fill + submit + điều hướng), cần nhiều thời gian hơn mặc định
+    const page = await getPageAsRole('editableTeacher');
+    const listPage = new HocLieuCuaToiV2Page(page);
+    await listPage.goto();
+    const menu = new CreateHocLieuMenu(page);
+
+    for (const type of TEACHER_MATERIAL_TYPES) {
+      await test.step(`${type.key}: Điền Tiêu đề/Khối lớp/Môn học rồi bấm "Tạo"`, async () => {
+        const modal = await menu.createNewAndOpenModal(type.value);
+        if (!isCommonModal(modal)) return; // luôn true ở đây, chỉ để TS narrow union
+
+        const title = `[UI-CREATE] ${type.label} ${Date.now()}`;
+        // titleInput dùng chung giữa CreateMaterialModal/ExamModal (cả 2 đều
+        // có field này); fillTitle() wrapper chỉ tồn tại ở CreateMaterialModal
+        // nên dùng thẳng titleInput.fill() để hoạt động với cả union type.
+        await modal.titleInput.fill(title);
+        await modal.selectGrade(/Lớp 10/i);
+        await modal.selectSubject(/Toán/i);
+        await modal.submit();
+
+        // TODO: khi có DOM trang quản lý đích của từng loại học liệu, thay
+        // assertion "modal đóng" dưới bằng kiểm tra cụ thể (URL đích, tiêu đề
+        // trang, hoặc học liệu mới xuất hiện đúng dòng trong danh sách) theo
+        // đúng DOM thật — KHÔNG đoán trước.
+        await expect.soft(modal.dialog).toBeHidden({ timeout: 10_000 });
+
+        // Dọn dẹp trước khi sang loại tiếp theo: nếu submit thành công đã
+        // điều hướng sang trang khác thì goto() sẽ quay lại danh sách; nếu
+        // submit thất bại (modal còn mở do thiếu field riêng) thì đóng modal
+        // bằng "Hủy" để không kẹt trạng thái cho vòng lặp kế tiếp.
+        if (await modal.dialog.isVisible({ timeout: 500 }).catch(() => false)) {
+          await modal.cancel().catch(() => {});
+        }
+        await listPage.goto();
+      });
+    }
+
+    // GAME (Game hóa): TẠM CHƯA submit thật. GameQuestionModal dùng dropdown
+    // Bootstrap tùy biến (.custom-dropdown-header) — hiện mới có
+    // openGradeSelect()/openSubjectSelect() để MỞ dropdown, CHƯA có
+    // selectGrade()/selectSubject() chọn đúng option theo DOM thật (khác cấu
+    // trúc popover/option của Radix dùng ở CreateMaterialModal). Bổ sung khi
+    // có DOM option thật của 2 dropdown này, tránh đoán chọn nhầm.
+    await test.step('GAME: (TODO) chưa tạo mới thật — thiếu DOM chọn Khối lớp/Môn học của dropdown Bootstrap', async () => {
+      const modal = await menu.createNewAndOpenModal(HOC_LIEU_TYPE.GAME);
+      if (isCommonModal(modal)) return; // luôn false ở đây, chỉ để TS narrow
+      await expect.soft(modal.titleHeading).toContainText('Câu hỏi vui');
+      await modal.dismiss();
+    });
+  });
+
   // ─── Role: Nhân sự OLM (có SEO tuỳ loại) – 1 test duy nhất, loop 12 loại dùng chung shape ───
-  test('Nhân sự OLM: kiểm tra UI 12 loại học liệu (có/không SEO)', async ({ getPageAsRole }) => {
+  test('Nhân sự OLM: kiểm tra UI 12 loại học liệu (có/không SEO) @v2role_olmStaff', async ({ getPageAsRole }) => {
     const page = await getPageAsRole('olmStaff');
     const listPage = new HocLieuCuaToiV2Page(page);
     await listPage.goto();

@@ -11,7 +11,7 @@ import { KhoaHocOLMPage, GradeLevel } from '../../pages/KhoaHocOLMPage';
  *
  * DOM tham chiếu: 2026-08-04 (debug.olm.vn/khoa-hoc)
  */
-test.describe('[FUNCTION] TC-COURSES-FUNC: Trang Khóa học OLM', () => {
+test.describe('[FUNCTION] TC-COURSES-FUNC: Trang Khóa học OLM @v2role_editableTeacher', () => {
   test('TC-FUNC-01: Chọn khối lớp → danh sách khóa học cập nhật theo lớp', async ({ getPageAsRole }) => {
     const page = await getPageAsRole('editableTeacher');
     const coursePage = new KhoaHocOLMPage(page);

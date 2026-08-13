@@ -1,7 +1,7 @@
 import { test, expect } from '../../../../../core/fixtures/V2authoringrole.fixture';
 import { HocLieuDuocChiaSeV2Page } from '../../pages/HoclieuduocchiaseV2page';
 
-test.describe('[UI] Trang Học liệu được chia sẻ (V2)', () => {
+test.describe('[UI] Trang Học liệu được chia sẻ (V2) @v2role_editableTeacher', () => {
   test('Tiêu đề, tabs, bảng dữ liệu, badge, bộ lọc', async ({ getPageAsRole }) => {
     const p = await getPageAsRole('editableTeacher');
     const page = new HocLieuDuocChiaSeV2Page(p);
